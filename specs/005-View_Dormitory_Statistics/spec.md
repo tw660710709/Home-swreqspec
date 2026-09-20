@@ -1,6 +1,7 @@
 # Feature: ดูสถิติหอพัก (View Dormitory Statistics)
 
 Spec ID: SPEC-STAT-001 | Source: ข้อกำหนดความต้องการ | Use case: UC-05
+
 Owner: ทีมพัฒนาระบบหอพัก | Status: Draft v2 | Updated: 2569-09-20
 
 ## Goal
