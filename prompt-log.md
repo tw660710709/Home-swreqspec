@@ -196,6 +196,25 @@
 
 ---
 
+## 2569-09-20 16:05:00 คำสั่ง: /plan
+
+- เครื่องมือ: Copilot ใน Codespaces
+- ไฟล์: specs/004-update_room_data/spec.md (Draft v2)
+- ผลลัพธ์: specs/004-update_room_data/plan.md
+- Constraint ที่ AI ใช้: `CON-AUTH-01`, `CON-AUTH-02`, `CON-STATUS-01`, `CON-DATA-01`, `CON-SYNC-01`
+- Constraint ที่ยังไม่ได้ใช้: ไม่มี (ทุก constraint ใน spec ถูกนำไปใช้ใน plan)
+- สิ่งที่ AI บอกว่าอยากเดาแต่ไม่ได้เดา: ไม่มี Open Questions ค้างอยู่ใน spec; รายละเอียดเชิงเทคนิคของ transaction/rollback, batch payload, และ sync/retry implementation ยังต้องยืนยันก่อนเริ่มสร้างจริง
+
+### สรุปผลลัพธ์
+
+- วางโครงหน้ารายการห้องพักและ batch update flow สำหรับเจ้าของหอพักหรือผู้ได้รับมอบหมาย
+- วางโครง entity `Room`, `Dormitory`, `RoomStatusUpdateBatch`, `RoomStatusSyncEvent`, `PermissionAssignment`
+- วาง API หลัก `GET /owners/dormitories/{dormitoryId}/rooms`, `POST /owners/dormitories/{dormitoryId}/rooms/status-batch`, `POST /owners/dormitories/{dormitoryId}/rooms/status-batch/confirm`, `POST /owners/dormitories/{dormitoryId}/rooms/status-batch/cancel`
+- ครอบคลุมแผนทดสอบ `AC-DOR-13` ถึง `AC-DOR-19` และเน้น batch update, cancel rollback, retry, และ performance ภายใน 2 วินาที
+- ระบุว่าระบบจะไม่สร้างสิ่งที่อยู่นอก scope เช่น UC-03, UC-01, UC-06, UC-12 และ UC-13
+
+---
+
 ## 2569-09-20 15:10:00 คำสั่ง: /plan
 
 - เครื่องมือ: Copilot ใน Codespaces
