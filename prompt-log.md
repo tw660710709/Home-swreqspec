@@ -232,3 +232,22 @@
 - ระบุเวลาแสดงผลภายใน 3 วินาทีตาม `NFR-PERF-01` และคงการตรวจสิทธิ์ตาม `CON-AUTH-01`
 
 ---
+
+## 2569-09-20 17:02:00 คำสั่ง: /plan
+
+- เครื่องมือ: Copilot ใน Codespaces
+- ไฟล์: specs/009-review_data/spec.md (Draft v2)
+- ผลลัพธ์: specs/009-review_data/plan.md
+- Constraint ที่ AI ใช้: `CON-AUTH-01`, `CON-REVIEW-01`, `CON-REVIEW-02`, `CON-REVIEW-03`, `CON-FILE-01`, `CON-DATA-01`, `CON-REVIEW-04`
+- Constraint ที่ยังไม่ได้ใช้: ไม่มี (ทุก constraint ใน spec ถูกนำไปใช้ใน plan)
+- สิ่งที่ AI บอกว่าอยากเดาแต่ไม่ได้เดา: ไม่มี Open Questions ค้างอยู่ใน spec; แนวทางเชิงเทคนิคสำหรับ upload storage, review lifecycle update, และ API contract ถูกเก็บไว้เป็นสัญญาเชิงตรรกะเท่านั้น และจะยืนยันเพิ่มเติมก่อนเริ่มสร้างจริง
+
+### สรุปผลลัพธ์
+
+- วางโครงระบบเขียนและแก้ไขรีวิวพร้อมฟอร์ม, validation, และ permission checks สำหรับผู้พักอาศัยที่เข้าสู่ระบบ
+- วางโครง model สำหรับ `Review`, `ReviewImage`, `Dormitory`, `ResidentUser`, และ `DormitoryScoreSummary`
+- วาง API หลัก `GET /dormitories/{dormitoryId}/reviews`, `POST /reviews`, และ `PUT /reviews/{reviewId}` พร้อม validation และ recalculation ของค่าเฉลี่ย
+- ครอบคลุม Acceptance Criteria `AC-REV-01` ถึง `AC-REV-08` ในแผนทดสอบและลำดับงาน
+- ระบุเวลาการประมวลผลภายใน 2 วินาทีตาม `NFR-PERF-03` และป้องกันการแก้ไขรีวิวของผู้อื่นตาม `NFR-SEC-04`
+
+---
