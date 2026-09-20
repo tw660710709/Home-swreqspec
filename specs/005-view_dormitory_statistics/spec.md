@@ -1,4 +1,4 @@
-# Feature: ดูสถิติหอพัก (View Dormitory Statistics)
+# Feature: ดูสถิติหอพัก (view dormitory statistics)
 
 Spec ID: SPEC-STAT-001 | Source: ข้อกำหนดความต้องการ | Use case: UC-05
 
