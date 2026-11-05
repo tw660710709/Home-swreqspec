@@ -537,3 +537,273 @@
 - สิ่งที่ต้องมีเพื่อดำเนินการต่อ: ทีมระบุ environment/URL ที่อนุญาตให้ตรวจ TLS แบบ read-only
 
 ---
+
+## 2569-11-05 09:36:36 คำสั่ง: /testcase AC-DOR-01 specs/001-search/
+
+- เครื่องมือ: Copilot ใน Codespaces
+- โหมด: ร่าง test cases
+- ไฟล์ที่สร้าง: `specs/001-search/test-cases.md`
+- TC ID ที่เสนอ: `TC-DOR-01-1`, `TC-DOR-01-2`, `TC-DOR-01-3`
+- ผลการทำงาน: เสนอ 3 แถว ครอบคลุมทางปกติ สถานะห้องทั้งสองแบบ และกรณีตัวกรองไม่ตรงประเภท; ทุกแถวอ้างอิง `AC-DOR-01`, `FR-DOR-01` และ/หรือ `FR-DOR-02` ตามที่เกี่ยวข้อง
+- สิ่งที่ spec ไม่ได้บอก: รูปแบบข้อความ/หน้าจอเมื่อค้นหาแล้วไม่มีผลลัพธ์ในกรณีกรองประเภทที่ไม่ตรง; ไม่ได้กำหนดขอบเขตเชิงตัวเลขของจำนวนห้องสำหรับทดสอบ boundary จึงใช้สถานะ "ห้องว่าง"/"ห้องเต็ม" ที่ระบุไว้ใน spec แทนการสมมติเกณฑ์จำนวน
+- ผลตรวจ: ไม่ได้เขียนหรือรันโค้ด test เพราะแถวทั้งหมดอยู่สถานะ "ร่าง" ตาม workflow
+
+---
+
+## 2569-11-05 10:15:35 คำสั่ง: /testcase AC-DOR-01 specs/001-search/
+
+- เครื่องมือ: Copilot ใน Codespaces
+- โหมด: เขียน test จากแถวสถานะ "ใช้ได้"
+- TC ID ที่เขียน: `TC-DOR-01-1`, `TC-DOR-01-2`, `TC-DOR-01-3`
+- ไฟล์ที่สร้าง: `backend/tests/test_AC_DOR_01.py`, `frontend/src/__tests__/TC-DOR-01-1.test.jsx`, `frontend/src/__tests__/TC-DOR-01-2.test.jsx`, `frontend/src/__tests__/TC-DOR-01-3.test.jsx`
+- ผล backend: `cd backend && PYTHONPATH=.. pytest -v` ผ่าน 19 tests (รวม 3 tests ใหม่)
+- ผล frontend เฉพาะ test ใหม่: `cd frontend && npx vitest run src/__tests__` ผ่าน 3 tests
+- ผล frontend suite ทั้งหมด: `cd frontend && npm test` พบ 5 tests เดิมใน `frontend/src/App.test.jsx` ไม่ผ่าน เนื่องจาก render `<App />` โดยไม่มี Router context (`basename` เป็น null); test ใหม่ทั้ง 3 ผ่าน ไม่มีการแก้ test เดิมหรือโค้ดระบบ
+- การตรวจด้วยคนตาม `TC-DOR-01-1`: มีหอพักหญิง Approved ที่มีห้องว่างและหอพัก Approved ประเภทอื่นอยู่ในระบบ; เลือกกรอง "หอพักหญิง" แล้วกดค้นหา; ยืนยันว่ารายการที่แสดงเป็นหอพักหญิงเท่านั้น และป้าย "ห้องว่าง" ตรงกับฐานข้อมูล
+
+---
+
+## 2569-11-05 10:21:31 คำสั่ง: /testcase AC-DOR-02 specs/001-search/
+
+- เครื่องมือ: Copilot ใน Codespaces
+- โหมด: ร่าง test cases
+- ไฟล์ที่แก้: `specs/001-search/test-cases.md`
+- TC ID ที่เสนอ: `TC-DOR-02-1`, `TC-DOR-02-2`, `TC-DOR-02-3`
+- ผลการทำงาน: เพิ่ม 3 แถว ครอบคลุมทางปกติ, หอพัก Approved แต่ไม่มีสถานะ Verified, และหอพักที่ไม่ Approved; ทุกแถวอยู่สถานะ "ร่าง" และผูกกับ `AC-DOR-02` และข้อกำหนดที่เกี่ยวข้อง
+- สิ่งที่ spec ไม่ได้บอก: เกณฑ์เชิงภาพว่าการแสดง Verified Badge "ชัดเจน" เพียงใด และรูปแบบข้อความ/การตอบสนองเมื่อเปิดรายละเอียดหอพักที่ไม่ Approved
+- ผลตรวจ: ไม่ได้เขียนหรือรันโค้ด test เพราะแถวอยู่สถานะ "ร่าง" ตาม workflow
+
+---
+
+## 2569-11-05 10:23:58 คำสั่ง: /testcase AC-DOR-03 specs/001-search/
+
+- เครื่องมือ: Copilot ใน Codespaces
+- โหมด: ร่าง test cases
+- ไฟล์ที่แก้: `specs/001-search/test-cases.md`
+- TC ID ที่เสนอ: `TC-DOR-03-1`, `TC-DOR-03-2`, `TC-DOR-03-3`
+- ผลการทำงาน: เพิ่ม 3 แถว ครอบคลุมกรณีไม่มีผลและมีรายการแนะนำ, ขอบเขตจำนวนรายการแนะนำสูงสุด 5 ตาม `ASM-05`, และกรณีค้นหาแล้วมีผลตรงเงื่อนไข; ทุกแถวอยู่สถานะ "ร่าง"
+- สิ่งที่ spec ไม่ได้บอก: เมื่อไม่มีผลการค้นหาและไม่มีหอพักแนะนำที่เข้าเกณฑ์ ระบบต้องแสดงอย่างไร; เมื่อมีผลตรงเงื่อนไข spec ไม่ได้ระบุโดยตรงว่าต้องซ่อนข้อความไม่พบข้อมูลหรือรายการแนะนำ
+- ผลตรวจ: ไม่ได้เขียนหรือรันโค้ด test เพราะแถวอยู่สถานะ "ร่าง" ตาม workflow
+
+---
+
+## 2569-11-05 10:25:23 คำสั่ง: /testcase AC-DOR-04 specs/001-search/
+
+- เครื่องมือ: Copilot ใน Codespaces
+- โหมด: ร่าง test cases
+- ไฟล์ที่แก้: `specs/001-search/test-cases.md`
+- TC ID ที่เสนอ: `TC-DOR-04-1`, `TC-DOR-04-2`, `TC-DOR-04-3`
+- ผลการทำงาน: เพิ่ม 3 แถว ครอบคลุมการล้างตัวกรองตาม AC, กรณีตั้งค่าตัวกรองทุกชนิดตาม FR-DOR-01, และกรณีไม่มีตัวกรองค้าง; ทุกแถวอยู่สถานะ "ร่าง"
+- สิ่งที่ spec ไม่ได้บอก: ผลที่คาดหวังเมื่อกดล้างตัวกรองทั้งที่ไม่มีตัวกรองค้างอยู่
+- ผลตรวจ: ไม่ได้เขียนหรือรันโค้ด test เพราะแถวอยู่สถานะ "ร่าง" ตาม workflow
+
+---
+
+## 2569-11-05 10:26:39 คำสั่ง: /testcase AC-DOR-05 specs/001-search/
+
+- เครื่องมือ: Copilot ใน Codespaces
+- โหมด: ร่าง test cases
+- ไฟล์ที่แก้: `specs/001-search/test-cases.md`
+- TC ID ที่เสนอ: `TC-DOR-05-1`, `TC-DOR-05-2`, `TC-DOR-05-3`
+- ผลการทำงาน: เพิ่ม 3 แถว ครอบคลุมฐานข้อมูลล้มเหลวตาม AC, retry หลังแหล่งข้อมูลกลับมาใช้งานได้, และกรณีไม่มีข้อผิดพลาด; ทุกแถวอยู่สถานะ "ร่าง"
+- สิ่งที่ spec ไม่ได้บอก: ผลหลัง retry เมื่อโหลดสำเร็จ และการแสดง/ซ่อนข้อความผิดพลาดกับปุ่ม retry เมื่อโหลดสำเร็จตั้งแต่แรก
+- ผลตรวจ: ไม่ได้เขียนหรือรันโค้ด test เพราะแถวอยู่สถานะ "ร่าง" ตาม workflow
+
+---
+
+## 2569-11-05 10:28:11 คำสั่ง: /testcase AC-DOR-06 specs/001-search/
+
+- เครื่องมือ: Copilot ใน Codespaces
+- โหมด: ร่าง test cases
+- ไฟล์ที่แก้: `specs/001-search/test-cases.md`
+- TC ID ที่เสนอ: `TC-DOR-06-1`, `TC-DOR-06-2`, `TC-DOR-06-3`
+- ผลการทำงาน: เพิ่ม 3 แถว ครอบคลุมการวัด p95 ของ search/detail, ขอบเขต p95 เท่ากับ 3 วินาที (ผ่านตาม <= 3 วินาที), และกรณีไม่มีรายการหอพัก; ทุกแถวอยู่สถานะ "ร่าง"
+- ข้อจำกัดที่ต้องพิจารณา: T-15 มี test profile ยิง 100 requests ต่อ endpoint แบบ sequential ผ่าน HTTPX ASGITransport ใน process เดียว ซึ่งตรวจเฉพาะ profile ใน-process ไม่ได้จำลองสภาวะเครือข่ายปกติหรือ integration/deployment; ต้องไม่อ้างผล profile นี้ว่าเป็นการยืนยันเงื่อนไขเครือข่ายปกติใน AC โดยลำพัง
+- สิ่งที่ spec ไม่ได้บอก: วิธีนิยาม/ตรวจสภาวะเครือข่ายปกติใน environment จริง และการใช้เกณฑ์ p95 เมื่อไม่มีรายการหอพัก
+- ผลตรวจ: ไม่ได้เขียนหรือรันโค้ด test เพราะแถวอยู่สถานะ "ร่าง" ตาม workflow
+
+---
+
+## 2569-11-05 10:56:59 คำสั่ง: /testcase AC-DOR-02 specs/001-search/
+
+- เครื่องมือ: Copilot ใน Codespaces
+- โหมด: เขียน test จากแถวสถานะ "ใช้ได้"
+- TC ID ที่เขียน: `TC-DOR-02-1`, `TC-DOR-02-2`, `TC-DOR-02-3`
+- ไฟล์ที่สร้าง: `backend/tests/test_AC_DOR_02.py`, `frontend/src/__tests__/TC-DOR-02-1.test.jsx`, `frontend/src/__tests__/TC-DOR-02-2.test.jsx`, `frontend/src/__tests__/TC-DOR-02-3.test.jsx`
+- ผล backend: `cd backend && PYTHONPATH=.. pytest -v` ผ่าน 22 tests (รวม 3 tests ใหม่)
+- ผล frontend เฉพาะ test ใหม่: `cd frontend && npx vitest run src/__tests__/TC-DOR-02-1.test.jsx src/__tests__/TC-DOR-02-2.test.jsx src/__tests__/TC-DOR-02-3.test.jsx` ผ่าน 3 tests
+- ผล frontend suite ทั้งหมด: `cd frontend && npm test` ผ่าน 11 tests ใน 7 test files
+- การตรวจด้วยคนตาม `TC-DOR-02-1`: เปิดรายละเอียดหอพักที่ Approved และ Verified; ตรวจว่ามีราคา ค่าเช่า ค่าน้ำ ค่าไฟ ค่ามัดจำ สิ่งอำนวยความสะดวก กฎระเบียบ รูปภาพ สถานที่ใกล้เคียง ข้อมูลความปลอดภัย ช่องทางติดต่อ และ Verified Badge แสดงครบ
+- สิ่งที่ไม่ได้ assert: เกณฑ์ภาพว่า Verified Badge ต้อง "ชัดเจน" เพียงใด และรูปแบบข้อความเมื่อเปิดหอพักไม่ Approved เพราะ spec ไม่ได้กำหนด
+
+---
+
+## 2569-11-05 10:59:11 คำสั่ง: /testcase AC-DOR-03 specs/001-search/
+
+- เครื่องมือ: Copilot ใน Codespaces
+- โหมด: เขียน test จากแถวสถานะ "ใช้ได้"
+- TC ID ที่เขียน: `TC-DOR-03-1`, `TC-DOR-03-2`, `TC-DOR-03-3`
+- ไฟล์ที่สร้าง: `backend/tests/test_AC_DOR_03.py`, `frontend/src/__tests__/TC-DOR-03-1.test.jsx`, `frontend/src/__tests__/TC-DOR-03-2.test.jsx`, `frontend/src/__tests__/TC-DOR-03-3.test.jsx`
+- ผล backend: `cd backend && PYTHONPATH=.. pytest -v` ผ่าน 25 tests (รวม 3 tests ใหม่)
+- ผล frontend เฉพาะ test ใหม่: `cd frontend && npx vitest run src/__tests__/TC-DOR-03-1.test.jsx src/__tests__/TC-DOR-03-2.test.jsx src/__tests__/TC-DOR-03-3.test.jsx` ผ่าน 3 tests
+- ผล frontend suite ทั้งหมด: `cd frontend && npm test` ผ่าน 14 tests ใน 10 test files
+- ผลแต่ละกรณี: `TC-DOR-03-1` ผ่านการตรวจ no-results, recommendations และ Approved/max-5; `TC-DOR-03-2` ผ่านการสร้าง recommendations ที่เข้าเกณฑ์ 6 รายการและยืนยัน API คืน 5; `TC-DOR-03-3` ผ่านการค้นหาและแสดงรายการที่ตรงเงื่อนไข
+- ส่วนที่ spec ไม่ได้บอกใน `TC-DOR-03-3`: การแสดงข้อความไม่พบข้อมูลหรือรายการแนะนำเมื่อมีผลค้นหา ไม่ได้เขียน assert ตามตาราง
+
+---
+
+## 2569-11-05 11:00:15 คำสั่ง: /testcase AC-DOR-04 specs/001-search/
+
+- เครื่องมือ: Copilot ใน Codespaces
+- โหมด: เขียน test จากแถวสถานะ "ใช้ได้"
+- TC ID ที่เขียน: `TC-DOR-04-1`, `TC-DOR-04-2`, `TC-DOR-04-3`
+- ไฟล์ที่สร้าง: `frontend/src/__tests__/TC-DOR-04-1.test.jsx`, `frontend/src/__tests__/TC-DOR-04-2.test.jsx`, `frontend/src/__tests__/TC-DOR-04-3.test.jsx`
+- ผล frontend เฉพาะ test ใหม่: `cd frontend && npx vitest run src/__tests__/TC-DOR-04-1.test.jsx src/__tests__/TC-DOR-04-2.test.jsx src/__tests__/TC-DOR-04-3.test.jsx` ผ่าน 3 tests
+- ผล frontend suite ทั้งหมด: `cd frontend && npm test` ผ่าน 17 tests ใน 13 test files
+- ผลตรวจ: `TC-DOR-04-1` และ `TC-DOR-04-2` ตรวจค่าตัวกรองกลับเป็นค่าเริ่มต้นและโหลดรายการ Approved ทั้งหมดจาก mock; `TC-DOR-04-3` กดล้างตัวกรองในสภาวะไม่มีตัวกรองโดยไม่ assert ผลลัพธ์ที่ spec ไม่ได้กำหนด
+- การตรวจด้วยคนตาม `TC-DOR-04-1`: ยังไม่ได้ดำเนินการ; ให้เปิดหน้าค้นหาที่มีรายการ Approved หลายรายการ ตั้งตัวกรองและกด "ล้างตัวกรอง" แล้วตรวจด้วยคนว่าตัวกรองถูกรีเซ็ตและรายการ Approved ทั้งหมดแสดงกลับมาทันที
+- สิ่งที่ spec ไม่ได้บอก: ผลลัพธ์ของการกดล้างตัวกรองเมื่อไม่มีตัวกรองค้างอยู่; ไม่มีการเพิ่ม assertion เชิงพฤติกรรมสำหรับ `TC-DOR-04-3`
+
+---
+
+## 2569-11-05 11:06:27 คำสั่ง: /testcase AC-DOR-05 specs/001-search/
+
+- เครื่องมือ: Copilot ใน Codespaces
+- โหมด: เขียน test จากแถวสถานะ "ใช้ได้"
+- TC ID ที่เขียน: `TC-DOR-05-1`, `TC-DOR-05-2`, `TC-DOR-05-3`
+- ไฟล์ที่สร้าง: `backend/tests/test_AC_DOR_05.py`, `frontend/src/__tests__/TC-DOR-05-1.test.jsx`, `frontend/src/__tests__/TC-DOR-05-2.test.jsx`, `frontend/src/__tests__/TC-DOR-05-3.test.jsx`
+- ผล backend: `cd backend && PYTHONPATH=.. pytest -v` ผ่าน 28 tests (รวม 3 tests ใหม่)
+- ผล frontend: `cd frontend && npm test` ผ่าน 20 tests ใน 16 test files (รวม 3 tests ใหม่)
+- ผลแต่ละกรณี: `TC-DOR-05-1` ตรวจ API error 500, ข้อความแจ้งเตือน, ปุ่มลองใหม่ และการตอบสนองต่อการกดซ้ำ; `TC-DOR-05-2` ตรวจข้อผิดพลาดครั้งแรกกับการร้องขอซ้ำหลังแหล่งข้อมูลกลับมาใช้งานได้ โดยไม่ assert รูปแบบผลลัพธ์ UI หลัง retry; `TC-DOR-05-3` ตรวจรายละเอียดที่กำหนดใน `FR-DOR-03` และ `FR-DOR-04` ทั้ง API และ UI
+- การตรวจด้วยคนตาม `TC-DOR-05-1`: จำลองการเชื่อมต่อฐานข้อมูลล้มเหลวขณะเปิดหน้ารายละเอียด ตรวจว่ามีข้อความ "ไม่สามารถโหลดข้อมูลได้" และปุ่ม "ลองใหม่" จากนั้นลองกดปุ่มและใช้งานหน้าจอต่อเพื่อยืนยันว่าหน้าจอไม่ค้าง
+- การแก้ระหว่างตรวจ: test UI ของ `TC-DOR-05-3` มีข้อความค่าน้ำ/ค่าไฟซ้ำสำหรับสองห้อง จึงปรับ assertion ให้ตรวจครบสองรายการ แล้วรัน frontend suite ใหม่จนผ่าน
+- ผลตรวจ: `git diff --check` ผ่าน; ไม่มีการแก้โค้ดระบบหรือ test เดิม
+
+---
+
+## 2569-11-05 11:10:48 คำสั่ง: /testcase AC-DOR-06 specs/001-search/
+
+- เครื่องมือ: Copilot ใน Codespaces
+- โหมด: เขียน test จากแถวสถานะ "ใช้ได้"
+- TC ID ที่เขียน: `TC-DOR-06-1`, `TC-DOR-06-2`
+- TC ID ที่ตรวจด้วยคน: `TC-DOR-06-3` (ไม่ได้สร้าง automated test เพราะช่อง "ตรวจด้วย" ระบุคน)
+- ไฟล์ที่สร้าง: `backend/tests/test_AC_DOR_06.py`
+- ผล backend: `cd backend && PYTHONPATH=.. pytest -v` ผ่าน 30 tests (รวม 2 tests ใหม่)
+- ผลแต่ละกรณี: `TC-DOR-06-1` วัด p95 ของ API ค้นหาและรายละเอียดแยกกันและผ่านเกณฑ์ <= 3 วินาที; `TC-DOR-06-2` ยืนยันว่าค่า p95 เท่ากับ 3 วินาทีผ่านเกณฑ์
+- ข้อจำกัดของ `TC-DOR-06-1`: วัดผ่าน HTTPX ASGITransport ใน process เดียว จึงไม่ยืนยัน “สภาวะเครือข่ายปกติ” ใน deployment ตามข้อสังเกตใน `plan.md`; workload ที่ใช้เป็น 100 requests ต่อ API ตาม test performance ที่มีอยู่
+- ขั้นตอนตรวจด้วยคนตาม `TC-DOR-06-3`: ใช้ environment ที่ไม่มีรายการหอพัก ทดลองค้นหาหรือเปิดรายละเอียด แล้วสอบถาม/ตรวจเกณฑ์ว่า p95 ควรถูกประเมินหรือไม่และอย่างไร; spec ปัจจุบันไม่ได้กำหนดผลที่คาดหวังสำหรับกรณีไม่มีข้อมูล
+- ผลตรวจ: `git diff --check` ผ่าน; ไม่มีการแก้โค้ดระบบหรือ test เดิม
+
+---
+
+## 2569-11-05 12:00:32 คำสั่ง: /verify specs/001-search/
+
+- เครื่องมือ: Copilot ใน Codespaces
+- ผล backend: `cd backend && PYTHONPATH=.. pytest -v` ผ่าน 30 tests
+- ผล frontend: `cd frontend && npm test` ผ่าน 20 tests ใน 16 test files
+- ผลการตามรอย: สร้าง `specs/001-search/rtm.md` โดยมี 17 แถว: ครบ 8, ยังไม่ถึง 1, รอ Q 0, ช่องโหว่ 8
+- ข้อค้นพบใหม่: `F-01` ถึง `F-08`
+- ไฟล์ที่แก้ได้ตาม workflow: สร้าง `specs/001-search/rtm.md` และเพิ่มบันทึกนี้ใน `prompt-log.md`; ไม่แก้โค้ด, test, spec, plan หรือ tasks
+
+---
+
+## 2569-11-05 12:25:22 คำสั่ง: แก้ตาม F-01 ใน `specs/001-search/rtm.md`
+
+- ข้อกำหนดเพิ่มเติมจากผู้ใช้: แตะเฉพาะไฟล์ที่เกี่ยวข้อง, ห้ามแก้ test ที่ชื่อขึ้นต้น `test_TC_`, รัน `pytest -v` และจดผลใน `prompt-log.md`
+- คำถามที่ถาม: แหล่งข้อมูลใดควรใช้แทน fixtures และควรกำหนด schema อย่างไร
+- คำตอบของทีม: เพิ่ม SQLite ในโปรเจกต์นี้ และทำ schema ตาม `backend/app/models.py`
+- วิธีแก้: เพิ่ม SQLite data access ตาม model; API ค้นหา, แนะนำ และรายละเอียดอ่านข้อมูลจากฐานข้อมูล; seed fixtures เฉพาะเมื่อสร้างฐานข้อมูลใหม่และยังไม่มีข้อมูล; ตั้งฐานข้อมูลแยกต่อ test
+- Tests ใหม่: `test_AC_DOR_01_search_reads_latest_database_values` และ `test_AC_DOR_02_detail_reads_latest_database_values` ตรวจว่า API อ่านค่าที่แก้ใน SQLite ล่าสุด
+- ข้อจำกัดที่ยังคงอยู่: fixtures ยังเป็นข้อมูลตั้งต้นของฐานข้อมูลใหม่; ไม่มีแหล่งข้อมูลจริงหรือวิธีนำเข้าข้อมูลที่กำหนดใน scope จึงยังยืนยัน `NFR-ACC-01` กับสภาพจริงไม่ได้
+- ผล backend: `cd backend && PYTHONPATH=.. pytest -v` ผ่าน 32 tests
+- ผลการตรวจ: `git diff --check` ผ่าน; ไม่แก้ test ที่ชื่อขึ้นต้น `test_TC_`
+
+---
+
+## 2569-11-05 12:40:31 คำสั่ง: แก้ตาม F-02 ใน `specs/001-search/rtm.md`
+
+- ข้อกำหนดจากผู้ใช้: แตะเฉพาะไฟล์ที่เกี่ยวข้อง, ห้ามแก้ test ที่ชื่อขึ้นต้น `test_TC_`, รัน `pytest -v` และจดผลใน `prompt-log.md`
+- คำถามที่ถาม: เลือกสภาพแวดล้อมเครือข่ายและ workload สำหรับวัด p95
+- คำตอบของทีม: HTTP จริงผ่าน localhost/loopback และ 100 requests แบบ sequential ต่อ API
+- วิธีแก้: ปรับ `test_AC_DOR_06_search_and_detail_p95_under_three_seconds` ให้เริ่ม Uvicorn บน loopback แล้ววัดผ่าน HTTP จริง แยก p95 ของ API ค้นหาและรายละเอียด; อัปเดต plan และ RTM ให้ระบุ test profile และข้อจำกัด
+- ข้อจำกัดที่ยังคงอยู่: localhost/loopback ไม่ใช่ deployment environment และไม่ยืนยันสภาวะเครือข่ายปกติของ deployment; test ที่ชื่อขึ้นต้น `test_TC_` ยังคงเดิมตามคำสั่ง
+- ผล backend: `cd backend && PYTHONPATH=.. pytest -v` ผ่าน 32 tests
+- ผลการตรวจ: `git diff --check` ผ่าน; ไม่มีการแก้ test ที่ชื่อขึ้นต้น `test_TC_`
+
+---
+
+## 2569-11-05 12:43:57 คำสั่ง: แก้ตาม F-03 ใน `specs/001-search/rtm.md`
+
+- ข้อกำหนดจากผู้ใช้: แตะเฉพาะไฟล์ที่เกี่ยวข้อง, ห้ามแก้ test ที่ชื่อขึ้นต้น `test_TC_`, รัน `pytest -v` และจดผลใน `prompt-log.md`
+- คำถามที่ถาม: นิยามทำเลใกล้เคียง, ระยะราคาใกล้เคียง และลำดับจัดอันดับเมื่อเกณฑ์ขัดกัน
+- คำตอบของทีม: ทำเลต้องตรงกันทั้งข้อความ; ราคาใช้ระยะห่างจากช่วงที่ค้นหา (ช่วงทับซ้อนมีระยะ 0); ทำเลมาก่อนและใช้ระยะราคาเป็นลำดับรอง
+- วิธีแก้: ปรับ `recommend_dormitories` ให้เทียบ location แบบข้อความตรงกันทั้งค่า; คงการคำนวณระยะห่างราคาและลำดับทำเลก่อนราคา; เพิ่ม `test_AC_DOR_03_exact_location_precedes_price_distance`
+- เอกสารที่อัปเดต: `specs/001-search/spec.md` ปรับ ASM-05 ตามคำตัดสินโดยคง ID เดิม; อัปเดต plan และ RTM
+- ผล backend: `cd backend && PYTHONPATH=.. pytest -v` ผ่าน 33 tests
+- ผลการตรวจ: `git diff --check` ผ่าน; ไม่มีการแก้ test ที่ชื่อขึ้นต้น `test_TC_`
+
+---
+
+## 2569-11-05 12:51 คำสั่ง: แก้ตาม F-04 ใน `specs/001-search/rtm.md`
+
+- ข้อกำหนดจากผู้ใช้: แตะเฉพาะไฟล์ที่เกี่ยวข้อง, ห้ามแก้ test ที่ชื่อขึ้นต้น `test_TC_`, รัน `pytest -v` และจดผลใน `prompt-log.md`
+- คำถามที่ถาม: กลุ่มผู้ทดสอบ งานที่ประเมิน และเกณฑ์ผ่านเชิงตัวเลขของ `NFR-USE-01`
+- คำตอบของทีม: ผู้ใช้ทั่วไป 5 คน; ทำงานค้นหา/กรองหอพัก, ล้างตัวกรอง และเปิดดูรายละเอียด; แต่ละงานต้องสำเร็จโดยไม่รับความช่วยเหลืออย่างน้อย 4 ใน 5 คน
+- วิธีแก้: ปรับ `NFR-USE-01` ให้ตรวจรับได้และเพิ่มขั้นตอนทดสอบด้วยคนใน plan; อัปเดตสถานะใน RTM โดยระบุว่าการทดสอบจริงยังไม่ดำเนินการ
+- ผล backend: `cd backend && PYTHONPATH=.. pytest -v` ผ่าน 33 tests
+- ผลการตรวจ: `git diff --check` ผ่าน; ไม่มีการแก้ test ที่ชื่อขึ้นต้น `test_TC_`; การทดสอบ usability กับผู้ใช้จริงยังไม่ดำเนินการและไม่ได้ยืนยันด้วย pytest
+
+---
+
+## 2569-11-05 12:57:21 คำสั่ง: แก้ตาม F-05 ใน `specs/001-search/rtm.md`
+
+- ข้อกำหนดจากผู้ใช้: แตะเฉพาะไฟล์ที่เกี่ยวข้อง, ห้ามแก้ test ที่ชื่อขึ้นต้น `test_TC_`, รัน `pytest -v` และจดผลใน `prompt-log.md`
+- วิธีแก้: เพิ่ม backend regression test `test_AC_DOR_02_unverified_detail_contains_all_required_fields` ตรวจค่าเช่า ค่าน้ำ ค่าไฟ ค่ามัดจำ สิ่งอำนวยความสะดวก กฎ ความปลอดภัย ช่องทางติดต่อ รูปภาพ สถานที่ใกล้เคียง และไม่มี Verified Badge สำหรับหอพัก Approved แต่ไม่ Verified
+- UI regression test: เพิ่ม `AC-DOR-02-unverified-detail.test.jsx` ตรวจการแสดงข้อมูลรายละเอียดทุกส่วนและไม่แสดง Badge; ไม่แก้ `TC-DOR-02-2` หรือ test อื่นที่ชื่อขึ้นต้น `test_TC_`
+- ไฟล์เอกสาร: อัปเดต `specs/001-search/rtm.md` ให้ F-05 เป็นแก้แล้ว พร้อมอ้างอิง test ใหม่ และปรับยอด test ล่าสุด
+- ผล backend: `cd backend && PYTHONPATH=.. pytest -v` ผ่าน 34 tests
+- ผล frontend: `cd frontend && npm test` ผ่าน 21 tests ใน 17 files
+- ผลการตรวจ: `git diff --check` ผ่าน; ไม่แก้ test ที่ชื่อขึ้นต้น `test_TC_`
+
+---
+
+## 2569-11-05 12:59:30 คำสั่ง: แก้ตาม F-06 ใน `specs/001-search/rtm.md`
+
+- ข้อกำหนดจากผู้ใช้: แตะเฉพาะไฟล์ที่เกี่ยวข้อง, ห้ามแก้ test ที่ชื่อขึ้นต้น `test_TC_`, รัน `pytest -v` และจดผลใน `prompt-log.md`
+- วิธีแก้: นำลิงก์ “เกี่ยวกับเรา” ที่ชี้ไป `/about` แต่ไม่มี route หรือ requirement รองรับออกจาก `frontend/src/components/Navbar.jsx`; ไม่เพิ่ม route/page เพื่อไม่เพิ่ม scope
+- Regression test: เพิ่ม `frontend/src/__tests__/F-06-navbar-navigation.test.jsx` ตรวจว่าลิงก์หน้าแรกยังอยู่และไม่มีลิงก์เกี่ยวกับเรา
+- ผล backend: `cd backend && PYTHONPATH=.. pytest -v` ผ่าน 34 tests
+- ผล frontend: `cd frontend && npm test` ผ่าน 22 tests ใน 18 files
+- ผลการตรวจ: `git diff --check` ผ่าน; ไม่มีการแก้ test ที่ชื่อขึ้นต้น `test_TC_`
+
+---
+
+## 2569-11-05 13:00:51 คำสั่ง: แก้ตาม F-07 ใน `specs/001-search/rtm.md`
+
+- ข้อกำหนดจากผู้ใช้: แตะเฉพาะไฟล์ที่เกี่ยวข้อง, ห้ามแก้ test ที่ชื่อขึ้นต้น `test_TC_`, รัน `pytest -v` และจดผลใน `prompt-log.md`
+- วิธีแก้: ปรับ placeholder ใน `frontend/src/pages/HomePage.jsx` ให้ระบุเฉพาะ “ชื่อหอพักหรือทำเล” ตาม `FR-DOR-01`
+- Regression test: เพิ่ม `frontend/src/__tests__/F-07-search-placeholder.test.jsx` ตรวจข้อความ placeholder และยืนยันว่าไม่กล่าวถึงสถานศึกษา
+- เอกสาร: อัปเดต `specs/001-search/rtm.md` และยอด frontend tests ล่าสุด
+- ผล backend: `cd backend && PYTHONPATH=.. pytest -v` ผ่าน 34 tests
+- ผล frontend: `cd frontend && npm test` ผ่าน 23 tests ใน 19 files
+- ผลการตรวจ: `git diff --check` ผ่าน; ไม่มีการแก้ test ที่ชื่อขึ้นต้น `test_TC_`
+
+---
+
+## 2569-11-05 13:04:20 คำสั่ง: แก้ตาม F-08 ใน `specs/001-search/rtm.md`
+
+- ข้อกำหนดจากผู้ใช้: แตะเฉพาะไฟล์ที่เกี่ยวข้อง, ห้ามแก้ test ที่ชื่อขึ้นต้น `test_TC_`, รัน `pytest -v` และจดผลใน `prompt-log.md`
+- วิธีแก้: นำปุ่ม “โทร/ไลน์” ที่ไม่มี handler และไม่มี requirement รองรับออกจาก `frontend/src/pages/DormDetailPage.jsx`; คงการแสดงช่องทางติดต่อไว้ตาม `FR-DOR-03`
+- Regression test: เพิ่ม `frontend/src/__tests__/AC-DOR-02-contact-info.test.jsx` ตรวจว่าช่องทางติดต่อแสดงอยู่และปุ่ม “โทร/ไลน์” ไม่แสดง
+- ผล backend: `cd backend && PYTHONPATH=.. pytest -v` ผ่าน 34 tests
+- ผล frontend: `cd frontend && npm test` ผ่าน 24 tests ใน 20 files
+- ผลการตรวจ: `git diff --check` ผ่าน; ไม่มีการแก้ test ที่ชื่อขึ้นต้น `test_TC_`
+---
+
+## 2569-11-05 13:06 คำสั่ง: `/verify specs/001-search/`
+
+- ผล backend: `cd backend && PYTHONPATH=.. pytest -v` ผ่าน 34 tests
+- ผล frontend: `cd frontend && npm test` ผ่าน 24 tests ใน 20 files
+- ผลการตรวจ `git diff --check`: ผ่าน
+- อัปเดต `specs/001-search/rtm.md`: ปรับเวลาตรวจและยอด test ให้เป็นปัจจุบัน, แก้สรุปสถานะตาม 17 แถวในตาราง (ครบ 13, ยังไม่ถึง 2, รอ Q 0, ช่องโหว่ 2) และอัปเดตผลยืนยันของ F-01/F-02
+- ข้อจำกัดที่ยังคงอยู่: F-01 ยังไม่มีแหล่งข้อมูลจริง; F-02 ยังไม่ยืนยันผลใน deployment; NFR-USE-01 ยังรอทดสอบกับผู้ใช้ 5 คนตามเกณฑ์; NFR-SEC-01 ยังรอ environment/URL สำหรับตรวจ HTTPS/TLS

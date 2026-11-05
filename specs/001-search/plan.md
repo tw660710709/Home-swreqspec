@@ -67,17 +67,17 @@ Spec ID: `SPEC-DOR-001` | สถานะข้อกำหนด: `Draft v2`
 |---|---|---|
 | `AC-DOR-01` | `test_AC_DOR_01_search_female_available_dormitories` | เตรียม Approved หอพักหญิงที่มีห้องว่าง เรียกค้นหาด้วยประเภทหญิง ตรวจเฉพาะรายการหญิงและป้าย “ห้องว่าง” ตรงกับข้อมูล |
 | `AC-DOR-02` | `test_AC_DOR_02_detail_verified_dormitory` | เตรียมหอพัก Approved และ Verified เปิด detail ตรวจข้อมูลทุกส่วน รูปภาพ สถานที่ใกล้เคียง และ badge |
-| `AC-DOR-03` | `test_AC_DOR_03_empty_search_returns_recommendations` | ค้นหาด้วยเงื่อนไขที่ไม่มีผล ตรวจข้อความที่กำหนดและ recommendations ที่แสดงเป็นทางเลือก ไม่เกิน 5 รายการ |
+| `AC-DOR-03` | `test_AC_DOR_03_empty_search_returns_recommendations` | ค้นหาด้วยเงื่อนไขที่ไม่มีผล ตรวจข้อความที่กำหนดและ recommendations ไม่เกิน 5 รายการ; จัดอันดับ location ที่ตรงทั้งข้อความก่อน แล้วใช้ระยะห่างจากช่วงราคาค้นหาเป็นลำดับรองตาม `ASM-05` |
 | `AC-DOR-04` | `test_AC_DOR_04_clear_filter_loads_all_dormitories` | ตั้ง filter แล้วกด Clear Filter ตรวจว่า filter กลับค่าเริ่มต้นและรายการ Approved ทั้งหมดถูกโหลด |
 | `AC-DOR-05` | `test_AC_DOR_05_detail_load_error_has_retry` | จำลองฐานข้อมูลล้มเหลวระหว่างเปิด detail ตรวจข้อความผิดพลาด ปุ่ม retry และไม่ค้าง |
-| `AC-DOR-06` | `test_AC_DOR_06_search_and_detail_p95_under_three_seconds` | เมื่อทีมกำหนด workload และนิยามสภาวะเครือข่ายปกติแล้ว ให้เก็บ response time ของการค้นหาและ detail และตรวจ p95 <= 3 วินาที; ยังสรุปผลตรวจรับไม่ได้จนกว่าจะกำหนดเงื่อนไขดังกล่าว |
+| `AC-DOR-06` | `test_AC_DOR_06_search_and_detail_p95_under_three_seconds` | ตามการตัดสินของทีม ใช้ 100 requests แบบ sequential ต่อ API ผ่าน HTTP จริงบน localhost/loopback; ผลใช้ตรวจ test profile นี้เท่านั้น ไม่ใช่การยืนยัน performance ใน deployment |
 
 การทดสอบเพิ่มเติมที่ผูกกับข้อกำหนดคุณภาพ:
 
 - ตรวจ responsive layout บน viewport คอมพิวเตอร์และอุปกรณ์พกพา (`CON-UI-01`)
+- ตรวจ usability ด้วยผู้ใช้ทั่วไป 5 คน ให้ทำงานค้นหา/กรองหอพัก ล้างตัวกรอง และเปิดดูรายละเอียด; แต่ละงานผ่านเมื่อมีผู้ทำสำเร็จโดยไม่รับความช่วยเหลืออย่างน้อย 4 ใน 5 คน (`NFR-USE-01`); บันทึกผลแยกตามงาน
 - ตรวจ HTTPS/TLS 1.2 ขึ้นไปใน deployment/integration environment (`NFR-SEC-01`)
 - ตรวจข้อมูลราคา รูปภาพ กฎ ค่าใช้จ่าย และเงื่อนไขที่แสดงตรงกับ fixture/data source (`NFR-ACC-01`, `DOM-RULE-01`)
-- `NFR-USE-01` ยังไม่มีเกณฑ์วัดหรือ AC สำหรับตัดสินผ่าน/ไม่ผ่าน จึงยังระบุผลตรวจรับเชิงวัตถุวิสัยไม่ได้
 
 ## 7. ลำดับงาน
 
@@ -96,9 +96,8 @@ Spec ID: `SPEC-DOR-001` | สถานะข้อกำหนด: `Draft v2`
 จาก `spec.md` ฉบับปัจจุบันไม่มีรายการ Open Questions ที่ลงทะเบียนไว้ อย่างไรก็ตาม ประเด็นต่อไปนี้ยังไม่ชัดพอให้ plan ตัดสินแทนทีม และควรยืนยันก่อนลงมือส่วนที่เกี่ยวข้อง:
 
 - Scope ระบุประเภทหอพักรวม แต่ `FR-DOR-01` ระบุประเภทชาย/หญิง (`FR-DOR-01`)
-- “พื้นที่เดียวกัน” และ “ราคาใกล้เคียง” ในรายการแนะนำยังไม่มีเกณฑ์วัดที่ชัดเจน (`FR-DOR-07`, `ASM-05`)
 - พฤติกรรมปุ่มลองใหม่ใน `FR-DOR-08`/`AC-DOR-05` ไม่ตรงกับ UC-01 Exception 7a ที่ระบุให้กลับหน้าค้นหา
-- `NFR-USE-01` ไม่มีเกณฑ์วัด usability และ `AC-DOR-06` ยังไม่มี workload/นิยามสภาวะเครือข่ายสำหรับตรวจรับ
+- `NFR-USE-01` มีเกณฑ์ usability แล้ว แต่ยังต้องดำเนินการตรวจด้วยผู้ใช้จริง; `AC-DOR-06` กำหนด workload และ test profile เป็น localhost/loopback แล้ว แต่ยังไม่มีนิยามสภาวะเครือข่ายปกติหรือ deployment environment สำหรับตรวจรับ NFR-PERF-01 ใน deployment
 
 ไม่มีการกำหนดค่าหรือพฤติกรรมใหม่เพื่อแก้ความไม่ชัดเหล่านี้; ส่วนที่เกี่ยวข้องต้องรอการยืนยันจากทีมก่อนสร้างจริง
 
