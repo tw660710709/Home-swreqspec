@@ -1,0 +1,15 @@
+@import "tailwindcss";
+@import "./variables.css";
+
+@theme {
+  --color-primary: #b83d12;
+  --color-primary-dark: #9a3210;
+  --color-dark: #2e1c12;
+  --color-cream: #fbf7f2;
+  --color-sand: #eadccc;
+  --font-sans: "Prompt", "Noto Sans Thai", sans-serif;
+}
+
+body {
+  @apply bg-cream text-dark font-sans;
+}
