@@ -29,6 +29,7 @@ AI จะเปิดอ่านเมื่อ spec.md ไม่ชัด แ�
 ## Requirement
 ![Requirement](images/Requirement.png)
 **ผู้รับผิดชอบ**<br>
+670710713 ชนัสถ์นันท์ วะรีวะราช<br>
 
 ## Requirements Prioritization
 ![Requirements Prioritization](images/Requirements-Prioritization.png)
