@@ -145,9 +145,17 @@ export default function DormDetailPage() {
 
   return (
     <div className="mx-auto max-w-6xl px-6 py-8">
-      <Link to="/" className="inline-flex items-center gap-2 hover:text-primary">
-        ← กลับหน้าแรก
-      </Link>
+      <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+        <Link to="/" className="inline-flex items-center gap-2 hover:text-primary">
+          ← กลับหน้าแรก
+        </Link>
+        <Link
+          to={`/dorms/${id}/statistics?ownerId=owner-1`}
+          className="rounded-lg bg-primary px-4 py-2 font-medium text-white hover:bg-primary-dark"
+        >
+          ดูสถิติหอพัก
+        </Link>
+      </div>
 
       {loading && (
         <p role="status" className="mt-4">

@@ -9,13 +9,17 @@ import {
 import { MemoryRouter } from "react-router-dom";
 import App from "./App.jsx";
 import {
+  downloadDormitoryStatisticsReport,
   getDormitoryDetail,
+  getDormitoryStatistics,
   getRecommendedDormitories,
   searchDormitories,
 } from "./api/dormApi.js";
 
 vi.mock("./api/dormApi.js", () => ({
+  downloadDormitoryStatisticsReport: vi.fn(),
   getDormitoryDetail: vi.fn(),
+  getDormitoryStatistics: vi.fn(),
   getRecommendedDormitories: vi.fn(),
   searchDormitories: vi.fn(),
 }));
@@ -328,5 +332,293 @@ describe("dormitory search and details", () => {
       2,
       "dorm-approved-verified",
     );
+  });
+
+  it("test_AC_STAT_01_dashboard_displays_summary_metrics", async () => {
+    getDormitoryStatistics.mockResolvedValue({
+      empty_data: false,
+      summary: {
+        dormitory_id: "dorm-approved-verified",
+        owner_id: "owner-1",
+        vacant_rooms: 4,
+        occupied_rooms: 6,
+        detail_page_views: 28,
+        appointments_count: 11,
+      },
+      date_range: {
+        start_date: "2026-01-01",
+        end_date: "2026-01-07",
+        detail_page_views: 28,
+        appointments_count: 11,
+      },
+    });
+
+    render(
+      <MemoryRouter initialEntries={["/dorms/dorm-approved-verified/statistics?ownerId=owner-1"]}>
+        <App />
+      </MemoryRouter>,
+    );
+
+    expect(await screen.findByRole("heading", { name: "สถิติหอพัก" })).toBeTruthy();
+    expect(screen.getAllByText("ห้องว่าง").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("4").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("ผู้เข้าชม").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("28").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("การนัดหมาย").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("11").length).toBeGreaterThan(0);
+    expect(getDormitoryStatistics).toHaveBeenCalledWith({
+      dormitoryId: "dorm-approved-verified",
+      ownerId: "owner-1",
+      startDate: expect.any(String),
+      endDate: expect.any(String),
+    });
+  });
+
+  it("test_AC_STAT_02_dashboard_displays_current_room_status_counts", async () => {
+    getDormitoryStatistics.mockResolvedValue({
+      empty_data: false,
+      summary: {
+        vacant_rooms: 4,
+        occupied_rooms: 6,
+        detail_page_views: 0,
+        appointments_count: 0,
+      },
+      date_range: {
+        start_date: "2026-01-03",
+        end_date: "2026-01-03",
+        detail_page_views: 0,
+        appointments_count: 0,
+      },
+    });
+
+    render(
+      <MemoryRouter initialEntries={["/dorms/dorm-approved-verified/statistics?ownerId=owner-1"]}>
+        <App />
+      </MemoryRouter>,
+    );
+
+    expect(await screen.findByRole("heading", { name: "กราฟสรุป" })).toBeTruthy();
+    expect(screen.getByText("จำนวนห้องทั้งหมด")).toBeTruthy();
+    expect(screen.getAllByText("ห้องว่าง").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("ห้องเต็ม").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("4").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("6").length).toBeGreaterThan(0);
+  });
+
+  it("test_AC_STAT_04_no_statistics_data_shows_message", async () => {
+    getDormitoryStatistics.mockResolvedValue({
+      empty_data: true,
+      summary: {
+        total_rooms: 10,
+        vacant_rooms: 4,
+        occupied_rooms: 6,
+        detail_page_views: 0,
+        appointments_count: 0,
+      },
+      date_range: {
+        start_date: "2026-02-01",
+        end_date: "2026-02-02",
+        detail_page_views: 0,
+        appointments_count: 0,
+      },
+    });
+
+    render(
+      <MemoryRouter initialEntries={["/dorms/dorm-approved-verified/statistics?ownerId=owner-1"]}>
+        <App />
+      </MemoryRouter>,
+    );
+
+    expect(await screen.findByText("ยังไม่มีข้อมูลสถิติในรอบเวลานี้")).toBeTruthy();
+    expect(screen.getByRole("button", { name: "ดาวน์โหลดรายงาน CSV" })).toBeTruthy();
+    expect(screen.getByText("จำนวนห้องทั้งหมด")).toBeTruthy();
+    expect(screen.getAllByText("ห้องว่าง").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("ห้องเต็ม").length).toBeGreaterThan(0);
+    expect(screen.getByText("10")).toBeTruthy();
+    expect(screen.queryByText("ผู้เข้าชม")).toBeNull();
+  });
+
+  it("test_AC_STAT_04_zero_metrics_with_data_are_displayed", async () => {
+    getDormitoryStatistics.mockResolvedValue({
+      empty_data: false,
+      summary: {
+        vacant_rooms: 0,
+        occupied_rooms: 0,
+        detail_page_views: 0,
+        appointments_count: 0,
+      },
+      date_range: {
+        start_date: "2026-01-03",
+        end_date: "2026-01-03",
+        detail_page_views: 0,
+        appointments_count: 0,
+      },
+    });
+
+    render(
+      <MemoryRouter initialEntries={["/dorms/dorm-approved-verified/statistics?ownerId=owner-1"]}>
+        <App />
+      </MemoryRouter>,
+    );
+
+    expect(await screen.findByRole("heading", { name: "กราฟสรุป" })).toBeTruthy();
+    expect(screen.getAllByText("0").length).toBeGreaterThan(0);
+    expect(screen.getByRole("button", { name: "ดาวน์โหลดรายงาน CSV" })).toBeTruthy();
+    expect(downloadDormitoryStatisticsReport).not.toHaveBeenCalled();
+  });
+
+  it("test_AC_STAT_03_invalid_date_range_is_rejected_without_search", async () => {
+    getDormitoryStatistics.mockResolvedValue({
+      empty_data: false,
+      summary: {
+        vacant_rooms: 4,
+        occupied_rooms: 6,
+        detail_page_views: 8,
+        appointments_count: 2,
+      },
+      date_range: {
+        start_date: "2026-01-01",
+        end_date: "2026-01-07",
+        detail_page_views: 8,
+        appointments_count: 2,
+      },
+    });
+
+    render(
+      <MemoryRouter initialEntries={["/dorms/dorm-approved-verified/statistics?ownerId=owner-1"]}>
+        <App />
+      </MemoryRouter>,
+    );
+    await screen.findByRole("heading", { name: "กราฟสรุป" });
+
+    const callsBeforeSubmit = getDormitoryStatistics.mock.calls.length;
+    fireEvent.change(screen.getByLabelText("วันที่เริ่มต้น"), {
+      target: { value: "2026-01-10" },
+    });
+    fireEvent.change(screen.getByLabelText("วันที่สิ้นสุด"), {
+      target: { value: "2026-01-09" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: "ยืนยันช่วงเวลา" }));
+
+    expect((await screen.findByRole("alert")).textContent).toContain(
+      "วันที่สิ้นสุดต้องไม่น้อยกว่าวันที่เริ่มต้น",
+    );
+    expect(getDormitoryStatistics).toHaveBeenCalledTimes(callsBeforeSubmit);
+  });
+
+  it("test_AC_STAT_05_downloads_csv_for_selected_range", async () => {
+    getDormitoryStatistics.mockResolvedValue({
+      empty_data: false,
+      summary: {
+        vacant_rooms: 4,
+        occupied_rooms: 6,
+        detail_page_views: 8,
+        appointments_count: 2,
+      },
+      date_range: {
+        start_date: "2026-01-01",
+        end_date: "2026-01-07",
+        detail_page_views: 8,
+        appointments_count: 2,
+      },
+    });
+    downloadDormitoryStatisticsReport.mockResolvedValue(new Blob(["csv"]));
+    const originalCreateObjectURL = URL.createObjectURL;
+    const originalRevokeObjectURL = URL.revokeObjectURL;
+    const anchorClick = vi.spyOn(HTMLAnchorElement.prototype, "click").mockImplementation(() => {});
+    URL.createObjectURL = vi.fn(() => "blob:test-report");
+    URL.revokeObjectURL = vi.fn();
+
+    try {
+      render(
+        <MemoryRouter initialEntries={["/dorms/dorm-approved-verified/statistics?ownerId=owner-1"]}>
+          <App />
+        </MemoryRouter>,
+      );
+      await screen.findByRole("heading", { name: "กราฟสรุป" });
+      fireEvent.click(screen.getByRole("button", { name: "ดาวน์โหลดรายงาน CSV" }));
+
+      await waitFor(() => {
+        expect(downloadDormitoryStatisticsReport).toHaveBeenCalledWith({
+          dormitoryId: "dorm-approved-verified",
+          ownerId: "owner-1",
+          startDate: expect.any(String),
+          endDate: expect.any(String),
+        });
+      });
+      await waitFor(() => expect(URL.createObjectURL).toHaveBeenCalled());
+    } finally {
+      anchorClick.mockRestore();
+      if (originalCreateObjectURL) {
+        URL.createObjectURL = originalCreateObjectURL;
+      } else {
+        delete URL.createObjectURL;
+      }
+      if (originalRevokeObjectURL) {
+        URL.revokeObjectURL = originalRevokeObjectURL;
+      } else {
+        delete URL.revokeObjectURL;
+      }
+    }
+  });
+
+  it("test_NFR_PERF_01_statistics_render_within_three_seconds", async () => {
+    getDormitoryStatistics
+      .mockResolvedValueOnce({
+        empty_data: false,
+        summary: {
+          vacant_rooms: 4,
+          occupied_rooms: 6,
+          detail_page_views: 8,
+          appointments_count: 2,
+        },
+        date_range: {
+          start_date: "2026-01-01",
+          end_date: "2026-01-07",
+          detail_page_views: 8,
+          appointments_count: 2,
+        },
+      })
+      .mockResolvedValueOnce({
+        empty_data: false,
+        summary: {
+          vacant_rooms: 4,
+          occupied_rooms: 6,
+          detail_page_views: 31,
+          appointments_count: 7,
+        },
+        date_range: {
+          start_date: "2026-01-08",
+          end_date: "2026-01-14",
+          detail_page_views: 31,
+          appointments_count: 7,
+        },
+      });
+
+    render(
+      <MemoryRouter initialEntries={["/dorms/dorm-approved-verified/statistics?ownerId=owner-1"]}>
+        <App />
+      </MemoryRouter>,
+    );
+    await screen.findByRole("heading", { name: "กราฟสรุป" });
+    fireEvent.change(screen.getByLabelText("วันที่เริ่มต้น"), {
+      target: { value: "2026-01-08" },
+    });
+    fireEvent.change(screen.getByLabelText("วันที่สิ้นสุด"), {
+      target: { value: "2026-01-14" },
+    });
+
+    const startedAt = performance.now();
+    fireEvent.click(screen.getByRole("button", { name: "ยืนยันช่วงเวลา" }));
+    await screen.findAllByText("31");
+    const elapsedMilliseconds = performance.now() - startedAt;
+
+    expect(elapsedMilliseconds).toBeLessThanOrEqual(3000);
+    expect(getDormitoryStatistics).toHaveBeenLastCalledWith({
+      dormitoryId: "dorm-approved-verified",
+      ownerId: "owner-1",
+      startDate: "2026-01-08",
+      endDate: "2026-01-14",
+    });
   });
 });

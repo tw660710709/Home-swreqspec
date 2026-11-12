@@ -769,6 +769,8 @@
 
 ## 2569-11-05 12:59:30 คำสั่ง: แก้ตาม F-06 ใน `specs/001-search/rtm.md`
 
+---
+
 - ข้อกำหนดจากผู้ใช้: แตะเฉพาะไฟล์ที่เกี่ยวข้อง, ห้ามแก้ test ที่ชื่อขึ้นต้น `test_TC_`, รัน `pytest -v` และจดผลใน `prompt-log.md`
 - วิธีแก้: นำลิงก์ “เกี่ยวกับเรา” ที่ชี้ไป `/about` แต่ไม่มี route หรือ requirement รองรับออกจาก `frontend/src/components/Navbar.jsx`; ไม่เพิ่ม route/page เพื่อไม่เพิ่ม scope
 - Regression test: เพิ่ม `frontend/src/__tests__/F-06-navbar-navigation.test.jsx` ตรวจว่าลิงก์หน้าแรกยังอยู่และไม่มีลิงก์เกี่ยวกับเรา
@@ -807,3 +809,261 @@
 - ผลการตรวจ `git diff --check`: ผ่าน
 - อัปเดต `specs/001-search/rtm.md`: ปรับเวลาตรวจและยอด test ให้เป็นปัจจุบัน, แก้สรุปสถานะตาม 17 แถวในตาราง (ครบ 13, ยังไม่ถึง 2, รอ Q 0, ช่องโหว่ 2) และอัปเดตผลยืนยันของ F-01/F-02
 - ข้อจำกัดที่ยังคงอยู่: F-01 ยังไม่มีแหล่งข้อมูลจริง; F-02 ยังไม่ยืนยันผลใน deployment; NFR-USE-01 ยังรอทดสอบกับผู้ใช้ 5 คนตามเกณฑ์; NFR-SEC-01 ยังรอ environment/URL สำหรับตรวจ HTTPS/TLS
+
+---
+
+## 2569-11-12 17:35:02 คำสั่ง: /clarify
+
+- เครื่องมือ: Copilot ใน Codespaces
+- ไฟล์: specs/005-view_dormitory_statistics/spec.md (Draft v2)
+
+### คำถามที่ AI ถาม (ทั้งหมด)
+
+1. หากวันที่สิ้นสุดน้อยกว่าวันที่เริ่มต้น ให้ระบบไม่อนุญาตให้ค้นหาและแจ้งเตือนผู้ใช้หรือไม่?
+2. จำนวนผู้เข้าชมให้นับจำนวนครั้งที่เปิดหน้ารายละเอียดหอพัก และจำนวนการนัดหมายให้นับจำนวนรายการนัดหมายที่เกิดขึ้นในช่วงวันที่เลือกหรือไม่?
+3. แสดงข้อมูลด้วย Summary Cards ร่วมกับกราฟแท่งหรือกราฟเส้นหรือไม่?
+4. รายงานสถิติให้ดาวน์โหลดเป็นไฟล์ CSV โดยมีข้อมูลตามช่วงวันที่ที่เลือกหรือไม่?
+5. เฉพาะเจ้าของหอพักที่สามารถดูสถิติของหอพักที่ตนเองเป็นเจ้าของได้หรือไม่?
+6. ใช้รูปแบบวันที่ YYYY-MM-DD ในการประมวลผล และเลือกช่วงวันที่จากข้อมูลที่ระบบมีหรือไม่?
+7. หากไม่มีข้อมูลสถิติเลยให้แสดงข้อความแจ้งเตือน แต่หากมีข้อมูลและค่าตัวชี้วัดเป็น 0 ให้แสดงค่า 0 หรือไม่?
+8. วัดเวลาตั้งแต่ผู้ใช้กดยืนยันช่วงวันที่จนระบบแสดงผลสถิติครบถ้วน โดยต้องไม่เกิน 3 วินาทีหรือไม่?
+
+### คำตอบของทีมและเหตุผล
+
+1. ใช่ ต้องไม่อนุญาตให้ค้นหาและแจ้งเตือนผู้ใช้เมื่อวันที่สิ้นสุดน้อยกว่าวันที่เริ่มต้น
+2. ใช่ จำนวนผู้เข้าชมนับจำนวนครั้งที่เปิดหน้ารายละเอียดหอพัก และจำนวนการนัดหมายนับจำนวนรายการนัดหมายที่เกิดขึ้นในช่วงวันที่เลือก
+3. ใช่ แสดงข้อมูลด้วย Summary Cards ร่วมกับกราฟแท่งหรือกราฟเส้น
+4. ใช่ รายงานสถิติให้ดาวน์โหลดเป็นไฟล์ CSV โดยมีข้อมูลตามช่วงวันที่ที่เลือก
+5. ใช่ เฉพาะเจ้าของหอพักที่สามารถดูสถิติของหอพักที่ตนเองเป็นเจ้าของได้
+6. ใช่ ใช้รูปแบบวันที่ YYYY-MM-DD และเลือกช่วงวันที่จากข้อมูลที่ระบบมี
+7. ใช่ หากไม่มีข้อมูลสถิติเลยให้แสดงข้อความแจ้งเตือน แต่หากมีข้อมูลและค่าตัวชี้วัดเป็น 0 ให้แสดงค่า 0
+8. ใช่ วัดเวลาตั้งแต่ผู้ใช้กดยืนยันช่วงวันที่จนระบบแสดงผลสถิติครบถ้วน โดยต้องไม่เกิน 3 วินาที
+
+### สิ่งที่แก้ใน spec.md (v2)
+
+- เพิ่ม FR-STAT-07 ให้มีอยู่จริงและสอดคล้องกับ AC-STAT-05 สำหรับการดาวน์โหลด CSV ตามช่วงวันที่ที่เลือก
+- ปรับ FR-STAT-02, FR-STAT-04, FR-STAT-06 ให้สอดคล้องกับคำตอบของทีม: Summary Cards, รูปแบบวันที่ YYYY-MM-DD, การแจ้งเมื่อวันที่ไม่ถูกต้อง, และการแสดง 0 สำหรับค่าที่เป็น 0
+- ปรับ AC-STAT-03 และ AC-STAT-05 ให้ครอบคลุมเงื่อนไขวันที่ไม่ถูกต้องและการดาวน์โหลด CSV ตามช่วงเวลา
+- ปรับ Assumptions ให้ชัดเจนว่าเจ้าของหอพักเท่านั้น, วันที่ใช้ YYYY-MM-DD, ประเภทกราฟแบบ Summary Cards + line/bar chart, ค่า 0 แสดงได้, และการแจ้งเตือนเมื่อวันที่สิ้นสุดน้อยกว่าวันที่เริ่มต้น
+- ตรวจเทียบ Traceability ให้ requirement และ acceptance criteria เชื่อมโยงตรงตาม ID เดิม
+- เปลี่ยน Status เป็น Draft v2 และอัปเดต Updated เป็น 2569-11-12
+- คำถามที่เหลือหลังปรับปรุง: ไม่มี (ทุกคำถามหลักได้คำตอบแล้ว)
+
+---
+
+## 2569-11-12 17:51:41 คำสั่ง: /tasks specs/005-view_dormitory_statistics/spec.md
+
+- เครื่องมือ: Copilot ใน Codespaces
+- ไฟล์: specs/005-view_dormitory_statistics/spec.md (Draft v2), specs/005-view_dormitory_statistics/plan.md (Draft v2)
+- ผลลัพธ์: specs/005-view_dormitory_statistics/tasks.md
+- คำถามที่ AI ถาม: ไม่มี
+- คำตอบของทีม: ไม่มี
+
+### สิ่งที่สร้างใน tasks.md
+
+- แบ่งงานเป็น 2 เฟสหลัก พร้อม 5 tasks ตามลำดับงานจาก contract/auth → API → dashboard → empty state/export → validation/performance
+- เพิ่มตารางตรวจ AC, Constraints และ FR โดยอ้าง ID เดิมจาก spec
+- ระบุว่าไม่มี Open Questions ค้างอยู่ใน spec หลังจากได้รับคำตอบของทีมแล้ว
+- ยึดข้อกำหนดว่า invalid date range ต้องปฏิเสธและแจ้งเตือน, empty state และ CSV export เป็นงานหลักของฟีเจอร์นี้
+- ไม่เพิ่ม requirement หรือ use case ใดที่อยู่นอก scope
+
+---
+
+## 2569-11-12 17:56:38 คำสั่ง: /implement T-01 specs/005-view_dormitory_statistics/spec.md
+
+- เครื่องมือ: Copilot ใน Codespaces
+- Task: `T-01` จาก `specs/005-view_dormitory_statistics/tasks.md`
+- ไฟล์ที่สร้าง: `backend/app/statistics_contract.py`, `backend/tests/test_statistics_contract.py`
+- คำถามที่ AI ถามและคำตอบของทีม:
+  1. Task T-01 หมายถึงการกำหนด contract ข้อมูลสถิติและการตรวจสิทธิ์ผู้ใช้หรือไม่: ใช่
+  2. ชื่อไฟล์ contract: ใช้ `backend/app/statistics_contract.py` ตามแผน tasks
+- ผลการทำงาน: สร้าง contract สำหรับ `DormitoryStatisticsSummary`, `RoomStatusSnapshot`, `DateRangeSummary`, พร้อม helper สำหรับตรวจสิทธิ์เจ้าของหอพักและตรวจสอบช่วงวันที่ที่ไม่ถูกต้อง
+- ผลตรวจ: `python -m unittest backend.tests.test_statistics_contract -v` ผ่าน 5 tests
+- สิ่งที่เกือบต้องเดาแต่ถามแทน: ชื่อไฟล์ contract และความหมายของการตรวจสิทธิ์เจ้าของหอพักตาม `CON-AUTH-01`
+
+---
+
+## 2569-11-12 17:59:17 คำสั่ง: /implement T-02 specs/005-view_dormitory_statistics/spec.md
+
+- เครื่องมือ: Copilot ใน Codespaces
+- Task: `T-02` จาก `specs/005-view_dormitory_statistics/tasks.md`
+- ไฟล์ที่สร้าง: `backend/app/statistics.py`, `backend/tests/test_statistics.py`
+- ไฟล์ที่แก้: `backend/app/main.py`
+- คำถามที่ AI ถามและคำตอบของทีม:
+  1. Endpoint และ path ของ statistiques API ใช้ชื่อ `statistics.py` และ include ใน `main.py`: ใช่
+  2. ใช้ `owner_id` เป็น query param สำหรับตรวจสิทธิ์และคำนวณข้อมูล: ใช่
+  3. ช่วงวันที่ที่ไม่ถูกต้องต้องคืน 400 และข้อความแจ้งเตือนชัดเจน: ใช่
+- ผลการทำงาน: เพิ่ม API 3 endpoint สำหรับดึงสถิติหอพัก, room status, และ date-range statistics พร้อมตรวจสิทธิ์เจ้าของหอพักและ invalid date range validation
+- ผลตรวจ: `python -m unittest backend.tests.test_statistics -v` ผ่าน 4 tests
+- สิ่งที่เกือบต้องเดาแต่ถามแทน: path ของ service และ policy ของ `owner_id` สำหรับการตรวจสิทธิ์และ validation
+
+---
+
+## 2569-11-12 18:05:09 คำสั่ง: /implement T-03 specs/005-view_dormitory_statistics/spec.md
+
+- เครื่องมือ: Copilot ใน Codespaces
+- Task: `T-03` จาก `specs/005-view_dormitory_statistics/tasks.md`
+- ไฟล์ที่สร้าง: `frontend/src/pages/DormitoryStatisticsPage.jsx`
+- ไฟล์ที่แก้: `frontend/src/App.jsx`, `frontend/src/api/client.js`, `frontend/src/api/dormApi.js`, `frontend/src/pages/DormDetailPage.jsx`, `frontend/src/App.test.jsx`
+- คำถามที่ AI ถามและคำตอบของทีม:
+  1. Dashboard path ใช้ `/dorms/:id/statistics` และ route ใหม่ใน `App.jsx`: ใช่
+  2. `ownerId` จะส่งเป็น query param `ownerId=owner-1` สำหรับการทดสอบ/ตัวอย่าง: ใช่
+  3. ตัวชี้วัดแสดงครอบคลุม summary cards + line/bar chart ตาม spec: ใช่
+- ผลการทำงาน: เพิ่มหน้า dashboard สำหรับเจ้าของหอพักพร้อม form เลือกวันที่, summary cards, chart, invalid date range handling, และวิ่งจากหน้า detail ไป statistics ได้อย่างชัดเจน
+- ผลตรวจ: `cd frontend && npm test -- --run src/App.test.jsx` ผ่าน 6/6 tests
+- สิ่งที่เกือบต้องเดาแต่ถามแทน: path ของ route/dashboard และค่า `ownerId` สำหรับ simulation
+
+---
+
+## 2569-11-12 18:32:02 คำสั่ง: /implement T-04 specs/005-view_dormitory_statistics/spec.md
+
+- เครื่องมือ: Copilot ใน Codespaces
+- Task: `T-04` จาก `specs/005-view_dormitory_statistics/tasks.md`
+- ไฟล์ที่แก้: `backend/app/statistics.py`, `backend/tests/test_statistics.py`, `frontend/src/api/client.js`, `frontend/src/api/dormApi.js`, `frontend/src/pages/DormitoryStatisticsPage.jsx`, `frontend/src/App.test.jsx`, `specs/005-view_dormitory_statistics/tasks.md`
+- คำถามที่ AI ถามและคำตอบของทีม: ไม่มี
+- ผลการทำงาน: เพิ่ม empty state เมื่อช่วงวันที่ไม่มีรายการสถิติ; ให้แสดงค่า 0 เมื่อมีข้อมูลช่วงวันแม้ค่าตัวชี้วัดเป็น 0; เพิ่ม API สำหรับดาวน์โหลด CSV ตามช่วงวันที่พร้อมตรวจสิทธิ์และ validation; เพิ่มปุ่มดาวน์โหลดใน dashboard
+- ผลตรวจ: `python -m unittest backend.tests.test_statistics -v` ผ่าน 6 tests; `cd frontend && npm test -- --run src/App.test.jsx` ผ่าน 8 tests; `npm run build` ผ่าน; `git diff --check` ผ่าน
+- สิ่งที่เกือบต้องเดาแต่ไม่ได้เดา: ไม่มี
+
+---
+
+## 2569-11-12 18:34:45 คำสั่ง: /implement T-05 specs/005-view_dormitory_statistics/spec.md
+
+- เครื่องมือ: Copilot ใน Codespaces
+- Task: `T-05` จาก `specs/005-view_dormitory_statistics/tasks.md`
+- ไฟล์ที่แก้: `backend/tests/test_statistics.py`, `frontend/src/App.test.jsx`, `specs/005-view_dormitory_statistics/tasks.md`
+- คำถามที่ AI ถามและคำตอบของทีม: ไม่มี
+- ผลการทำงาน: เพิ่ม/ตรวจ test ครอบคลุม `AC-STAT-01` ถึง `AC-STAT-05` ได้แก่ metrics dashboard, room status, valid/invalid date range, empty state, ค่า 0 เมื่อมีข้อมูล, และดาวน์โหลด CSV; เพิ่มการวัดเวลาจากยืนยันช่วงวันที่จนแสดงผลและ API ภายใน 3 วินาทีตาม `NFR-PERF-01`
+- ผลตรวจ:
+  - `cd frontend && npm test`: ผ่าน 31 tests
+  - `python -m unittest backend.tests.test_statistics backend.tests.test_statistics_contract -v`: ผ่าน 13 tests
+  - `python -m unittest discover -s backend/tests -v`: มี 2 failures ใน tests คำแนะนำหอพักที่ไม่เกี่ยวกับ feature นี้ (`test_AC_DOR_03_2_recommendations_are_limited_to_five`, `test_AC_DOR_03_empty_search_returns_recommendations`); tests สถิติผ่าน
+- สิ่งที่เกือบต้องเดาแต่ไม่ได้เดา: ไม่มี
+
+---
+
+## 2569-11-12 18:52:17 คำสั่ง: /testcase AC-STAT-01 specs/005-view_dormitory_statistics/
+
+- เครื่องมือ: Copilot ใน Codespaces
+- ไฟล์อ้างอิง: `specs/005-view_dormitory_statistics/spec.md` (Draft v2)
+- ผลลัพธ์: `specs/005-view_dormitory_statistics/test-cases.md`
+- คำถามที่ AI ถาม: ไม่มี
+- คำตอบของทีม: ไม่มี
+
+### สิ่งที่สร้างใน test-cases.md
+
+- สร้างกรณีทดสอบสำหรับ `AC-STAT-01` ครอบคลุมการแสดง Summary Cards และกราฟ, ค่าตัวชี้วัดเป็น 0 เมื่อมีข้อมูล, และการตรวจป้ายกำกับ/ความอ่านง่ายของกราฟ
+- อ้างอิง `FR-STAT-01`, `FR-STAT-02`, `FR-STAT-06` และ `CON-UI-01` โดยไม่เพิ่ม requirement ใหม่
+- ระบุว่าชนิดกราฟยอมรับได้ทั้งกราฟแท่งหรือกราฟเส้น และเกณฑ์เชิงตัวเลขของ “อ่านง่ายและชัดเจน” ยังไม่ได้ระบุใน spec
+- สถานะทุกกรณีเป็นร่าง รอทีมตรวจ
+
+---
+
+## 2569-11-12 18:54:36 คำสั่ง: /testcase AC-STAT-02 specs/005-view_dormitory_statistics/
+
+- เครื่องมือ: Copilot ใน Codespaces
+- ไฟล์อ้างอิง: `specs/005-view_dormitory_statistics/spec.md` (Draft v2)
+- ผลลัพธ์: เพิ่มกรณี `AC-STAT-02` ใน `specs/005-view_dormitory_statistics/test-cases.md`
+- คำถามที่ AI ถาม: “แสดงจำนวนห้องพักและสถานะของห้องพัก” ต้องแสดงจำนวนรวมทั้งหมดพร้อมจำนวนตามสถานะ หรือแสดงสถานะของแต่ละห้อง?
+- คำตอบของทีม: แสดงจำนวนห้องพักทั้งหมดและแสดงสถานะของแต่ละห้อง
+
+### สิ่งที่เพิ่มใน test-cases.md
+
+- เพิ่มกรณีทางปกติ ตรวจจำนวนห้องทั้งหมดและสถานะของแต่ละห้อง
+- เพิ่มกรณีขอบที่ทุกห้องมีสถานะเดียวกัน
+- เพิ่มกรณีมีข้อมูลห้องพักแต่ไม่มีข้อมูลกิจกรรมในช่วงเวลาที่เลือก โดยตรวจว่าสถานะห้องปัจจุบันยังแสดงพร้อม empty-state ของสถิติช่วงเวลา
+- สถานะทุกกรณีเป็นร่าง รอทีมตรวจ
+
+---
+
+## 2569-11-12 18:58:05 คำสั่ง: /testcase AC-STAT-03 specs/005-view_dormitory_statistics/
+
+- เครื่องมือ: Copilot ใน Codespaces
+- ไฟล์อ้างอิง: `specs/005-view_dormitory_statistics/spec.md` (Draft v2)
+- ผลลัพธ์: เพิ่มกรณี `AC-STAT-03` ใน `specs/005-view_dormitory_statistics/test-cases.md`
+- คำถามที่ AI ถาม: ไม่มี
+- คำตอบของทีม: ไม่มี
+
+### สิ่งที่เพิ่มใน test-cases.md
+
+- เพิ่มกรณีช่วงวันที่ปกติที่ยืนยันการรวมวันเริ่มต้นและวันสิ้นสุด และไม่รวมข้อมูลนอกช่วง
+- เพิ่มกรณีเลือกวันเดียวกันเป็นวันเริ่มต้นและวันสิ้นสุด
+- เพิ่มกรณีวันสิ้นสุดก่อนวันเริ่มต้น โดยตรวจว่าไม่ค้นหาและแจ้งเตือนโดยไม่กำหนดข้อความเฉพาะที่ spec ไม่ได้ระบุ
+- สถานะทุกกรณีเป็นร่าง รอทีมตรวจ
+
+---
+
+## 2569-11-12 19:00:13 คำสั่ง: /testcase AC-STAT-04 specs/005-view_dormitory_statistics/
+
+- เครื่องมือ: Copilot ใน Codespaces
+- ไฟล์อ้างอิง: `specs/005-view_dormitory_statistics/spec.md` (Draft v2)
+- ผลลัพธ์: เพิ่มกรณี `AC-STAT-04` ใน `specs/005-view_dormitory_statistics/test-cases.md`
+- คำถามที่ AI ถาม: ไม่มี
+- คำตอบของทีม: ไม่มี
+
+### สิ่งที่เพิ่มใน test-cases.md
+
+- เพิ่มกรณีไม่มีข้อมูลในช่วงที่เลือก โดยตรวจข้อความแจ้งเตือนตรงตาม spec และการเลือกช่วงใหม่
+- เพิ่มกรณีมีข้อมูลแต่ค่าตัวชี้วัดเป็น 0 เพื่อแยกจากกรณีไม่มีข้อมูล
+- เพิ่มกรณีเลือกช่วงวันที่ใหม่หลัง empty state และตรวจผลตามช่วงใหม่
+- สถานะทุกกรณีเป็นร่าง รอทีมตรวจ
+
+---
+
+## 2569-11-12 19:04:13 คำสั่ง: /testcase AC-STAT-05 specs/005-view_dormitory_statistics/
+
+- เครื่องมือ: Copilot ใน Codespaces
+- ไฟล์อ้างอิง: `specs/005-view_dormitory_statistics/spec.md` (Draft v2)
+- ผลลัพธ์: เพิ่มกรณี `AC-STAT-05` ใน `specs/005-view_dormitory_statistics/test-cases.md`
+- คำถามที่ AI ถาม: ไม่มี
+- คำตอบของทีม: ไม่มี
+
+### สิ่งที่เพิ่มใน test-cases.md
+
+- เพิ่มกรณีดาวน์โหลดรายงาน CSV สำหรับช่วงวันที่ที่เลือก
+- เพิ่มกรณีตรวจว่ารายงานรวมวันเริ่มต้นและวันสิ้นสุด โดยไม่รวมข้อมูลนอกช่วง
+- เพิ่มกรณีผู้ใช้ที่ไม่ใช่เจ้าของหอพักต้องไม่ได้รับรายงาน ตาม `CON-AUTH-01`
+- ระบุว่าชื่อคอลัมน์, encoding และนโยบายชื่อไฟล์ไม่ได้กำหนดใน spec จึงไม่กำหนดผลทดสอบเฉพาะ
+- สถานะทุกกรณีเป็นร่าง รอทีมตรวจ
+
+---
+
+## 2569-11-12 19:08:58 คำสั่ง: /testcase AC-STAT-01 specs/005-view_dormitory_statistics/
+
+- เครื่องมือ: Copilot ใน Codespaces
+- ไฟล์อ้างอิง: `specs/005-view_dormitory_statistics/spec.md` (Draft v2)
+- ผลลัพธ์: เพิ่มกรณีขอบด้านสิทธิ์ใน `specs/005-view_dormitory_statistics/test-cases.md`; คงกรณี AC-STAT-01 เดิมไว้ ไม่สร้าง ID ซ้ำ
+- คำถามที่ AI ถาม: ไม่มี
+- คำตอบของทีม: ไม่มี
+
+### สิ่งที่เพิ่มใน test-cases.md
+
+- เพิ่มกรณีผู้ใช้ที่เข้าสู่ระบบแต่ไม่ใช่เจ้าของหอพัก พยายามเข้าดูสถิติ และต้องไม่ได้รับข้อมูลตาม `CON-AUTH-01`
+- สถานะกรณีทดสอบเป็นร่าง รอทีมตรวจ
+
+---
+
+## 2569-11-12 19:26:12 คำสั่ง: /verify specs/005-view_dormitory_statistics/
+
+- เครื่องมือ: Copilot ใน Codespaces
+- ผล backend: `cd backend && PYTHONPATH=.. pytest -v` ผ่าน 47 tests
+- ผล frontend: `cd frontend && npm test -- --run` ผ่าน 20 test files และ 31 tests
+- ผลการตามรอย: ปรับ `specs/005-view_dormitory_statistics/rtm.md` จำนวน 11 แถว: ครบ 4, ยังไม่ถึง 0, รอ Q 0, ช่องโหว่ 7
+- ข้อค้นพบ: F-01 ข้อมูลสถิติเป็นค่าคงที่ ไม่อ่านข้อมูลจริง; F-02 endpoint เชื่อ `owner_id` จาก query แทนการยืนยันตัวตน; F-03 ไม่มีการตรวจ responsive/readability บนอุปกรณ์เป้าหมาย; F-04 การวัดประสิทธิภาพใช้ ASGITransport และ mock ไม่ครอบคลุมการไหลจริง
+- ไฟล์ที่แก้ได้ตาม workflow: สร้าง `specs/005-view_dormitory_statistics/rtm.md` และเพิ่มบันทึกนี้ใน `prompt-log.md`; ไม่แก้โค้ด, test, spec, plan หรือ tasks
+
+---
+
+## 2569-11-12 19:30:04 คำสั่ง: แก้ตาม F-01 ใน `specs/005-view_dormitory_statistics/rtm.md`
+
+- คำถามเพื่อยืนยันแหล่งข้อมูล:
+  1. จำนวนผู้เข้าชมหน้ารายละเอียด: บันทึกทุก API request, ใช้ analytics ที่มีอยู่ หรือรอระบุแหล่งข้อมูล?
+  2. จำนวนการนัดหมาย: เชื่อมข้อมูลจาก feature 006, ใช้แหล่งข้อมูลเดิม หรือรอระบุแหล่งข้อมูล?
+  3. owner mapping: เพิ่ม `owner_id` ในข้อมูลหอพัก, ใช้แหล่งข้อมูลเดิม หรือแยกแก้ใน F-02?
+- คำตอบของทีม: ผู้เข้าชมให้รอแหล่งข้อมูล; การนัดหมายให้รอแหล่งข้อมูล; คง owner mapping เดิมและแยกแก้ใน F-02
+- วิธีแก้: ลบข้อมูลสถานะห้องแบบค่าคงที่และอ่านสถานะห้องจาก SQLite; ลบข้อมูลผู้เข้าชม/นัดหมายตัวอย่างและให้ API ระบุว่าไม่มีข้อมูลจนกว่าจะมี source; แสดงยอดห้องปัจจุบันแม้ช่วงวันที่ไม่มี metrics
+- สถานะ F-01: ยังเปิดอยู่สำหรับผู้เข้าชม/นัดหมาย เพราะทีมเลือกให้รอระบุแหล่งข้อมูล; owner mapping ยังคงอยู่ใน F-02
+- ผลตรวจ: `cd backend && PYTHONPATH=.. pytest -v tests/test_statistics.py` ผ่าน 7 tests; `cd frontend && npm test -- --run src/App.test.jsx` ผ่าน 12 tests
+- ไม่แก้ spec, plan หรือ tasks เพราะคำตอบเป็นแนวทาง implement ภายใต้ requirement เดิม; อัปเดต RTM และ test ให้สะท้อนแหล่งข้อมูลที่มีจริง
+
+---

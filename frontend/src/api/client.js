@@ -56,3 +56,51 @@ export async function getDormitoryDetail(dormitoryId) {
   }
   return data;
 }
+
+// รองรับ FR-STAT-01, FR-STAT-02, FR-STAT-04, FR-STAT-05 และ AC-STAT-01
+export async function getDormitoryStatistics({ dormitoryId, ownerId, startDate, endDate }) {
+  const params = new URLSearchParams({
+    owner_id: ownerId,
+    start_date: startDate,
+    end_date: endDate,
+  });
+
+  const response = await fetch(
+    `/dormitories/${encodeURIComponent(dormitoryId)}/statistics?${params.toString()}`,
+  );
+  if (!response.ok) {
+    const payload = await response.json().catch(() => ({}));
+    throw new Error(payload?.detail?.message || `ไม่สามารถโหลดสถิติหอพักได้ (${response.status})`);
+  }
+
+  const data = await response.json();
+  if (!data || typeof data !== "object" || !data.summary || !data.date_range) {
+    throw new Error("รูปแบบข้อมูลสถิติหอพักไม่ถูกต้อง");
+  }
+  return data;
+}
+
+// รองรับ FR-STAT-07 และ AC-STAT-05
+export async function downloadDormitoryStatisticsReport({
+  dormitoryId,
+  ownerId,
+  startDate,
+  endDate,
+}) {
+  const params = new URLSearchParams({
+    owner_id: ownerId,
+    start_date: startDate,
+    end_date: endDate,
+  });
+  const response = await fetch(
+    `/dormitories/${encodeURIComponent(dormitoryId)}/statistics/report?${params.toString()}`,
+  );
+  if (!response.ok) {
+    const payload = await response.json().catch(() => ({}));
+    throw new Error(
+      payload?.detail?.message ||
+        `ไม่สามารถดาวน์โหลดรายงานสถิติได้ (${response.status})`,
+    );
+  }
+  return response.blob();
+}
