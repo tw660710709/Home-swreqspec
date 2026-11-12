@@ -35,6 +35,7 @@ AI จะเปิดอ่านเมื่อ spec.md ไม่ชัด แ�
 ![Requirements Prioritization](images/Requirements-Prioritization.png)
 **ผู้รับผิดชอบ**<br>
 660710709 ธนกฤต เวทยนุกูล รับผิดชอบ UC-01<br>
+670710713 ชนัสถ์นันท์ วะรีวะราช รับผิดชอบ UC-04<br>
 
 ## system context
 
