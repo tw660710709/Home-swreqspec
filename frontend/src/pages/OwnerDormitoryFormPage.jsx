@@ -3,6 +3,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import {
   createOwnerDormitory,
   getOwnerDormitory,
+  OwnerDormitoryValidationError,
   updateOwnerDormitory,
 } from "../api/client.js";
 
@@ -55,8 +56,8 @@ function toSavePayload(formValues) {
   };
 }
 
-// รองรับ CON-ACC-01, CON-AUTH-01, CON-DATA-01, FR-DOR-10 ถึง FR-DOR-12,
-// FR-DOR-15 และ AC-DOR-08
+// รองรับ CON-ACC-01, CON-AUTH-01, CON-DATA-01, FR-DOR-10 ถึง FR-DOR-13,
+// FR-DOR-15, FR-DOR-17 และ AC-DOR-08 ถึง AC-DOR-09
 export default function OwnerDormitoryFormPage() {
   const { dormitoryId } = useParams();
   const navigate = useNavigate();
@@ -65,6 +66,7 @@ export default function OwnerDormitoryFormPage() {
   const [loading, setLoading] = useState(Boolean(dormitoryId));
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
+  const [fieldErrors, setFieldErrors] = useState({});
   const [success, setSuccess] = useState("");
 
   useEffect(() => {
@@ -75,6 +77,7 @@ export default function OwnerDormitoryFormPage() {
       setFormValues(emptyForm);
       setLoading(false);
       setError("");
+      setFieldErrors({});
       return () => {
         active = false;
       };
@@ -83,6 +86,7 @@ export default function OwnerDormitoryFormPage() {
     async function loadDormitory() {
       setLoading(true);
       setError("");
+      setFieldErrors({});
       try {
         const data = await getOwnerDormitory(dormitoryId);
         if (active) {
@@ -108,18 +112,27 @@ export default function OwnerDormitoryFormPage() {
     };
   }, [dormitoryId]);
 
-  // รองรับ CON-DATA-01, FR-DOR-10 และ FR-DOR-12
+  // รองรับ CON-DATA-01, FR-DOR-10, FR-DOR-12, FR-DOR-13 และ FR-DOR-17
   function handleChange(event) {
     const { name, value } = event.target;
     setFormValues((current) => ({ ...current, [name]: value }));
+    setFieldErrors((current) => {
+      if (!Object.prototype.hasOwnProperty.call(current, name)) return current;
+      const next = { ...current };
+      delete next[name];
+      return next;
+    });
+    setError("");
     setSuccess("");
   }
 
-  // รองรับ CON-BUS-01, FR-DOR-10, FR-DOR-12, FR-DOR-15 และ AC-DOR-08
+  // รองรับ CON-BUS-01, FR-DOR-10, FR-DOR-12, FR-DOR-13, FR-DOR-15,
+  // FR-DOR-17 และ AC-DOR-08 ถึง AC-DOR-09
   async function handleSubmit(event) {
     event.preventDefault();
     setSaving(true);
     setError("");
+    setFieldErrors({});
     setSuccess("");
 
     try {
@@ -139,9 +152,13 @@ export default function OwnerDormitoryFormPage() {
         );
       }
     } catch (err) {
-      setError(
-        err instanceof Error ? err.message : "ไม่สามารถบันทึกข้อมูลหอพักได้",
-      );
+      if (err instanceof OwnerDormitoryValidationError) {
+        setFieldErrors(err.fieldErrors);
+      } else {
+        setError(
+          err instanceof Error ? err.message : "ไม่สามารถบันทึกข้อมูลหอพักได้",
+        );
+      }
     } finally {
       setSaving(false);
     }
@@ -168,32 +185,49 @@ export default function OwnerDormitoryFormPage() {
               {statusLabel && <p>สถานะ: {statusLabel}</p>}
             </div>
           )}
-          <form className="space-y-4" onSubmit={handleSubmit}>
-            {fields.map(({ name, label, required }) => (
-              <div key={name}>
-                <label htmlFor={name} className="mb-1 block font-medium">
-                  {label}
-                </label>
-                {name === "rules" ? (
-                  <textarea
-                    id={name}
-                    name={name}
-                    value={formValues[name]}
-                    onChange={handleChange}
-                    className="w-full rounded-lg border border-dark/20 bg-white px-3 py-2"
-                  />
-                ) : (
-                  <input
-                    id={name}
-                    name={name}
-                    value={formValues[name]}
-                    onChange={handleChange}
-                    required={required}
-                    className="w-full rounded-lg border border-dark/20 bg-white px-3 py-2"
-                  />
-                )}
-              </div>
-            ))}
+          <form className="space-y-4" noValidate onSubmit={handleSubmit}>
+            {fields.map(({ name, label, required }) => {
+              const fieldError = fieldErrors[name];
+              const errorId = `${name}-error`;
+              return (
+                <div key={name}>
+                  <label htmlFor={name} className="mb-1 block font-medium">
+                    {label}
+                  </label>
+                  {name === "rules" ? (
+                    <textarea
+                      id={name}
+                      name={name}
+                      value={formValues[name]}
+                      onChange={handleChange}
+                      className="w-full rounded-lg border border-dark/20 bg-white px-3 py-2"
+                      aria-invalid={Boolean(fieldError)}
+                      aria-describedby={fieldError ? errorId : undefined}
+                    />
+                  ) : (
+                    <input
+                      id={name}
+                      name={name}
+                      value={formValues[name]}
+                      onChange={handleChange}
+                      required={required}
+                      className="w-full rounded-lg border border-dark/20 bg-white px-3 py-2"
+                      aria-invalid={Boolean(fieldError)}
+                      aria-describedby={fieldError ? errorId : undefined}
+                    />
+                  )}
+                  {fieldError && (
+                    <p
+                      id={errorId}
+                      role="alert"
+                      className="mt-1 text-sm text-red-700"
+                    >
+                      {fieldError}
+                    </p>
+                  )}
+                </div>
+              );
+            })}
             <button
               type="submit"
               disabled={saving}

@@ -1210,3 +1210,9 @@
 - ผลลัพธ์: ยืนยันการตรวจ required fields ของ Pydantic ที่ปฏิเสธข้อมูลว่าง/ขาดก่อนเข้า endpoint และคืน `422 detail` แยกตามช่อง; เพิ่ม tests ว่าการสร้างไม่บันทึกเมื่อผิดและการแก้ไขไม่เปลี่ยนข้อมูลเดิม; เปลี่ยนสถานะ T-09 เป็น "เสร็จ รอทีมตรวจ"
 - ผล test: `PYTHONPATH=.. pytest -q tests/test_AC_DOR_09.py` ผ่าน 3 tests; `PYTHONPATH=.. pytest -q tests` ผ่าน 58 tests
 - สิ่งที่เกือบต้องเดาแต่ถามแทน: `TC-DOR-09-4` ยังเป็น "ร่าง" เพราะ spec ไม่ระบุกฎสำหรับค่าที่กรอกครบแต่ไม่ถูกต้อง; จึงไม่เพิ่มกฎตรวจรูปแบบช่องทางติดต่อ ประเภทหอพัก หรือการ trim whitespace
+
+## 2569-11-13 คำสั่ง: `/implement T-10 specs/003-manage_dormitory_data/tasks.md`
+- ไฟล์ที่แก้/สร้าง: `frontend/src/pages/OwnerDormitoryFormPage.jsx`, `frontend/src/api/client.js`, `frontend/src/__tests__/AC-DOR-09-field-errors.test.jsx`, `specs/003-manage_dormitory_data/tasks.md`
+- ผลลัพธ์: แปลง `422 detail` เป็นข้อผิดพลาดใต้ช่องที่เกี่ยวข้อง; แสดงเหตุผลภาษาไทยสำหรับฟิลด์บังคับที่ขาด/ว่าง ล้างข้อความเมื่อแก้ช่อง และไม่แสดงผลสำเร็จเมื่อ validation ล้มเหลว; เปลี่ยนสถานะ T-10 เป็น "เสร็จ รอทีมตรวจ"
+- ผล test: `npm test -- --run src/__tests__/AC-DOR-09-field-errors.test.jsx` ผ่าน 3 tests; `npm test` ผ่าน 42 tests ใน 24 ไฟล์; `npm run build` ผ่าน
+- สิ่งที่เกือบต้องเดาแต่ถามแทน: ใช้เฉพาะ error types ของ required fields ที่ T-09 มีอยู่; ไม่เพิ่ม validation rules สำหรับค่าที่กรอกครบแต่ไม่ถูกต้องซึ่ง spec ยังไม่ระบุ

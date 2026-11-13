@@ -1,6 +1,60 @@
 // รองรับ CON-ACC-01 และ CON-AUTH-01; ตัวตนจำลองตามมติทีมจนกว่า 007 จะพร้อม
 const prototypeOwnerHeaders = { "X-Owner-Id": "owner-1" };
 
+const dormitoryFieldLabels = {
+  name: "ชื่อหอพัก",
+  location: "ที่อยู่/ทำเล",
+  type: "ประเภทหอพัก",
+  contact_info: "ช่องทางติดต่อ",
+  amenities: "สิ่งอำนวยความสะดวก",
+  rules: "กฎระเบียบ",
+};
+
+const requiredFieldLabels = {
+  name: "ชื่อหอพัก",
+  location: "ที่อยู่/ทำเล",
+  type: "ประเภทหอพัก",
+  contact_info: "ช่องทางติดต่อ",
+};
+
+// รองรับ FR-DOR-13, FR-DOR-17 และ AC-DOR-09
+export class OwnerDormitoryValidationError extends Error {
+  constructor(fieldErrors) {
+    super("กรุณาตรวจสอบข้อมูลที่กรอก");
+    this.name = "OwnerDormitoryValidationError";
+    this.fieldErrors = fieldErrors;
+  }
+}
+
+// รองรับ FR-DOR-13, FR-DOR-17 และ AC-DOR-09
+function parseDormitoryFieldErrors(payload) {
+  if (!Array.isArray(payload?.detail)) return null;
+
+  const fieldErrors = {};
+  for (const detail of payload.detail) {
+    const field =
+      Array.isArray(detail?.loc) && detail.loc[0] === "body"
+        ? detail.loc[1]
+        : null;
+    if (
+      typeof field !== "string" ||
+      !Object.prototype.hasOwnProperty.call(dormitoryFieldLabels, field)
+    ) {
+      continue;
+    }
+
+    const isRequiredFieldError =
+      Object.prototype.hasOwnProperty.call(requiredFieldLabels, field) &&
+      ["missing", "string_too_short"].includes(detail.type);
+    const message = isRequiredFieldError
+      ? `กรุณากรอก${requiredFieldLabels[field]}`
+      : detail.msg;
+    if (typeof message !== "string" || !message.trim()) return null;
+    fieldErrors[field] = message;
+  }
+  return fieldErrors;
+}
+
 // รองรับ FR-DOR-01, FR-DOR-02 และ CON-ACC-01
 export async function searchDormitories(filters = {}) {
   const params = new URLSearchParams();
@@ -55,7 +109,7 @@ export async function getOwnerDormitory(dormitoryId) {
   return data;
 }
 
-// รองรับ CON-DATA-01, CON-BUS-01, FR-DOR-10 และ FR-DOR-15
+// รองรับ CON-DATA-01, CON-BUS-01, FR-DOR-10, FR-DOR-13, FR-DOR-15 และ FR-DOR-17
 async function saveOwnerDormitory(path, method, dormitory) {
   const response = await fetch(path, {
     method,
@@ -66,6 +120,13 @@ async function saveOwnerDormitory(path, method, dormitory) {
     body: JSON.stringify(dormitory),
   });
   if (!response.ok) {
+    if (response.status === 422) {
+      const payload = await response.json();
+      const fieldErrors = parseDormitoryFieldErrors(payload);
+      if (fieldErrors && Object.keys(fieldErrors).length > 0) {
+        throw new OwnerDormitoryValidationError(fieldErrors);
+      }
+    }
     throw new Error(`ไม่สามารถบันทึกข้อมูลหอพักได้ (${response.status})`);
   }
 
@@ -81,12 +142,14 @@ async function saveOwnerDormitory(path, method, dormitory) {
   return data;
 }
 
-// รองรับ CON-ACC-01, CON-DATA-01, CON-BUS-01, FR-DOR-10 และ FR-DOR-15
+// รองรับ CON-ACC-01, CON-DATA-01, CON-BUS-01, FR-DOR-10, FR-DOR-13,
+// FR-DOR-15 และ FR-DOR-17
 export async function createOwnerDormitory(dormitory) {
   return saveOwnerDormitory("/owners/dormitories", "POST", dormitory);
 }
 
-// รองรับ CON-ACC-01, CON-AUTH-01, CON-BUS-01, FR-DOR-12 และ FR-DOR-15
+// รองรับ CON-ACC-01, CON-AUTH-01, CON-BUS-01, FR-DOR-12, FR-DOR-13,
+// FR-DOR-15 และ FR-DOR-17
 export async function updateOwnerDormitory(dormitoryId, dormitory) {
   return saveOwnerDormitory(
     `/owners/dormitories/${encodeURIComponent(dormitoryId)}`,
