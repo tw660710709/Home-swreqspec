@@ -1249,3 +1249,11 @@
 - ผลลัพธ์: ยืนยันหน้ารายละเอียดเรียก API `/dormitories/{id}` ผ่าน client และแสดงข้อมูล/รูปที่ API ส่งกลับ โดยไม่เรียก API ค้นหารายการสาธารณะ; เปลี่ยนสถานะ T-15 เป็น "เสร็จ รอทีมตรวจ"
 - ผล test: `npm test -- --run src/__tests__/AC-DOR-12-public-detail.test.jsx` ผ่าน 1 test; `npm test` ผ่าน 48 tests ใน 27 ไฟล์; `npm run build` ผ่าน
 - สิ่งที่เกือบต้องเดาแต่ถามแทน: ไม่พบประเด็นกำกวมเพิ่มเติม; ใช้ endpoint รายละเอียดและตัวกรองสถานะที่ T-14 ทำไว้ โดยไม่เพิ่มการค้นหาสาธารณะหรือกำหนดพฤติกรรม Q-02
+
+## 2569-11-13 10:15:47 คำสั่ง: `/testcases AC-DOR-07 specs/003-manage_dormitory_data/`
+- โหมด: เขียน test จากแถวสถานะ "ใช้ได้"
+- มติทีม: แถวที่ตรวจด้วยทั้ง pytest และ vitest ให้เขียน test ฝั่งละ 1 ตัวโดยใช้ชื่อเดียวกัน; นับจำนวนเพิ่มแยกตามฝั่ง (pytest 4 ตัว, vitest 1 ตัว)
+- TC ID: `TC-DOR-07-1` ถึง `TC-DOR-07-4`; `TC-DOR-07-1` ใช้ชื่อ `test_TC_DOR_07_1_owner_list_and_actions` ทั้งฝั่ง pytest และ vitest
+- ไฟล์ที่แก้/สร้าง: `backend/tests/test_AC_DOR_07.py`, `frontend/src/__tests__/TC-DOR-07-1.test.jsx`; ไม่แก้ `test-cases.md`
+- ผล test: `cd backend && PYTHONPATH=.. pytest -v` ผ่าน 69 tests; `cd frontend && npm test` ผ่าน 49 tests ใน 28 ไฟล์
+- จำนวน test: backend เพิ่มจาก 2 เป็น 6 (+4); frontend เพิ่มจาก 0 เป็น 1 (+1)

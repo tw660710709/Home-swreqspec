@@ -129,3 +129,86 @@ class OwnerDormitoryApiTests(unittest.IsolatedAsyncioTestCase):
             get_owned_dormitory_room("owner-1", "dorm-001", "room-003")
         self.assertGreaterEqual(mismatched_room_error.exception.status_code, 400)
         self.assertLess(mismatched_room_error.exception.status_code, 500)
+
+    async def test_TC_DOR_07_1_owner_list_and_actions(self) -> None:
+        # Given owner-1 และ owner-2 มีข้อมูลหอพักในระบบ
+        # When owner-1 เรียกดูรายการหอพักของตน
+        response = await self.client.get(
+            "/owners/dormitories",
+            headers={"X-Owner-Id": "owner-1"},
+        )
+
+        # Then API คืนเฉพาะรายการหอพักของ owner-1
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(
+            [dormitory["dormitory_id"] for dormitory in response.json()],
+            ["dorm-001", "dorm-003"],
+        )
+
+    async def test_TC_DOR_07_2_reject_foreign_dormitory(self) -> None:
+        # Given owner-1 และ owner-2 มีข้อมูลหอพักในระบบ
+        # When owner-1 พยายามอ่านและแก้ไขหอพักของ owner-2
+        headers = {"X-Owner-Id": "owner-1"}
+        read_response = await self.client.get(
+            "/owners/dormitories/dorm-002",
+            headers=headers,
+        )
+        update_response = await self.client.put(
+            "/owners/dormitories/dorm-002",
+            headers=headers,
+            json={
+                "name": "ชื่อที่ไม่ได้รับอนุญาต",
+                "location": "ทำเล",
+                "type": "หอพักชาย",
+                "contact_info": "ช่องทางติดต่อ",
+            },
+        )
+
+        # Then ระบบไม่อนุญาตให้อ่านหรือแก้ไขข้อมูลของ owner-2
+        self.assertFalse(read_response.is_success)
+        self.assertFalse(update_response.is_success)
+
+    async def test_TC_DOR_07_3_reject_mismatched_room_dormitory_pair(self) -> None:
+        # Given owner-1 มี dormitoryId และ roomId ที่ไม่ได้เชื่อมโยงกัน
+        # When owner-1 พยายามแก้ไข room-003 ผ่าน dorm-001 ทั้งที่ห้องอยู่ใต้ dorm-003
+        response = await self.client.put(
+            "/owners/dormitories/dorm-001/rooms/room-003",
+            headers={"X-Owner-Id": "owner-1"},
+            json={"monthly_rent": "9000"},
+        )
+        rooms_response = await self.client.get(
+            "/owners/dormitories/dorm-003/rooms",
+            headers={"X-Owner-Id": "owner-1"},
+        )
+
+        # Then ระบบปฏิเสธคู่ ID ที่ไม่สัมพันธ์กันและราคาเดิมไม่เปลี่ยน
+        self.assertFalse(response.is_success)
+        self.assertEqual(rooms_response.status_code, 200)
+        self.assertEqual(rooms_response.json()[0]["monthly_rent"], "7000")
+
+    async def test_TC_DOR_07_4_reject_unauthenticated_access(self) -> None:
+        # Given ผู้ใช้ยังไม่ได้เข้าสู่ระบบ
+        # When ผู้ใช้ขอรายการและพยายามสร้างข้อมูลหอพักโดยไม่มีตัวตนเจ้าของ
+        list_response = await self.client.get("/owners/dormitories")
+        create_response = await self.client.post(
+            "/owners/dormitories",
+            json={
+                "name": "หอพักไม่มีตัวตนเจ้าของ",
+                "location": "ทำเล",
+                "type": "หอพักรวม",
+                "contact_info": "ช่องทางติดต่อ",
+            },
+        )
+
+        # Then ระบบไม่อนุญาตให้เข้าถึงหรือจัดการข้อมูลก่อนยืนยันตัวตน
+        self.assertFalse(list_response.is_success)
+        self.assertFalse(create_response.is_success)
+        owner_list = await self.client.get(
+            "/owners/dormitories",
+            headers={"X-Owner-Id": "owner-1"},
+        )
+        self.assertEqual(
+            [dormitory["dormitory_id"] for dormitory in owner_list.json()],
+            ["dorm-001", "dorm-003"],
+        )
+        # spec ไม่ได้บอกรูปแบบการปฏิเสธ รหัสตอบกลับ หรือข้อความ จึงไม่ตรวจค่าดังกล่าว
