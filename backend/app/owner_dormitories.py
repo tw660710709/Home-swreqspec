@@ -2,13 +2,27 @@ import json
 import sqlite3
 from contextlib import closing
 from typing import Optional
+from uuid import uuid4
 
 from fastapi import APIRouter, Depends, Header, HTTPException
+from pydantic import BaseModel, Field
 
 from .database import _connect, get_database_path, initialize_database
 
 
 router = APIRouter()
+# รองรับ DOM-RULE-01 และ FR-DOR-15; ใช้ค่ารออนุมัติจากสถานะที่ระบบเดิมใช้
+PENDING_APPROVAL_STATUS = "Pending"
+
+
+class OwnerDormitoryInput(BaseModel):
+    # รองรับ CON-DATA-01, FR-DOR-10 และ FR-DOR-12
+    name: str = Field(min_length=1)
+    location: str = Field(min_length=1)
+    type: str = Field(min_length=1)
+    contact_info: str = Field(min_length=1)
+    amenities: Optional[list[str]] = None
+    rules: Optional[str] = None
 
 
 def get_current_owner(
@@ -21,7 +35,7 @@ def get_current_owner(
 
 
 def _serialize_dormitory(row: sqlite3.Row) -> dict[str, object]:
-    # รองรับ FR-DOR-09 และ FR-DOR-11
+    # รองรับ FR-DOR-09, FR-DOR-11 และ FR-DOR-15
     return {
         "dormitory_id": row["dormitory_id"],
         "name": row["name"],
@@ -34,6 +48,20 @@ def _serialize_dormitory(row: sqlite3.Row) -> dict[str, object]:
         ),
         "rules": row["rules"],
     }
+
+
+def _owner_dormitory_values(dormitory: OwnerDormitoryInput) -> tuple[object, ...]:
+    # รองรับ CON-DATA-01, FR-DOR-10 และ FR-DOR-12
+    return (
+        dormitory.name,
+        dormitory.location,
+        dormitory.type,
+        dormitory.contact_info,
+        json.dumps(dormitory.amenities, ensure_ascii=False)
+        if dormitory.amenities is not None
+        else None,
+        dormitory.rules,
+    )
 
 
 def get_owned_dormitory(owner_id: str, dormitory_id: str) -> dict[str, object]:
@@ -105,4 +133,63 @@ def get_owner_dormitory(
     owner_id: str = Depends(get_current_owner),
 ) -> dict[str, object]:
     # รองรับ CON-ACC-01, CON-AUTH-01 และ FR-DOR-11
+    return get_owned_dormitory(owner_id, dormitory_id)
+
+
+@router.post("/owners/dormitories")
+def create_owner_dormitory(
+    dormitory: OwnerDormitoryInput,
+    owner_id: str = Depends(get_current_owner),
+) -> dict[str, object]:
+    # รองรับ CON-ACC-01, CON-DATA-01, CON-BUS-01, FR-DOR-10 และ FR-DOR-15
+    initialize_database()
+    dormitory_id = str(uuid4())
+    values = _owner_dormitory_values(dormitory)
+    with closing(_connect(get_database_path().resolve())) as connection:
+        connection.execute(
+            """
+            INSERT INTO owner_dormitories (
+                dormitory_id, owner_id, name, location, type, contact_info,
+                approval_status, amenities, rules
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """,
+            (
+                dormitory_id,
+                owner_id,
+                *values[:4],
+                PENDING_APPROVAL_STATUS,
+                *values[4:],
+            ),
+        )
+        connection.commit()
+    return get_owned_dormitory(owner_id, dormitory_id)
+
+
+@router.put("/owners/dormitories/{dormitory_id}")
+def update_owner_dormitory(
+    dormitory_id: str,
+    dormitory: OwnerDormitoryInput,
+    owner_id: str = Depends(get_current_owner),
+) -> dict[str, object]:
+    # รองรับ CON-ACC-01, CON-AUTH-01, CON-DATA-01, CON-BUS-01, FR-DOR-12 และ FR-DOR-15
+    initialize_database()
+    values = _owner_dormitory_values(dormitory)
+    with closing(_connect(get_database_path().resolve())) as connection:
+        cursor = connection.execute(
+            """
+            UPDATE owner_dormitories
+            SET name = ?, location = ?, type = ?, contact_info = ?,
+                amenities = ?, rules = ?, approval_status = ?
+            WHERE dormitory_id = ? AND owner_id = ?
+            """,
+            (
+                *values,
+                PENDING_APPROVAL_STATUS,
+                dormitory_id,
+                owner_id,
+            ),
+        )
+        if cursor.rowcount == 0:
+            raise HTTPException(status_code=404)
+        connection.commit()
     return get_owned_dormitory(owner_id, dormitory_id)

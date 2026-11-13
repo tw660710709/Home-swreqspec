@@ -1178,3 +1178,10 @@
 - มติทีม: ใช้ `owner-1` เป็นตัวตนจำลองเริ่มต้น และอนุญาตเพิ่ม `frontend/vite.config.js` เพื่อ proxy `/owners`
 - ผล test: test เป้าหมาย 3 tests ผ่าน; frontend ทั้งชุด 34 tests ผ่าน; `npm run build` ผ่าน; smoke test ผ่าน โดยเรียก `/owners/dormitories` ผ่าน Vite proxy ได้ผล `[]`
 - สิ่งที่เกือบต้องเดาแต่ถามแทน: แหล่ง owner ID สำหรับ frontend และการขยายรายการไฟล์เพื่อเพิ่ม proxy; ทีมยืนยันใช้ `owner-1` และอนุญาตแก้ `vite.config.js`
+
+## 2569-11-13 คำสั่ง: `/implement T-04 specs/003-manage_dormitory_data/tasks.md`
+- ไฟล์ที่แก้/สร้าง: `backend/app/owner_dormitories.py`, `backend/tests/test_AC_DOR_08.py`, `specs/003-manage_dormitory_data/tasks.md`
+- ผลลัพธ์: เพิ่ม API POST/PUT สำหรับบันทึกข้อมูลหอพักตามเจ้าของที่ยืนยันตัวตน; บันทึกก่อนอ่านข้อมูลล่าสุด, กำหนดสถานะเริ่มต้น/หลังแก้ไขเป็น `Pending` ตามค่าที่ระบบเดิมใช้ และไม่เผยแพร่ข้อมูลจากตาราง owner-managed ไปยัง public endpoints; เปลี่ยนสถานะ T-04 เป็น "เสร็จ รอทีมตรวจ"
+- หมายเหตุ: ไม่แก้ `database.py` เพราะ schema ที่เตรียมใน T-01 รองรับฟิลด์ที่ T-04 ต้องบันทึกอยู่แล้ว; ไม่เพิ่ม workflow หรือมุมมอง Admin (UC-13 อยู่นอกขอบเขต)
+- ผล test: `PYTHONPATH=. pytest -q backend/tests/test_AC_DOR_08.py` ผ่านก่อนเพิ่มกรณี validation; หลังเพิ่มกรณีดังกล่าว `PYTHONPATH=. pytest -q backend/tests` ผ่าน 53 tests
+- สิ่งที่เกือบต้องเดาแต่ถามแทน: ไม่มีคำถามค้างจาก task; ใช้รูปแบบสถานะ `Pending` ที่มีอยู่ในข้อมูลเดิม และรหัส UUID สำหรับ `dormitory_id` ที่ระบบสร้างอัตโนมัติ เนื่องจาก spec ไม่กำหนดรูปแบบรหัส
