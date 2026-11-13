@@ -204,8 +204,8 @@ AI จะเปิดอ่านเมื่อ spec.md ไม่ชัด แ�
 <details>
 <summary>UC-05 | ดูสถิติหอพัก</summary>
   
-![UC-05](https://raw.githubusercontent.com/Home-swreqspec/Home-swreqspec/main/docs/srs/images/smells/uc-05-view_dormitory_statistics.png)
 
+![uc-05](images/smells/uc-05-view_dormitory_statistics.png)
 **ผู้รับผิดชอบ:** 670710729 พิทักษ์พล ชยานนท์นุรักษ์<br>
 </details>
 
