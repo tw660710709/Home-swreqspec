@@ -3,7 +3,7 @@ import sqlite3
 from contextlib import closing
 from decimal import Decimal
 from pathlib import Path
-from typing import Optional
+from typing import Annotated, Optional
 from uuid import uuid4
 
 from fastapi import (
@@ -16,7 +16,7 @@ from fastapi import (
     UploadFile,
 )
 from fastapi.responses import FileResponse
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, StringConstraints
 
 from .config import MAX_IMAGE_SIZE_BYTES, MAX_IMAGES_PER_TARGET
 from .database import _connect, get_database_path, initialize_database
@@ -27,19 +27,25 @@ router = APIRouter()
 PENDING_APPROVAL_STATUS = "Pending"
 
 
+# รองรับ CON-DATA-01, FR-DOR-13, FR-DOR-17 และ AC-DOR-09 (ASM-21);
+# ช่องข้อความบังคับที่เป็นช่องว่างล้วนถือว่าไม่ได้กรอก
+RequiredText = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1)]
+
+
 class OwnerDormitoryInput(BaseModel):
     # รองรับ CON-DATA-01, FR-DOR-10, FR-DOR-12, FR-DOR-13 และ FR-DOR-17
-    name: str = Field(min_length=1)
-    location: str = Field(min_length=1)
-    type: str = Field(min_length=1)
-    contact_info: str = Field(min_length=1)
+    name: RequiredText
+    location: RequiredText
+    type: RequiredText
+    contact_info: RequiredText
     amenities: Optional[list[str]] = None
     rules: Optional[str] = None
 
 
 class OwnerDormitoryRoomInput(BaseModel):
-    # รองรับ CON-DATA-01, FR-DOR-12 และ ASM-16
-    monthly_rent: Decimal
+    # รองรับ CON-DATA-01, FR-DOR-12, ASM-16 และ AC-DOR-09 (ASM-21);
+    # ราคาต้องเป็นตัวเลขมากกว่า 0
+    monthly_rent: Decimal = Field(gt=0)
 
 
 def get_current_owner(

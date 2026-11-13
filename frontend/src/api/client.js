@@ -342,6 +342,10 @@ async function saveOwnerDormitoryRoom(path, method, room) {
     },
     body: JSON.stringify(room),
   });
+  if (response.status === 422) {
+    // รองรับ CON-DATA-01, FR-DOR-13 และ AC-DOR-09 (ASM-21)
+    throw new Error("ราคาค่าเช่าต่อห้องต่อเดือนต้องเป็นตัวเลขมากกว่า 0");
+  }
   if (!response.ok) {
     throw new Error(`ไม่สามารถบันทึกข้อมูลห้องพักได้ (${response.status})`);
   }

@@ -19,6 +19,8 @@ export default function OwnerRoomsPage() {
   const [rooms, setRooms] = useState([]);
   const [rentValues, setRentValues] = useState({});
   const [newMonthlyRent, setNewMonthlyRent] = useState("");
+  // รองรับ FR-DOR-13, FR-DOR-17 และ AC-DOR-09: ข้อผิดพลาดรายช่องของราคาห้องใหม่
+  const [newRentError, setNewRentError] = useState("");
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
@@ -80,6 +82,7 @@ export default function OwnerRoomsPage() {
   // รองรับ CON-DATA-01, FR-DOR-12 และ ASM-16
   function handleNewRentChange(event) {
     setNewMonthlyRent(event.target.value);
+    setNewRentError("");
     setError("");
     setSuccess("");
   }
@@ -96,6 +99,7 @@ export default function OwnerRoomsPage() {
     event.preventDefault();
     setSaving(true);
     setError("");
+    setNewRentError("");
     setSuccess("");
 
     try {
@@ -106,8 +110,11 @@ export default function OwnerRoomsPage() {
       setNewMonthlyRent("");
       setSuccess("เพิ่มข้อมูลห้องพักแล้ว");
     } catch (err) {
-      setError(
-        err instanceof Error ? err.message : "ไม่สามารถบันทึกข้อมูลห้องพักได้",
+      // รองรับ FR-DOR-13, FR-DOR-17 และ AC-DOR-09: แจ้งสาเหตุที่ช่องราคาและไม่บันทึก
+      setNewRentError(
+        err?.fieldErrors?.monthly_rent ||
+          (err instanceof Error && err.message) ||
+          "ราคาค่าเช่าต่อห้องต่อเดือนต้องเป็นตัวเลขมากกว่า 0",
       );
     } finally {
       setSaving(false);
@@ -419,8 +426,17 @@ export default function OwnerRoomsPage() {
                 required
                 value={newMonthlyRent}
                 onChange={handleNewRentChange}
+                aria-invalid={newRentError ? "true" : "false"}
+                aria-describedby={
+                  newRentError ? "new-monthly-rent-error" : undefined
+                }
                 className="w-full rounded-lg border border-dark/20 bg-white px-3 py-2"
               />
+              {newRentError && (
+                <p id="new-monthly-rent-error" className="mt-1 text-red-600">
+                  {newRentError}
+                </p>
+              )}
             </div>
             <button
               type="submit"
