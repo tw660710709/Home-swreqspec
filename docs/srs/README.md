@@ -41,10 +41,13 @@ AI จะเปิดอ่านเมื่อ spec.md ไม่ชัด แ�
 
 ## system context
 <img width="695" height="645" alt="image" src="https://github.com/user-attachments/assets/192212b6-9d79-4f4d-91b6-a79dc69bbd50" />
+**ผู้รับผิดชอบ**<br>
 670710746 ณัฎฐพล ดาเจริญ<br>
 
 ## architecture overview
-
+<img width="1702" height="744" alt="image" src="https://github.com/user-attachments/assets/570568a3-8d8a-4353-b397-c93da26c3cd7" />
+**ผู้รับผิดชอบ**<br>
+670710729 พิทักษ์พล ชยานนท์นุรักษ์<br>
 ## use case diagram
 
 ## use case specification
