@@ -1158,3 +1158,10 @@
 ## 2569-11-13 ทีมตัดสินใจเรื่องตัวตนจำลองสำหรับ prototype ของ 003
 - ไฟล์: specs/003-manage_dormitory_data/plan.md
 - ทีมตัดสินใจ: ระหว่างที่ 007 login ยังไม่มีโค้ด ใช้ตัวตนจำลองสำหรับ prototype ผ่าน header X-Owner-Id อ่านในฟังก์ชัน get_current_owner() ฟังก์ชันเดียว ทุก API ของ 003 ใช้ฟังก์ชันนี้; ไม่มี header = ปฏิเสธ; ข้อมูลตัวอย่างใช้ owner-1, owner-2 ให้ตรงกับ 005; เมื่อ 007 เสร็จให้เปลี่ยนเฉพาะ get_current_owner()
+
+## 2569-11-13 คำสั่ง: `/implement T-01 specs/003-manage_dormitory_data/tasks.md`
+- ไฟล์ที่แก้/สร้าง: `backend/app/models.py`, `backend/app/database.py`, `backend/tests/test_dormitory_management.py`, `specs/003-manage_dormitory_data/tasks.md`
+- ผลลัพธ์: เพิ่มโมเดลและ schema สำหรับหอพักที่เชื่อมกับ owner, ห้องพักที่มีเฉพาะฟิลด์ตาม spec, และ metadata รูปที่เชื่อมกับหอพักหรือห้องพัก; เปลี่ยนสถานะ T-01 เป็น "เสร็จ รอทีมตรวจ"
+- การตัดสินใจจากทีม: เก็บ metadata/ความสัมพันธ์ของรูปก่อน และให้เลือก storage จริงใน T-11
+- ผล test: `PYTHONPATH=. pytest -q backend/tests/test_dormitory_management.py` ผ่าน 1 test; `PYTHONPATH=. pytest -q backend/tests` ผ่าน 47 tests
+- สิ่งที่เกือบต้องเดาแต่ถามทีมก่อน: วิธีจัดเก็บไฟล์รูปจริง; ทีมเลือก metadata-only สำหรับ T-01 และเลื่อนการเลือก storage จริงไป T-11

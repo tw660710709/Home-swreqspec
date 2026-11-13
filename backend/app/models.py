@@ -70,3 +70,35 @@ class SearchResult:
     min_rent: Optional[Decimal]
     max_rent: Optional[Decimal]
     availability_status: Optional[AvailabilityStatus]
+
+
+@dataclass
+class OwnerDormitory:
+    # รองรับ CON-AUTH-01, CON-DATA-01 และ FR-DOR-12
+    dormitory_id: str
+    owner_id: str
+    name: str
+    location: str
+    type: str
+    contact_info: str
+    approval_status: str
+    amenities: Optional[list[str]] = None
+    rules: Optional[str] = None
+
+
+@dataclass
+class OwnerDormitoryRoom:
+    # รองรับ CON-DATA-01, FR-DOR-12, ASM-16 และ ASM-17
+    room_id: str
+    dormitory_id: str
+    monthly_rent: Decimal
+
+
+@dataclass
+class OwnerDormitoryImage:
+    # รองรับ CON-FILE-01 และ FR-DOR-12; เก็บ metadata ก่อนเลือก storage จริงใน T-11
+    image_id: str
+    file_type: str
+    file_size_bytes: int
+    dormitory_id: Optional[str] = None
+    room_id: Optional[str] = None

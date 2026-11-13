@@ -35,6 +35,42 @@ def _connect(path: Path) -> sqlite3.Connection:
     return connection
 
 
+def _create_owner_management_schema(connection: sqlite3.Connection) -> None:
+    # รองรับ CON-AUTH-01, CON-DATA-01, CON-FILE-01 และ FR-DOR-12
+    connection.executescript(
+        """
+        CREATE TABLE IF NOT EXISTS owner_dormitories (
+            dormitory_id TEXT PRIMARY KEY,
+            owner_id TEXT NOT NULL,
+            name TEXT NOT NULL,
+            location TEXT NOT NULL,
+            type TEXT NOT NULL,
+            contact_info TEXT NOT NULL,
+            approval_status TEXT NOT NULL,
+            amenities TEXT,
+            rules TEXT
+        );
+        CREATE TABLE IF NOT EXISTS owner_dormitory_rooms (
+            room_id TEXT PRIMARY KEY,
+            dormitory_id TEXT NOT NULL
+                REFERENCES owner_dormitories(dormitory_id),
+            monthly_rent TEXT NOT NULL
+        );
+        CREATE TABLE IF NOT EXISTS owner_dormitory_images (
+            image_id TEXT PRIMARY KEY,
+            dormitory_id TEXT REFERENCES owner_dormitories(dormitory_id),
+            room_id TEXT REFERENCES owner_dormitory_rooms(room_id),
+            file_type TEXT NOT NULL,
+            file_size_bytes INTEGER NOT NULL,
+            CHECK (
+                (dormitory_id IS NOT NULL AND room_id IS NULL)
+                OR (dormitory_id IS NULL AND room_id IS NOT NULL)
+            )
+        );
+        """
+    )
+
+
 def _default_seed_data() -> SeedData:
     from .fixtures import (
         DORMITORY_FIXTURES,
@@ -94,6 +130,7 @@ def _create_schema(connection: sqlite3.Connection) -> None:
         );
         """
     )
+    _create_owner_management_schema(connection)
 
 
 def _seed_database(connection: sqlite3.Connection, seed_data: SeedData) -> None:
