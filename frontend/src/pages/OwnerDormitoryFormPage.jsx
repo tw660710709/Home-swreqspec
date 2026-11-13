@@ -5,6 +5,7 @@ import {
   getOwnerDormitory,
   OwnerDormitoryValidationError,
   updateOwnerDormitory,
+  uploadOwnerDormitoryImages,
 } from "../api/client.js";
 
 const emptyForm = {
@@ -56,8 +57,8 @@ function toSavePayload(formValues) {
   };
 }
 
-// รองรับ CON-ACC-01, CON-AUTH-01, CON-DATA-01, FR-DOR-10 ถึง FR-DOR-13,
-// FR-DOR-15, FR-DOR-17 และ AC-DOR-08 ถึง AC-DOR-09
+// รองรับ CON-ACC-01, CON-AUTH-01, CON-DATA-01, CON-FILE-01, FR-DOR-10 ถึง FR-DOR-14,
+// FR-DOR-15, FR-DOR-17, FR-DOR-18 และ AC-DOR-08 ถึง AC-DOR-10
 export default function OwnerDormitoryFormPage() {
   const { dormitoryId } = useParams();
   const navigate = useNavigate();
@@ -68,6 +69,13 @@ export default function OwnerDormitoryFormPage() {
   const [error, setError] = useState("");
   const [fieldErrors, setFieldErrors] = useState({});
   const [success, setSuccess] = useState("");
+  const [selectedImages, setSelectedImages] = useState([]);
+  const [uploadingImages, setUploadingImages] = useState(false);
+  const [imageUploadResult, setImageUploadResult] = useState({
+    accepted: [],
+    rejected: [],
+  });
+  const [imageUploadError, setImageUploadError] = useState("");
 
   useEffect(() => {
     let active = true;
@@ -126,8 +134,37 @@ export default function OwnerDormitoryFormPage() {
     setSuccess("");
   }
 
+  // รองรับ CON-FILE-01, FR-DOR-14, FR-DOR-18 และ AC-DOR-10
+  function handleImageSelection(event) {
+    setSelectedImages(Array.from(event.target.files ?? []));
+    setImageUploadError("");
+    event.target.value = "";
+  }
+
+  // รองรับ CON-FILE-01, FR-DOR-14, FR-DOR-18 และ AC-DOR-10
+  async function uploadSelectedImages(savedDormitoryId, files) {
+    if (files.length === 0) return;
+
+    setUploadingImages(true);
+    setImageUploadError("");
+    try {
+      const result = await uploadOwnerDormitoryImages(savedDormitoryId, files);
+      setImageUploadResult((current) => ({
+        accepted: [...current.accepted, ...result.accepted],
+        rejected: result.rejected,
+      }));
+      setSelectedImages([]);
+    } catch (err) {
+      setImageUploadError(
+        err instanceof Error ? err.message : "ไม่สามารถอัปโหลดรูปภาพได้",
+      );
+    } finally {
+      setUploadingImages(false);
+    }
+  }
+
   // รองรับ CON-BUS-01, FR-DOR-10, FR-DOR-12, FR-DOR-13, FR-DOR-15,
-  // FR-DOR-17 และ AC-DOR-08 ถึง AC-DOR-09
+  // FR-DOR-17, FR-DOR-18 และ AC-DOR-08 ถึง AC-DOR-10
   async function handleSubmit(event) {
     event.preventDefault();
     setSaving(true);
@@ -144,6 +181,7 @@ export default function OwnerDormitoryFormPage() {
       setDormitory(savedDormitory);
       setFormValues(toFormValues(savedDormitory));
       setSuccess("บันทึกข้อมูลหอพักสำเร็จ");
+      await uploadSelectedImages(savedDormitory.dormitory_id, selectedImages);
 
       if (!dormitoryId) {
         navigate(
@@ -228,9 +266,69 @@ export default function OwnerDormitoryFormPage() {
                 </div>
               );
             })}
+            <div>
+              <label
+                htmlFor="dormitory-images"
+                className="mb-1 block font-medium"
+              >
+                รูปภาพหอพัก
+              </label>
+              <input
+                id="dormitory-images"
+                type="file"
+                accept=".jpg,.jpeg,.png,image/jpeg,image/png"
+                multiple
+                disabled={saving || uploadingImages}
+                onChange={handleImageSelection}
+                className="block w-full text-sm"
+              />
+              {selectedImages.length > 0 && (
+                <ul aria-label="ไฟล์รูปหอพักที่เลือก" className="mt-2 text-sm">
+                  {selectedImages.map((file, index) => (
+                    <li key={`${file.name}-${index}`}>{file.name}</li>
+                  ))}
+                </ul>
+              )}
+              <p className="mt-1 text-sm text-dark/70">
+                ไฟล์ที่เลือกจะอัปโหลดหลังบันทึกข้อมูลหอพักสำเร็จ
+                หากไฟล์ถูกปฏิเสธ สามารถเลือกไฟล์ใหม่แล้วบันทึกอีกครั้งได้
+              </p>
+              {uploadingImages && (
+                <p role="status" className="mt-2 text-sm">
+                  กำลังอัปโหลดรูปภาพ...
+                </p>
+              )}
+              {imageUploadError && (
+                <p role="alert" className="mt-2 text-sm text-red-700">
+                  {imageUploadError}
+                </p>
+              )}
+              {imageUploadResult.accepted.length > 0 && (
+                <div role="status" className="mt-2">
+                  <p className="font-medium">รูปภาพที่อัปโหลดแล้ว</p>
+                  <ul aria-label="รูปภาพหอพักที่อัปโหลดแล้ว">
+                    {imageUploadResult.accepted.map((image) => (
+                      <li key={image.image_id}>{image.filename}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+              {imageUploadResult.rejected.length > 0 && (
+                <div role="alert" className="mt-2 text-sm text-red-700">
+                  <p className="font-medium">ไฟล์ที่ถูกปฏิเสธ</p>
+                  <ul aria-label="รูปหอพักที่ถูกปฏิเสธ">
+                    {imageUploadResult.rejected.map((image, index) => (
+                      <li key={`${image.filename}-${index}`}>
+                        {image.filename}: {image.reason}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
             <button
               type="submit"
-              disabled={saving}
+              disabled={saving || uploadingImages}
               className="rounded-lg bg-primary px-4 py-2 font-medium text-white disabled:opacity-60"
             >
               {saving ? "กำลังบันทึก..." : "บันทึกข้อมูลหอพัก"}

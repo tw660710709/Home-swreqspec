@@ -1223,3 +1223,10 @@
 - หมายเหตุ: ทีมเลือก local filesystem เอง ไม่ได้มาจาก spec/plan; เพิ่ม `python-multipart` ใน manifest ตามที่ทีมอนุญาต; ไม่แก้ `database.py` เพราะ schema metadata รูปที่สร้างใน T-01 รองรับการบันทึกแล้ว
 - ผล test: `PYTHONPATH=.. pytest -q tests/test_AC_DOR_10.py` ผ่าน 5 tests; `PYTHONPATH=.. pytest -q tests` ผ่าน 63 tests
 - สิ่งที่เกือบต้องเดาแต่ถามแทน: ถามทีมก่อนเลือกเทคโนโลยีจัดเก็บรูปและก่อนแตะ `backend/requirements.txt`; ทีมยืนยัน local filesystem และอนุญาตเพิ่ม dependency; ไม่พบประเด็นกำกวมอื่นที่ต้องตัดสินใจแทนทีม
+
+## 2569-11-13 09:46:31 คำสั่ง: `/implement T-12 specs/003-manage_dormitory_data/tasks.md`
+- ไฟล์ที่แก้/สร้าง: `frontend/src/pages/OwnerDormitoryFormPage.jsx`, `frontend/src/pages/OwnerRoomsPage.jsx`, `frontend/src/api/client.js`, `frontend/src/__tests__/AC-DOR-10-image-upload.test.jsx`, `specs/003-manage_dormitory_data/tasks.md`
+- ผลลัพธ์: เพิ่มการเลือกและอัปโหลดรูปหอพัก/ห้องพัก แสดงรายชื่อรูปที่รับและสาเหตุของรูปที่ปฏิเสธ คงรายการรูปที่รับไว้เมื่อเลือกไฟล์ทดแทน และเปิดให้เลือกไฟล์เดิมซ้ำได้; เปลี่ยนสถานะ T-12 เป็น "เสร็จ รอทีมตรวจ"
+- มติทีม: ฟอร์มสร้างหอพักเลือกไฟล์ก่อนได้ และอัปโหลดอัตโนมัติหลังบันทึกหอพักสำเร็จเพื่อใช้ `dormitoryId`
+- ผล test: `test_AC_DOR_10_rejected_files_keep_valid_files` และ tests T-12 อีก 3 รายการผ่าน; `npm test` ผ่าน 46 tests ใน 25 ไฟล์; `npm run build` ผ่าน
+- สิ่งที่เกือบต้องเดาแต่ถามแทน: จังหวะอัปโหลดรูปในฟอร์มสร้างหอพัก; ทีมยืนยันให้อัปโหลดหลังบันทึกสำเร็จ

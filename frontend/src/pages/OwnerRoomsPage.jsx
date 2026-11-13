@@ -6,9 +6,11 @@ import {
   getOwnerDormitory,
   getOwnerDormitoryRooms,
   updateOwnerDormitoryRoom,
+  uploadOwnerRoomImages,
 } from "../api/client.js";
 
-// รองรับ CON-ACC-01, CON-AUTH-01, CON-DATA-01, FR-DOR-12 และ AC-DOR-08
+// รองรับ CON-ACC-01, CON-AUTH-01, CON-DATA-01, CON-FILE-01, FR-DOR-12,
+// FR-DOR-14, FR-DOR-18 และ AC-DOR-08, AC-DOR-10
 export default function OwnerRoomsPage() {
   const { dormitoryId } = useParams();
   const [dormitories, setDormitories] = useState([]);
@@ -20,6 +22,9 @@ export default function OwnerRoomsPage() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [selectedRoomImages, setSelectedRoomImages] = useState({});
+  const [roomImageResults, setRoomImageResults] = useState({});
+  const [roomImageErrors, setRoomImageErrors] = useState({});
 
   useEffect(() => {
     let active = true;
@@ -30,6 +35,9 @@ export default function OwnerRoomsPage() {
     setDormitory(null);
     setRooms([]);
     setRentValues({});
+    setSelectedRoomImages({});
+    setRoomImageResults({});
+    setRoomImageErrors({});
 
     async function loadRoomsPage() {
       try {
@@ -136,6 +144,63 @@ export default function OwnerRoomsPage() {
     }
   }
 
+  // รองรับ CON-FILE-01, FR-DOR-14, FR-DOR-18 และ AC-DOR-10
+  function handleRoomImageSelection(roomId, event) {
+    setSelectedRoomImages((current) => ({
+      ...current,
+      [roomId]: Array.from(event.target.files ?? []),
+    }));
+    setRoomImageErrors((current) => {
+      if (!Object.prototype.hasOwnProperty.call(current, roomId)) return current;
+      const next = { ...current };
+      delete next[roomId];
+      return next;
+    });
+    event.target.value = "";
+  }
+
+  // รองรับ CON-AUTH-01, CON-FILE-01, FR-DOR-14, FR-DOR-18 และ AC-DOR-10
+  async function handleRoomImageUpload(room) {
+    const files = selectedRoomImages[room.room_id] ?? [];
+    setSaving(true);
+    setRoomImageErrors((current) => ({
+      ...current,
+      [room.room_id]: "",
+    }));
+    try {
+      const result = await uploadOwnerRoomImages(
+        dormitoryId,
+        room.room_id,
+        files,
+      );
+      setRoomImageResults((current) => {
+        const previous = current[room.room_id] ?? {
+          accepted: [],
+          rejected: [],
+        };
+        return {
+          ...current,
+          [room.room_id]: {
+            accepted: [...previous.accepted, ...result.accepted],
+            rejected: result.rejected,
+          },
+        };
+      });
+      setSelectedRoomImages((current) => ({
+        ...current,
+        [room.room_id]: [],
+      }));
+    } catch (err) {
+      setRoomImageErrors((current) => ({
+        ...current,
+        [room.room_id]:
+          err instanceof Error ? err.message : "ไม่สามารถอัปโหลดรูปภาพได้",
+      }));
+    } finally {
+      setSaving(false);
+    }
+  }
+
   return (
     <section className="mx-auto max-w-5xl px-6 py-8">
       <h1 className="mb-6 text-3xl font-bold">จัดการข้อมูลห้องพัก</h1>
@@ -234,6 +299,86 @@ export default function OwnerRoomsPage() {
                         บันทึกราคา
                       </button>
                     </form>
+                    <div className="mt-4 border-t border-sand pt-4">
+                      <label
+                        htmlFor={`room-images-${room.room_id}`}
+                        className="mb-1 block font-medium"
+                      >
+                        รูปภาพห้องพัก {room.room_id}
+                      </label>
+                      <input
+                        id={`room-images-${room.room_id}`}
+                        type="file"
+                        accept=".jpg,.jpeg,.png,image/jpeg,image/png"
+                        multiple
+                        disabled={saving}
+                        onChange={(event) =>
+                          handleRoomImageSelection(room.room_id, event)
+                        }
+                        className="block w-full text-sm"
+                      />
+                      {(selectedRoomImages[room.room_id] ?? []).length > 0 && (
+                        <ul
+                          aria-label={`ไฟล์รูปห้อง ${room.room_id} ที่เลือก`}
+                          className="mt-2 text-sm"
+                        >
+                          {selectedRoomImages[room.room_id].map(
+                            (file, index) => (
+                              <li key={`${file.name}-${index}`}>{file.name}</li>
+                            ),
+                          )}
+                        </ul>
+                      )}
+                      <p className="mt-1 text-sm text-dark/70">
+                        หากไฟล์ถูกปฏิเสธ สามารถเลือกไฟล์ใหม่แล้วอัปโหลดอีกครั้งได้
+                      </p>
+                      <button
+                        type="button"
+                        disabled={
+                          saving ||
+                          (selectedRoomImages[room.room_id] ?? []).length === 0
+                        }
+                        onClick={() => handleRoomImageUpload(room)}
+                        className="mt-2 rounded-lg border border-dark px-4 py-2 font-medium hover:bg-sand/40 disabled:opacity-60"
+                      >
+                        อัปโหลดรูปภาพห้องพัก
+                      </button>
+                      {roomImageErrors[room.room_id] && (
+                        <p role="alert" className="mt-2 text-sm text-red-700">
+                          {roomImageErrors[room.room_id]}
+                        </p>
+                      )}
+                      {roomImageResults[room.room_id]?.accepted.length > 0 && (
+                        <div role="status" className="mt-2">
+                          <p className="font-medium">รูปภาพที่อัปโหลดแล้ว</p>
+                          <ul
+                            aria-label={`รูปห้อง ${room.room_id} ที่อัปโหลดแล้ว`}
+                          >
+                            {roomImageResults[room.room_id].accepted.map(
+                              (image) => (
+                                <li key={image.image_id}>{image.filename}</li>
+                              ),
+                            )}
+                          </ul>
+                        </div>
+                      )}
+                      {roomImageResults[room.room_id]?.rejected.length > 0 && (
+                        <div role="alert" className="mt-2 text-sm text-red-700">
+                          <p className="font-medium">ไฟล์ที่ถูกปฏิเสธ</p>
+                          <ul
+                            aria-label={`รูปห้อง ${room.room_id} ที่ถูกปฏิเสธ`}
+                          >
+                            {roomImageResults[room.room_id].rejected.map(
+                              (image, index) => (
+                                <li key={`${image.filename}-${index}`}>
+                                  {image.filename}: {image.reason}
+                                </li>
+                              ),
+                            )}
+                          </ul>
+                        </div>
+                      )}
+                    </div>
                   </li>
                 );
               })}

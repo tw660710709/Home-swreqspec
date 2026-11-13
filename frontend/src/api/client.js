@@ -158,6 +158,66 @@ export async function updateOwnerDormitory(dormitoryId, dormitory) {
   );
 }
 
+// รองรับ CON-FILE-01, FR-DOR-14, FR-DOR-18 และ AC-DOR-10
+async function uploadOwnerImages(path, files) {
+  const formData = new FormData();
+  for (const file of files) {
+    formData.append("files", file);
+  }
+
+  const response = await fetch(path, {
+    method: "POST",
+    headers: prototypeOwnerHeaders,
+    body: formData,
+  });
+  if (!response.ok) {
+    throw new Error(`ไม่สามารถอัปโหลดรูปภาพได้ (${response.status})`);
+  }
+
+  const data = await response.json();
+  if (
+    !data ||
+    typeof data !== "object" ||
+    !Array.isArray(data.accepted) ||
+    !Array.isArray(data.rejected) ||
+    data.accepted.some(
+      (image) =>
+        !image ||
+        typeof image !== "object" ||
+        typeof image.image_id !== "string" ||
+        typeof image.filename !== "string" ||
+        typeof image.file_type !== "string" ||
+        typeof image.file_size_bytes !== "number",
+    ) ||
+    data.rejected.some(
+      (image) =>
+        !image ||
+        typeof image !== "object" ||
+        typeof image.filename !== "string" ||
+        typeof image.reason !== "string",
+    )
+  ) {
+    throw new Error("รูปแบบผลการอัปโหลดรูปภาพไม่ถูกต้อง");
+  }
+  return data;
+}
+
+// รองรับ CON-AUTH-01, CON-FILE-01, FR-DOR-14, FR-DOR-18 และ AC-DOR-10
+export async function uploadOwnerDormitoryImages(dormitoryId, files) {
+  return uploadOwnerImages(
+    `/owners/dormitories/${encodeURIComponent(dormitoryId)}/images`,
+    files,
+  );
+}
+
+// รองรับ CON-AUTH-01, FR-DOR-12, FR-DOR-14, FR-DOR-18 และ AC-DOR-10
+export async function uploadOwnerRoomImages(dormitoryId, roomId, files) {
+  return uploadOwnerImages(
+    `/owners/dormitories/${encodeURIComponent(dormitoryId)}/rooms/${encodeURIComponent(roomId)}/images`,
+    files,
+  );
+}
+
 // รองรับ CON-AUTH-01, FR-DOR-12 และ ASM-17
 export async function getOwnerDormitoryRooms(dormitoryId) {
   const response = await fetch(
