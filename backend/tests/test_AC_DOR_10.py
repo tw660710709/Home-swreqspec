@@ -255,3 +255,145 @@ class OwnerDormitoryImageUploadTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(mismatched_room.status_code, 404)
         self.assertEqual(self._stored_image_rows(), [])
 
+    async def test_TC_DOR_10_1_reject_only_unsupported_file_and_keep_valid_files(
+        self,
+    ) -> None:
+        # Given เจ้าของเลือก JPG, JPEG และ PNG ที่ถูกต้องร่วมกับ GIF
+        dormitory_id = await self._create_dormitory()
+        files = (
+            ("valid.jpg", JPEG_HEADER + b"jpg", "image/jpeg"),
+            ("valid.jpeg", JPEG_HEADER + b"jpeg", "image/jpeg"),
+            ("valid.png", PNG_HEADER + b"png", "image/png"),
+            ("unsupported.gif", GIF_HEADER + b"gif", "image/gif"),
+        )
+
+        # When ระบบตรวจและรับชุดไฟล์ที่เลือก
+        response = await self._upload(
+            f"/owners/dormitories/{dormitory_id}/images",
+            *files,
+        )
+
+        # Then ปฏิเสธเฉพาะ GIF พร้อมสาเหตุและรับไฟล์ที่ถูกต้องทั้งหมด
+        self.assertEqual(response.status_code, 200)
+        result = response.json()
+        self.assertEqual(
+            {item["filename"] for item in result["accepted"]},
+            {"valid.jpg", "valid.jpeg", "valid.png"},
+        )
+        self.assertEqual(
+            [item["filename"] for item in result["rejected"]],
+            ["unsupported.gif"],
+        )
+        self.assertIn("JPG, JPEG หรือ PNG", result["rejected"][0]["reason"])
+        self.assertEqual(len(self._stored_image_rows()), 3)
+
+    async def test_TC_DOR_10_2_accept_file_at_5_mb_boundary(self) -> None:
+        # Given เจ้าของเลือก JPG ขนาดเท่ากับ 5 MB
+        dormitory_id = await self._create_dormitory()
+        content = JPEG_HEADER + b"x" * (MAX_IMAGE_SIZE_BYTES - len(JPEG_HEADER))
+
+        # When ระบบตรวจไฟล์รูปภาพ
+        response = await self._upload(
+            f"/owners/dormitories/{dormitory_id}/images",
+            ("boundary.jpg", content, "image/jpeg"),
+        )
+
+        # Then ระบบรับและจัดเก็บไฟล์ขนาดไม่เกิน 5 MB
+        self.assertEqual(response.status_code, 200)
+        accepted = response.json()["accepted"]
+        self.assertEqual(len(accepted), 1)
+        self.assertEqual(accepted[0]["file_size_bytes"], MAX_IMAGE_SIZE_BYTES)
+        self.assertEqual(len(self._stored_image_rows()), 1)
+        stored_path = self._storage_path(accepted[0]["image_id"], "JPG")
+        self.assertEqual(stored_path.stat().st_size, MAX_IMAGE_SIZE_BYTES)
+
+    async def test_TC_DOR_10_3_reject_only_oversized_file(self) -> None:
+        # Given เจ้าของเลือก JPG เกิน 5 MB ร่วมกับ JPG ที่ถูกต้อง
+        dormitory_id = await self._create_dormitory()
+        oversized = JPEG_HEADER + b"x" * (
+            MAX_IMAGE_SIZE_BYTES + 1 - len(JPEG_HEADER)
+        )
+
+        # When ระบบตรวจไฟล์รูปภาพ
+        response = await self._upload(
+            f"/owners/dormitories/{dormitory_id}/images",
+            ("valid.jpg", JPEG_HEADER + b"valid", "image/jpeg"),
+            ("oversized.jpg", oversized, "image/jpeg"),
+        )
+
+        # Then ปฏิเสธเฉพาะไฟล์เกิน 5 MB พร้อมสาเหตุและรับไฟล์ถูกต้อง
+        self.assertEqual(response.status_code, 200)
+        result = response.json()
+        self.assertEqual(
+            [item["filename"] for item in result["accepted"]],
+            ["valid.jpg"],
+        )
+        self.assertEqual(
+            [item["filename"] for item in result["rejected"]],
+            ["oversized.jpg"],
+        )
+        self.assertIn("ไม่เกิน 5 MB", result["rejected"][0]["reason"])
+        self.assertEqual(len(self._stored_image_rows()), 1)
+
+    async def test_TC_DOR_10_4_accept_tenth_image_per_dormitory_or_room(
+        self,
+    ) -> None:
+        # Given หอพักและห้องพักแต่ละรายการมีรูปที่รับไว้แล้ว 9 รูป
+        dormitory_id = await self._create_dormitory()
+        room_id = await self._create_room(dormitory_id)
+        image = ("image.jpg", JPEG_HEADER + b"image-data", "image/jpeg")
+        dormitory_url = f"/owners/dormitories/{dormitory_id}/images"
+        room_url = f"/owners/dormitories/{dormitory_id}/rooms/{room_id}/images"
+        dormitory_seed = await self._upload(dormitory_url, *([image] * 9))
+        room_seed = await self._upload(room_url, *([image] * 9))
+        self.assertEqual(len(dormitory_seed.json()["accepted"]), 9)
+        self.assertEqual(len(room_seed.json()["accepted"]), 9)
+
+        # When เจ้าของอัปโหลดรูปที่ 10 แยกสำหรับหอพักและห้องพัก
+        tenth_dormitory = await self._upload(dormitory_url, image)
+        tenth_room = await self._upload(room_url, image)
+
+        # Then ระบบรับรูปที่ 10 ได้ในทั้งสองขอบเขต
+        self.assertEqual(len(tenth_dormitory.json()["accepted"]), 1)
+        self.assertEqual(len(tenth_dormitory.json()["rejected"]), 0)
+        self.assertEqual(len(tenth_room.json()["accepted"]), 1)
+        self.assertEqual(len(tenth_room.json()["rejected"]), 0)
+        rows = self._stored_image_rows()
+        self.assertEqual(
+            sum(row["dormitory_id"] == dormitory_id and row["room_id"] is None for row in rows),
+            10,
+        )
+        self.assertEqual(
+            sum(row["room_id"] == room_id for row in rows),
+            10,
+        )
+
+    async def test_TC_DOR_10_5_reject_only_image_over_limit(self) -> None:
+        # Given หอพักและห้องพักแต่ละรายการมีรูปที่รับไว้แล้ว 10 รูป
+        dormitory_id = await self._create_dormitory()
+        room_id = await self._create_room(dormitory_id)
+        image = ("existing.jpg", JPEG_HEADER + b"image-data", "image/jpeg")
+        dormitory_url = f"/owners/dormitories/{dormitory_id}/images"
+        room_url = f"/owners/dormitories/{dormitory_id}/rooms/{room_id}/images"
+        dormitory_seed = await self._upload(dormitory_url, *([image] * 10))
+        room_seed = await self._upload(room_url, *([image] * 10))
+        self.assertEqual(len(dormitory_seed.json()["accepted"]), 10)
+        self.assertEqual(len(room_seed.json()["accepted"]), 10)
+        before_ids = {row["image_id"] for row in self._stored_image_rows()}
+
+        # When เจ้าของเลือกไฟล์ที่ถูกต้องเพิ่มอีก 1 รูปในแต่ละขอบเขต
+        extra_image = ("extra.jpg", JPEG_HEADER + b"extra", "image/jpeg")
+        over_limit_dormitory = await self._upload(dormitory_url, extra_image)
+        over_limit_room = await self._upload(room_url, extra_image)
+
+        # Then ปฏิเสธเฉพาะไฟล์เกินจำนวนพร้อมสาเหตุและคงรูปเดิมไว้
+        for response in (over_limit_dormitory, over_limit_room):
+            self.assertEqual(len(response.json()["accepted"]), 0)
+            self.assertEqual(
+                [item["filename"] for item in response.json()["rejected"]],
+                ["extra.jpg"],
+            )
+            self.assertIn("ไม่เกิน 10 รูป", response.json()["rejected"][0]["reason"])
+        after_ids = {row["image_id"] for row in self._stored_image_rows()}
+        self.assertEqual(after_ids, before_ids)
+
