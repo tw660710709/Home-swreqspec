@@ -142,7 +142,7 @@ AI จะเปิดอ่านเมื่อ spec.md ไม่ชัด แ�
 
 **ผู้รับผิดชอบ:** 670710713 ชนัสถ์นันท์ วะรีวะราช
 </details>
-
+<details>
 <summary>UC-05 | ดูสถิติหอพัก</summary>
   
 <img width="795" height="563" alt="image" src="https://github.com/user-attachments/assets/885959b2-8436-4c07-a80c-638969e97763" />
