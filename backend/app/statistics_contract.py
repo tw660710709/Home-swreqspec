@@ -14,8 +14,8 @@ class DormitoryStatisticsSummary:
     total_rooms: int = 0
     vacant_rooms: int = 0
     occupied_rooms: int = 0
-    detail_page_views: int = 0
-    appointments_count: int = 0
+    detail_page_views: Optional[int] = None
+    appointments_count: Optional[int] = None
     collected_at: Optional[date] = None
 
     def as_dict(self) -> dict[str, object]:
@@ -53,8 +53,8 @@ class RoomStatusSnapshot:
 class DateRangeSummary:
     start_date: date
     end_date: date
-    detail_page_views: int = 0
-    appointments_count: int = 0
+    detail_page_views: Optional[int] = None
+    appointments_count: Optional[int] = None
 
     def as_dict(self) -> dict[str, object]:
         return {

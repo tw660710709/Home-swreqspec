@@ -1068,6 +1068,54 @@
 
 ---
 
+## 2569-11-13 18:53 คำสั่ง: แก้ตาม F-01 ใน `specs/005-view_dormitory_statistics/rtm.md`
+
+- คำตอบทีมที่ใช้อ้างอิงจากการถามก่อนหน้า: ให้รอระบุแหล่งข้อมูลผู้เข้าชมและการนัดหมาย; คง owner mapping เดิมไว้แยกแก้ตาม F-02
+- การแก้: คงการนับสถานะห้องจาก SQLite; เปลี่ยน metrics ผู้เข้าชม/นัดหมายจาก `0` placeholder เป็น `null` ใน API contract และเว้นช่องใน CSV จนกว่าจะมี source เพื่อไม่รายงานข้อมูลที่ยังไม่มีเป็นศูนย์จริง
+- เอกสารที่อัปเดต: RTM ระบุ F-01 ว่ายังเปิดอยู่เนื่องจาก source รอทีมยืนยัน; plan ระบุ source/schema ของ `DormitoryVisit` และ `Appointment` ว่ายังรอทีมยืนยัน
+- Tests: เปลี่ยน assertions ให้ตรวจ `null`, empty state และช่องว่างใน CSV; เปลี่ยนชื่อ test ที่เกี่ยวข้องให้อ้าง `AC-STAT-04` และ `AC-STAT-05`
+- ผล backend: `cd backend && PYTHONPATH=.. pytest -v tests/test_statistics.py tests/test_statistics_contract.py` ผ่าน 12 tests
+- ผล frontend: `cd frontend && npm test -- --run src/App.test.jsx` ผ่าน 12 tests
+- F-01 ยังไม่ปิด: ยังแสดง/ส่งออกตัวเลขจริงของ page views และ appointments ไม่ได้จนกว่าทีมจะระบุแหล่งข้อมูล
+
+---
+
+## 2569-11-13 18:55 คำสั่ง: แก้ตาม F-02 ใน `specs/005-view_dormitory_statistics/rtm.md`
+
+- คำตอบทีมที่ใช้อ้างอิงจากการถามก่อนหน้า: รอ Login/Manage Account ที่มี session และ owner mapping; ระหว่างนี้ปิดกั้น API สถิติทั้งหมด
+- วิธีแก้: statistics, room-status, date-range และ report endpoints ปฏิเสธทุกคำขอด้วย HTTP 401; เอา mapping เจ้าของแบบ hard-coded และการยืนยันจาก `owner_id` query ออกจาก backend; เอา `ownerId` จาก URL/client ออก
+- เอกสารที่อัปเดต: RTM ย้าย F-02 ไป “แก้แล้ว” โดยระบุว่าเจ้าของจริงยังเข้าไม่ได้จนกว่า auth จะพร้อม; แถว `CON-AUTH-01` เป็น “ยังไม่ถึง”; อัปเดต plan ว่า API ถูกปิดกั้นชั่วคราว
+- Test: `test_CON_AUTH_01_statistics_endpoints_reject_unverified_owner_ids` ตรวจทั้ง 4 endpoints โดยไม่มี owner ID, ส่ง owner ID ที่ตรง และส่งค่า owner ID ปลอม; ทุกกรณีต้องได้ 401
+- ผล backend: `cd backend && PYTHONPATH=.. pytest -v tests/test_statistics.py tests/test_statistics_contract.py` ผ่าน 6 tests
+- ผล frontend: `cd frontend && npm test -- --run src/App.test.jsx` ผ่าน 12 tests
+- ผล `git diff --check`: ผ่าน
+- ข้อจำกัดคงเหลือ: ผู้ใช้ที่เป็นเจ้าของหอพักยังดูสถิติไม่ได้จนกว่า Login/Manage Account จะมี identity และ owner mapping ที่ยืนยันได้; F-01 ยังคงรอแหล่งข้อมูลผู้เข้าชม/นัดหมาย
+
+---
+
+## 2569-11-13 คำสั่ง: แก้ตาม F-03 ใน `specs/005-view_dormitory_statistics/rtm.md`
+
+- การแก้ UI: จัดส่วนหัวเป็นแนวตั้งบนจอแคบและแนวนอนบนจอกว้าง; ปรับกราฟเป็น 2 คอลัมน์บนโทรศัพท์และ 4 คอลัมน์บนจอกว้าง โดยใช้ความสูงกราฟที่เหมาะกับจำนวนแถว
+- การแก้ test: เพิ่ม Playwright browser tests สำหรับ viewport โทรศัพท์ 375×812, แท็บเล็ต 768×1024 และเดสก์ท็อป 1440×900; ตรวจการล้นแนวนอน การจัดคอลัมน์ ขนาดตัวอักษรกราฟอย่างน้อย 12px และการมองเห็นข้อมูล/ตัวควบคุม
+- เอกสารที่อัปเดต: RTM ย้าย F-03 ไป “แก้แล้ว” และปรับสรุปเป็นครบ 3, ยังไม่ถึง 5, ช่องโหว่ 3; เพิ่มการตรวจ browser ใน `test-cases.md` และระบุการทดสอบใน `plan.md`
+- ผล browser: `cd frontend && npm run test:responsive` ผ่าน 3 tests
+- ผล frontend: `cd frontend && npm test -- --run` ผ่าน 20 test files และ 31 tests
+- ผล build: `cd frontend && npm run build` ผ่าน
+- ผล audit: `cd frontend && npm audit --audit-level=high` ไม่พบช่องโหว่
+- ไม่แก้ `spec.md` หรือเพิ่ม requirement/ID ใหม่; F-01 และ F-04 ยังคงเปิดตาม RTM
+
+---
+
+## 2569-11-13 คำสั่ง: แก้ตาม F-04 ใน `specs/005-view_dormitory_statistics/rtm.md`
+
+- ข้อจำกัดที่พบ: F-04 ต้องวัดตั้งแต่กดยืนยันช่วงวันจนแสดงสถิติครบจาก API จริง; ปัจจุบัน API ตอบ 401 ระหว่างรอ auth ตาม F-02 และยังไม่มีแหล่งข้อมูลผู้เข้าชม/นัดหมายตาม F-01
+- คำถามของ AI: ต้องการเพิ่ม browser timing test ด้วย API จำลอง, เลื่อนการทดสอบจนมี auth/ข้อมูลจริง, หรือให้รายละเอียดสภาพแวดล้อม API จริง?
+- คำตอบของทีม: เลื่อนการทดสอบไว้ก่อน
+- การแก้เอกสาร: RTM ระบุว่า test ปัจจุบันวัดเฉพาะ UI ด้วย mock และคง F-04/NFR-PERF-01 เป็นช่องโหว่; plan บันทึกเงื่อนไขก่อนทำ end-to-end performance test
+- ไม่เพิ่มหรือแก้ test เพราะยังไม่มี API/auth/source จริงที่ทำให้วัดผลตาม NFR ได้โดยตรง; ไม่แก้ `spec.md` และไม่สร้าง ID ใหม่
+
+---
+
 ## 2569-11-13 คำสั่ง: `/tasks specs/003-manage_dormitory_data/spec.md`
 
 - ไฟล์อ้างอิง: `specs/003-manage_dormitory_data/spec.md` (SPEC-DOR-003, Draft v2) และ `specs/003-manage_dormitory_data/plan.md`

@@ -152,7 +152,7 @@ export default function DormDetailPage() {
           ← กลับหน้าแรก
         </Link>
         <Link
-          to={`/dorms/${id}/statistics?ownerId=owner-1`}
+          to={`/dorms/${id}/statistics`}
           className="rounded-lg bg-primary px-4 py-2 font-medium text-white hover:bg-primary-dark"
         >
           ดูสถิติหอพัก

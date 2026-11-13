@@ -354,7 +354,7 @@ describe("dormitory search and details", () => {
     });
 
     render(
-      <MemoryRouter initialEntries={["/dorms/dorm-approved-verified/statistics?ownerId=owner-1"]}>
+      <MemoryRouter initialEntries={["/dorms/dorm-approved-verified/statistics"]}>
         <App />
       </MemoryRouter>,
     );
@@ -368,7 +368,6 @@ describe("dormitory search and details", () => {
     expect(screen.getAllByText("11").length).toBeGreaterThan(0);
     expect(getDormitoryStatistics).toHaveBeenCalledWith({
       dormitoryId: "dorm-approved-verified",
-      ownerId: "owner-1",
       startDate: expect.any(String),
       endDate: expect.any(String),
     });
@@ -392,7 +391,7 @@ describe("dormitory search and details", () => {
     });
 
     render(
-      <MemoryRouter initialEntries={["/dorms/dorm-approved-verified/statistics?ownerId=owner-1"]}>
+      <MemoryRouter initialEntries={["/dorms/dorm-approved-verified/statistics"]}>
         <App />
       </MemoryRouter>,
     );
@@ -424,7 +423,7 @@ describe("dormitory search and details", () => {
     });
 
     render(
-      <MemoryRouter initialEntries={["/dorms/dorm-approved-verified/statistics?ownerId=owner-1"]}>
+      <MemoryRouter initialEntries={["/dorms/dorm-approved-verified/statistics"]}>
         <App />
       </MemoryRouter>,
     );
@@ -456,7 +455,7 @@ describe("dormitory search and details", () => {
     });
 
     render(
-      <MemoryRouter initialEntries={["/dorms/dorm-approved-verified/statistics?ownerId=owner-1"]}>
+      <MemoryRouter initialEntries={["/dorms/dorm-approved-verified/statistics"]}>
         <App />
       </MemoryRouter>,
     );
@@ -485,7 +484,7 @@ describe("dormitory search and details", () => {
     });
 
     render(
-      <MemoryRouter initialEntries={["/dorms/dorm-approved-verified/statistics?ownerId=owner-1"]}>
+      <MemoryRouter initialEntries={["/dorms/dorm-approved-verified/statistics"]}>
         <App />
       </MemoryRouter>,
     );
@@ -531,7 +530,7 @@ describe("dormitory search and details", () => {
 
     try {
       render(
-        <MemoryRouter initialEntries={["/dorms/dorm-approved-verified/statistics?ownerId=owner-1"]}>
+        <MemoryRouter initialEntries={["/dorms/dorm-approved-verified/statistics"]}>
           <App />
         </MemoryRouter>,
       );
@@ -541,7 +540,6 @@ describe("dormitory search and details", () => {
       await waitFor(() => {
         expect(downloadDormitoryStatisticsReport).toHaveBeenCalledWith({
           dormitoryId: "dorm-approved-verified",
-          ownerId: "owner-1",
           startDate: expect.any(String),
           endDate: expect.any(String),
         });
@@ -596,7 +594,7 @@ describe("dormitory search and details", () => {
       });
 
     render(
-      <MemoryRouter initialEntries={["/dorms/dorm-approved-verified/statistics?ownerId=owner-1"]}>
+      <MemoryRouter initialEntries={["/dorms/dorm-approved-verified/statistics"]}>
         <App />
       </MemoryRouter>,
     );
@@ -616,7 +614,6 @@ describe("dormitory search and details", () => {
     expect(elapsedMilliseconds).toBeLessThanOrEqual(3000);
     expect(getDormitoryStatistics).toHaveBeenLastCalledWith({
       dormitoryId: "dorm-approved-verified",
-      ownerId: "owner-1",
       startDate: "2026-01-08",
       endDate: "2026-01-14",
     });

@@ -433,9 +433,8 @@ export async function getDormitoryDetail(dormitoryId) {
 }
 
 // รองรับ FR-STAT-01, FR-STAT-02, FR-STAT-04, FR-STAT-05 และ AC-STAT-01
-export async function getDormitoryStatistics({ dormitoryId, ownerId, startDate, endDate }) {
+export async function getDormitoryStatistics({ dormitoryId, startDate, endDate }) {
   const params = new URLSearchParams({
-    owner_id: ownerId,
     start_date: startDate,
     end_date: endDate,
   });
@@ -458,12 +457,10 @@ export async function getDormitoryStatistics({ dormitoryId, ownerId, startDate, 
 // รองรับ FR-STAT-07 และ AC-STAT-05
 export async function downloadDormitoryStatisticsReport({
   dormitoryId,
-  ownerId,
   startDate,
   endDate,
 }) {
   const params = new URLSearchParams({
-    owner_id: ownerId,
     start_date: startDate,
     end_date: endDate,
   });

@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Link, useParams, useSearchParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import {
   downloadDormitoryStatisticsReport,
   getDormitoryStatistics,
@@ -42,8 +42,6 @@ function SummaryCard({ label, value, tone = "primary" }) {
 
 export default function DormitoryStatisticsPage() {
   const { id } = useParams();
-  const [searchParams] = useSearchParams();
-  const ownerId = searchParams.get("ownerId") || "owner-1";
   const initialRange = useMemo(defaultDateRange, []);
   const [startDate, setStartDate] = useState(initialRange.startDate);
   const [endDate, setEndDate] = useState(initialRange.endDate);
@@ -59,7 +57,6 @@ export default function DormitoryStatisticsPage() {
     try {
       const result = await getDormitoryStatistics({
         dormitoryId: id,
-        ownerId,
         startDate: nextStartDate,
         endDate: nextEndDate,
       });
@@ -74,7 +71,7 @@ export default function DormitoryStatisticsPage() {
   useEffect(() => {
     loadStatistics();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id, ownerId]);
+  }, [id]);
 
   const totalRooms = stats
     ? (stats.summary.total_rooms ?? stats.summary.vacant_rooms + stats.summary.occupied_rooms)
@@ -110,7 +107,6 @@ export default function DormitoryStatisticsPage() {
     try {
       const report = await downloadDormitoryStatisticsReport({
         dormitoryId: id,
-        ownerId,
         startDate,
         endDate,
       });
@@ -131,7 +127,7 @@ export default function DormitoryStatisticsPage() {
 
   return (
     <div className="mx-auto max-w-6xl px-6 py-8">
-      <div className="mb-6 flex items-center justify-between gap-4">
+      <div className="mb-6 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
         <div>
           <p className="text-sm font-medium uppercase tracking-wide text-primary">View Dormitory Statistics</p>
           <h1 className="mt-1 text-3xl font-bold">สถิติหอพัก</h1>
@@ -214,7 +210,7 @@ export default function DormitoryStatisticsPage() {
 
               <div className="mt-8 rounded-2xl bg-white p-6 shadow-sm">
                 <h2 className="mb-4 text-xl font-bold">กราฟสรุป</h2>
-                <div className="grid h-52 grid-cols-4 items-end gap-4">
+                <div className="grid h-80 grid-cols-2 items-end gap-4 sm:h-52 sm:grid-cols-4">
                   {chartValues.map((value, index) => (
                     <div key={labels[index]} className="flex h-full flex-col items-center justify-end gap-3">
                       <div className="w-full rounded-t-xl bg-primary/80" style={{ height: `${(value / maxChartValue) * 100}%` }} />
