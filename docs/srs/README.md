@@ -213,7 +213,7 @@ AI จะเปิดอ่านเมื่อ spec.md ไม่ชัด แ�
 <details>
 <summary>UC-06 | นัดหมายดูห้องพัก</summary>
 
-![uc-06](images/smells/uc-06-schedule_a_room_viewing.png)
+![uc-06](images/smells/uc-06-schedule_a _room_viewing.png)
 
 **ผู้รับผิดชอบ:** 670710729 พิทักษ์พล ชยานนท์นุรักษ์<br>
 </details>
