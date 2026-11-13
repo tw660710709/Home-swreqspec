@@ -1230,3 +1230,10 @@
 - มติทีม: ฟอร์มสร้างหอพักเลือกไฟล์ก่อนได้ และอัปโหลดอัตโนมัติหลังบันทึกหอพักสำเร็จเพื่อใช้ `dormitoryId`
 - ผล test: `test_AC_DOR_10_rejected_files_keep_valid_files` และ tests T-12 อีก 3 รายการผ่าน; `npm test` ผ่าน 46 tests ใน 25 ไฟล์; `npm run build` ผ่าน
 - สิ่งที่เกือบต้องเดาแต่ถามแทน: จังหวะอัปโหลดรูปในฟอร์มสร้างหอพัก; ทีมยืนยันให้อัปโหลดหลังบันทึกสำเร็จ
+
+## 2569-11-13 09:56:48 คำสั่ง: `/implement T-13 specs/003-manage_dormitory_data/tasks.md`
+- ไฟล์ที่แก้/สร้าง: `frontend/src/pages/OwnerDormitoryFormPage.jsx`, `frontend/src/__tests__/AC-DOR-11-cancel.test.jsx`, `specs/003-manage_dormitory_data/tasks.md`
+- ผลลัพธ์: เพิ่มปุ่ม “ยกเลิก” ในฟอร์มแก้ไขให้กลับหน้ารายการโดยไม่เรียก API บันทึกหรืออัปโหลด; เปิดรายการเดิมอีกครั้งแล้วได้ข้อมูลเดิม; เปลี่ยนสถานะ T-13 เป็น "เสร็จ รอทีมตรวจ"
+- หมายเหตุ: ไม่แก้ `frontend/src/App.jsx` เพราะ route หน้ารายการมีอยู่แล้ว
+- ผล test: `npm test -- --run src/__tests__/AC-DOR-11-cancel.test.jsx` ผ่าน 1 test; `npm test` ผ่าน 47 tests ใน 26 ไฟล์; `npm run build` ผ่าน
+- สิ่งที่เกือบต้องเดาแต่ถามแทน: ไม่มีประเด็นกำกวมเพิ่มเติม; ใช้พฤติกรรมยกเลิกตาม AC-DOR-11 โดยไม่เพิ่มการยืนยันหรือข้อกำหนดอื่น

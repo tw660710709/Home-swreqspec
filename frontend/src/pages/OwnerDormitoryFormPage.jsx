@@ -336,12 +336,22 @@ export default function OwnerDormitoryFormPage() {
           </form>
         </>
       )}
-      <Link
-        to="/owner/dormitories"
-        className="mt-6 inline-block font-medium text-primary hover:underline"
-      >
-        กลับไปรายการหอพัก
-      </Link>
+      {dormitoryId ? (
+        <button
+          type="button"
+          onClick={() => navigate("/owner/dormitories")}
+          className="mt-6 rounded-lg border border-dark px-4 py-2 font-medium hover:bg-sand/40"
+        >
+          ยกเลิก
+        </button>
+      ) : (
+        <Link
+          to="/owner/dormitories"
+          className="mt-6 inline-block font-medium text-primary hover:underline"
+        >
+          กลับไปรายการหอพัก
+        </Link>
+      )}
     </section>
   );
 }
