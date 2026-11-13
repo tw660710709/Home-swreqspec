@@ -1067,3 +1067,24 @@
 - ไม่แก้ spec, plan หรือ tasks เพราะคำตอบเป็นแนวทาง implement ภายใต้ requirement เดิม; อัปเดต RTM และ test ให้สะท้อนแหล่งข้อมูลที่มีจริง
 
 ---
+
+## 2569-11-13 คำสั่ง: `/tasks specs/003-manage_dormitory_data/spec.md`
+
+- ไฟล์อ้างอิง: `specs/003-manage_dormitory_data/spec.md` (SPEC-DOR-003, Draft v2) และ `specs/003-manage_dormitory_data/plan.md`
+- ผลลัพธ์: สร้าง `specs/003-manage_dormitory_data/tasks.md` พร้อมลำดับงาน ตารางครอบคลุม AC และ Constraint; แยกงานที่รอคำตอบ Q-02 โดยไม่กำหนดพฤติกรรมแทนทีม
+- ข้อควรทราบ: AC-DOR-08 ต้องมีผู้ทดสอบจริงสำหรับ usability testing; AC-DOR-08/12 อาจต้องอาศัยสถานะและมุมมองจาก UC-13/UC-01 ที่มีอยู่หรือ fixture ตามแผน
+- คำถามที่ AI ถาม: ไม่มี
+- คำตอบของทีม: ไม่มี
+
+---
+
+## 2569-11-13 คำสั่ง: แก้รอบที่ 1 ตาม `.github/prompts/tasks.prompt.md`
+
+- ไฟล์อ้างอิง: `.github/prompts/tasks.prompt.md`, `specs/003-manage_dormitory_data/spec.md` (SPEC-DOR-003, Draft v2), `specs/003-manage_dormitory_data/plan.md`
+- ผลลัพธ์: ปรับ `specs/003-manage_dormitory_data/tasks.md` เป็น task ID T-01 ถึง T-16 แบ่งเฟส 0, หนึ่งเฟสต่อ AC-DOR-07 ถึง AC-DOR-12 และเฟสรอ Q-02; เพิ่มจุดตรวจท้ายทุกเฟสที่ไม่ใช่เฟสรอคำตอบ, task 7 ช่อง, ตารางตามรอย AC/Constraint/FR และคัดลอก Q-02
+- เหตุผลที่แก้: รูปแบบเดิมเป็นรายการงานทั่วไป ไม่ได้ใช้ T-ID, vertical slices ต่อ AC, จุดตรวจ Given/When/Then, 7 ช่องต่อ task และตาราง FR ตาม prompt
+- ข้อสังเกต: plan อ้างถึง auth ที่มีอยู่ แต่ไม่พบกลไกยืนยันตัวตนเจ้าของในโค้ดปัจจุบัน; จึงระบุเป็น dependency และห้ามสร้าง auth เพิ่มเอง
+- คำถามที่ AI ถาม: auth ภายนอกตาม plan หรือบล็อกจนยืนยัน/ปรับ plan; ไม่มีการเลือกตอบเฉพาะ จึงคงเป็น dependency gate และไม่สร้าง Open Question ID ใหม่
+- ไม่เริ่มทำ task หรือแก้โค้ด
+
+---
