@@ -184,7 +184,7 @@ AI จะเปิดอ่านเมื่อ spec.md ไม่ชัด แ�
 </details>
 
 <details>
-<summary>UC-09 | เขียนเเละเเก้ไขข้อมูลหอพัก</summary>
+<summary>UC-09 | เขียนเเละเเก้ไขรีวิวหอพัก</summary>
 
 ![UC-09](images/smells/Smell09.png)
 
