@@ -1192,3 +1192,9 @@
 - หมายเหตุ: ไม่แก้ `database.py` เพราะ schema จาก T-01 มีตารางห้องและฟิลด์ตาม spec ครบแล้ว; ไม่เพิ่มฟิลด์ห้องหรือกฎช่วงราคาที่ spec ไม่ได้กำหนด
 - ผล test: `PYTHONPATH=. pytest -q backend/tests/test_AC_DOR_08.py` ผ่าน 6 tests; `PYTHONPATH=. pytest -q backend/tests` ผ่าน 55 tests
 - สิ่งที่เกือบต้องเดาแต่ถามแทน: spec ไม่กำหนดช่วงหรือค่าต่ำสุดของราคา จึงไม่เพิ่มเงื่อนไขดังกล่าว; ใช้ `Decimal` สำหรับราคาและ UUID ตามรูปแบบรหัสระบบที่ใช้ใน T-04
+
+## 2569-11-13 คำสั่ง: `/implement T-06 specs/003-manage_dormitory_data/tasks.md`
+- ไฟล์ที่แก้/สร้าง: `frontend/src/pages/OwnerDormitoryFormPage.jsx`, `frontend/src/App.jsx`, `frontend/src/api/client.js`, `frontend/src/__tests__/AC-DOR-08-dormitory-form.test.jsx`, `specs/003-manage_dormitory_data/tasks.md`
+- ผลลัพธ์: เพิ่มฟอร์มสร้าง/แก้ไขข้อมูลหอพักและเชื่อม POST/PUT ผ่าน client โดยคงรหัสหอพักเป็นข้อมูลอ่านอย่างเดียว ไม่ส่งราคาห้องพัก และแสดงข้อมูลล่าสุดกับสถานะ “รออนุมัติ”; เปลี่ยนสถานะ T-06 เป็น "เสร็จ รอทีมตรวจ"
+- ผล test: `npm test -- --run src/__tests__/AC-DOR-08-dormitory-form.test.jsx` ผ่าน 3 tests; `npm test` ผ่าน 37 tests ใน 22 ไฟล์; `npm run build` ผ่าน
+- สิ่งที่เกือบต้องเดาแต่ถามแทน: ไม่มีประเด็นกำกวมที่ต้องถามเพิ่ม; ใช้การแสดงสิ่งอำนวยความสะดวกแบบคั่น comma ตามฟอร์มเดิมใน T-03 และไม่เพิ่มข้อความ validation รายช่องซึ่งเป็นขอบเขตของ T-09

@@ -55,6 +55,46 @@ export async function getOwnerDormitory(dormitoryId) {
   return data;
 }
 
+// รองรับ CON-DATA-01, CON-BUS-01, FR-DOR-10 และ FR-DOR-15
+async function saveOwnerDormitory(path, method, dormitory) {
+  const response = await fetch(path, {
+    method,
+    headers: {
+      ...prototypeOwnerHeaders,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(dormitory),
+  });
+  if (!response.ok) {
+    throw new Error(`ไม่สามารถบันทึกข้อมูลหอพักได้ (${response.status})`);
+  }
+
+  const data = await response.json();
+  if (
+    !data ||
+    typeof data !== "object" ||
+    Array.isArray(data) ||
+    typeof data.dormitory_id !== "string"
+  ) {
+    throw new Error("รูปแบบข้อมูลหอพักที่บันทึกไม่ถูกต้อง");
+  }
+  return data;
+}
+
+// รองรับ CON-ACC-01, CON-DATA-01, CON-BUS-01, FR-DOR-10 และ FR-DOR-15
+export async function createOwnerDormitory(dormitory) {
+  return saveOwnerDormitory("/owners/dormitories", "POST", dormitory);
+}
+
+// รองรับ CON-ACC-01, CON-AUTH-01, CON-BUS-01, FR-DOR-12 และ FR-DOR-15
+export async function updateOwnerDormitory(dormitoryId, dormitory) {
+  return saveOwnerDormitory(
+    `/owners/dormitories/${encodeURIComponent(dormitoryId)}`,
+    "PUT",
+    dormitory,
+  );
+}
+
 // รองรับ FR-DOR-07, CON-BUS-01 และ ASM-05
 export async function getRecommendedDormitories(filters = {}) {
   const params = new URLSearchParams();

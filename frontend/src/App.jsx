@@ -7,7 +7,7 @@ import DormitoryStatisticsPage from "./pages/DormitoryStatisticsPage.jsx";
 import OwnerDormitoriesPage from "./pages/OwnerDormitoriesPage.jsx";
 import OwnerDormitoryFormPage from "./pages/OwnerDormitoryFormPage.jsx";
 
-// รองรับ FR-DOR-09, FR-DOR-11 และ AC-DOR-07
+// รองรับ FR-DOR-09 ถึง FR-DOR-12 และ AC-DOR-07 ถึง AC-DOR-08
 export default function App() {
   return (
     <>
@@ -29,6 +29,10 @@ export default function App() {
           <Route path="/dorms/:id" element={<DormDetailPage />} />
           <Route path="/dorms/:id/statistics" element={<DormitoryStatisticsPage />} />
           <Route path="/owner/dormitories" element={<OwnerDormitoriesPage />} />
+          <Route
+            path="/owner/dormitories/new"
+            element={<OwnerDormitoryFormPage />}
+          />
           <Route
             path="/owner/dormitories/:dormitoryId/edit"
             element={<OwnerDormitoryFormPage />}
