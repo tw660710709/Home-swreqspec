@@ -40,7 +40,7 @@ AI จะเปิดอ่านเมื่อ spec.md ไม่ชัด แ�
 670710713 ชนัสถ์นันท์ วะรีวะราช รับผิดชอบ UC-03<br>
 
 ## system context
-<img width="695" height="645" alt="image" src="https://github.com/user-attachments/assets/192212b6-9d79-4f4d-91b6-a79dc69bbd50" />
+<img width="695" height="645" alt="image" src="https://github.com/user-attachments/assets/192212b6-9d79-4f4d-91b6-a79dc69bbd50" /><br>
 **ผู้รับผิดชอบ**<br>
 670710746 ณัฎฐพล ดาเจริญ<br>
 
@@ -138,6 +138,14 @@ AI จะเปิดอ่านเมื่อ spec.md ไม่ชัด แ�
 
 ![UC-07]<img width="946" height="794" alt="image" src="https://github.com/user-attachments/assets/4b28d2be-2962-4d97-abb8-20d3259cbc4e" />
 
+**ผู้รับผิดชอบ:** 670710746 ณัฎฐพล ดาเจริญ
+</details>
+
+<details>
+<summary>UC-08 | จัดการบัญชีผู้ใช้</summary>
+
+![UC-08]<img width="959" height="782" alt="image" src="https://github.com/user-attachments/assets/b9f9557a-f6ad-44c9-bc59-a9a6259c5ebe" />
 
 **ผู้รับผิดชอบ:** 670710746 ณัฎฐพล ดาเจริญ
 </details>
+
