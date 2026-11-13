@@ -138,7 +138,7 @@ AI จะเปิดอ่านเมื่อ spec.md ไม่ชัด แ�
 <details>
 <summary>UC-03 | จัดการข้อมูลหอพัก</summary>
 
-![UC-01](images/smells/Smell03.png)
+![UC-03](images/smells/Smell03.png)
 
 **ผู้รับผิดชอบ:** 670710713 ชนัสถ์นันท์ วะรีวะราช
 </details>
@@ -146,7 +146,7 @@ AI จะเปิดอ่านเมื่อ spec.md ไม่ชัด แ�
 <details>
 <summary>UC-04 | อัพเดทสถานะห้องว่าง</summary>
 
-![UC-01](images/smells/Smell04.png)
+![UC-04](images/smells/Smell04.png)
 
 **ผู้รับผิดชอบ:** 670710713 ชนัสถ์นันท์ วะรีวะราช
 </details>
