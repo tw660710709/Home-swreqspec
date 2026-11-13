@@ -197,7 +197,8 @@ def update_owner_dormitory(
     dormitory: OwnerDormitoryInput,
     owner_id: str = Depends(get_current_owner),
 ) -> dict[str, object]:
-    # รองรับ CON-ACC-01, CON-AUTH-01, CON-DATA-01, CON-BUS-01, FR-DOR-12 และ FR-DOR-15
+    # รองรับ CON-ACC-01, CON-AUTH-01, CON-DATA-01, CON-BUS-01, FR-DOR-12,
+    # FR-DOR-15, AC-DOR-08, AC-DOR-12 และ ASM-20
     initialize_database()
     values = _owner_dormitory_values(dormitory)
     with closing(_connect(get_database_path().resolve())) as connection:

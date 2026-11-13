@@ -1,4 +1,9 @@
+import os
+import sqlite3
+import tempfile
 import unittest
+from pathlib import Path
+from unittest.mock import patch
 
 from httpx import ASGITransport, AsyncClient
 
@@ -8,7 +13,7 @@ from backend.app.main import app
 
 class OwnerDormitorySaveTests(unittest.IsolatedAsyncioTestCase):
     # รองรับ CON-DATA-01, CON-BUS-01, DOM-RULE-01, FR-DOR-10,
-    # FR-DOR-12, FR-DOR-15 และ AC-DOR-08
+    # FR-DOR-12, FR-DOR-15, AC-DOR-08, AC-DOR-12 และ ASM-20
     async def asyncSetUp(self) -> None:
         initialize_database()
         self.client = AsyncClient(
@@ -108,6 +113,75 @@ class OwnerDormitorySaveTests(unittest.IsolatedAsyncioTestCase):
             headers={"X-Owner-Id": "owner-1"},
         )
         self.assertEqual(owner_read.json(), updated.json())
+
+    async def test_TC_DOR_08_2_edit_approved_dormitory_pending_q02(self) -> None:
+        # Given หอพักที่อนุมัติแล้วและผู้ใช้ทั่วไปเปิดดูข้อมูลเดิมได้
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            database_path = Path(temporary_directory) / "dormitory.sqlite3"
+            with patch.dict(
+                os.environ,
+                {"DORMITORY_DATABASE_PATH": str(database_path)},
+            ):
+                initialize_database()
+                created = await self.client.post(
+                    "/owners/dormitories",
+                    headers={"X-Owner-Id": "owner-1"},
+                    json={
+                        "name": "หอพักเดิมที่อนุมัติ",
+                        "location": "ทำเลเดิม",
+                        "type": "หอพักรวม",
+                        "contact_info": "ติดต่อเดิม",
+                    },
+                )
+                self.assertEqual(created.status_code, 200)
+                dormitory_id = created.json()["dormitory_id"]
+
+                with sqlite3.connect(database_path) as connection:
+                    connection.execute(
+                        """
+                        UPDATE owner_dormitories
+                        SET approval_status = 'Approved'
+                        WHERE dormitory_id = ?
+                        """,
+                        (dormitory_id,),
+                    )
+
+                approved_public_view = await self.client.get(
+                    f"/dormitories/{dormitory_id}"
+                )
+                self.assertEqual(approved_public_view.status_code, 200)
+                self.assertEqual(
+                    approved_public_view.json()["name"],
+                    "หอพักเดิมที่อนุมัติ",
+                )
+
+                # When เจ้าของบันทึกการแก้ไขหอพักที่อนุมัติแล้ว
+                updated_response = await self.client.put(
+                    f"/owners/dormitories/{dormitory_id}",
+                    headers={"X-Owner-Id": "owner-1"},
+                    json={
+                        "name": "หอพักใหม่ที่รออนุมัติ",
+                        "location": "ทำเลใหม่",
+                        "type": "หอพักหญิง",
+                        "contact_info": "ติดต่อใหม่",
+                    },
+                )
+                owner_view = await self.client.get(
+                    f"/owners/dormitories/{dormitory_id}",
+                    headers={"X-Owner-Id": "owner-1"},
+                )
+                public_view = await self.client.get(
+                    f"/dormitories/{dormitory_id}"
+                )
+
+                # Then เจ้าของเห็นข้อมูลใหม่ Pending; ผู้ใช้ทั่วไปไม่เห็นข้อมูลเดิมหรืองานแก้ไข
+                self.assertEqual(updated_response.status_code, 200)
+                self.assertEqual(owner_view.status_code, 200)
+                self.assertEqual(owner_view.json()["name"], "หอพักใหม่ที่รออนุมัติ")
+                self.assertEqual(owner_view.json()["approval_status"], "Pending")
+                self.assertEqual(public_view.status_code, 404)
+                self.assertNotIn("หอพักเดิมที่อนุมัติ", public_view.text)
+                self.assertNotIn("หอพักใหม่ที่รออนุมัติ", public_view.text)
 
     async def test_AC_DOR_08_rejects_save_without_authenticated_owner(self) -> None:
         # Given ข้อมูลหอพักครบถ้วน แต่ไม่มีตัวตนเจ้าของที่ผ่านการยืนยัน

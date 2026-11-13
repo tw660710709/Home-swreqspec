@@ -1371,3 +1371,17 @@
 - `test-cases.md`: เปลี่ยน TC-DOR-08-2, TC-DOR-12-4 และ TC-DOR-09-4 เป็น “ใช้ได้”; ระบุผลการซ่อนข้อมูลเดิมและเกณฑ์ข้อมูลไม่ถูกต้องตาม spec
 - `rtm.md`: บันทึกคำตัดสินของทีมในช่อง “ทีมตัดสิน” สำหรับ F-06 และ F-04 ตามข้อความที่ทีมกำหนด
 - ไม่แก้โค้ดหรือ test; ไม่รันทดสอบ เนื่องจากแก้เฉพาะเอกสาร
+
+## 2569-11-13 12:10 UTC คำสั่ง: `/implement T-16 specs/003-manage_dormitory_data/tasks.md`
+- เครื่องมือ: Copilot ใน Codespaces
+- ขอบเขต: ทำ T-16 ตาม `tasks.md`, `spec.md`, `plan.md` และ `AGENTS.md`; ไม่สร้าง workflow อนุมัติ UC-13
+- คำถามที่ AI ถาม: `tasks.md` ระบุ test `test_TC_DOR_12_4_previous_approved_data_visibility_q02` แต่ `test-cases.md` ระบุ TC-DOR-12-4 ว่า “ตรวจด้วย: คน”; ควรยึดแนวทางใด
+- คำตอบของทีม: ยึด `test-cases.md`; TC-DOR-12-4 คงเป็นการตรวจด้วยคน
+- ผลลัพธ์: พฤติกรรมเดิมของระบบตั้งสถานะ Pending เมื่อเจ้าของแก้ไข และ public detail ซ่อนหอพักที่ไม่ Approved อยู่แล้ว; เพิ่ม regression test ครอบคลุมการแก้หอพักที่เคย Approved และยืนยันว่าเจ้าของเห็นข้อมูลล่าสุดแต่ผู้ใช้ทั่วไปไม่เห็นทั้งข้อมูลเดิมและข้อมูลใหม่
+- Tests:
+  - pytest เฉพาะ `test_AC_DOR_08.py` และ `test_AC_DOR_12.py`: ผ่าน 16 tests
+  - pytest ทั้ง backend: ผ่าน 90 tests
+  - Vitest เฉพาะ `TC-DOR-08-2.test.jsx`: ผ่าน 1 test
+  - Vitest ทั้ง frontend: ผ่าน 66 tests ใน 43 ไฟล์
+- ไฟล์ที่แก้/สร้าง: `backend/app/owner_dormitories.py`, `backend/app/details.py`, `backend/tests/test_AC_DOR_08.py`, `frontend/src/__tests__/TC-DOR-08-2.test.jsx`, `specs/003-manage_dormitory_data/tasks.md`, `prompt-log.md`
+- ข้อที่เกือบต้องเดา: ไม่ทำ TC-DOR-12-4 เป็น automated test หรืออ้างว่าผ่าน; รอทีมตรวจด้วยคนตามคำตอบ และปรับ T-16 เป็น “เสร็จ รอทีมตรวจ”

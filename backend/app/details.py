@@ -114,7 +114,7 @@ def build_dormitory_detail(
     nearby_facilities: Sequence[Facility],
 ) -> dict:
     # รองรับ FR-DOR-03, FR-DOR-04, FR-DOR-05, CON-BUS-01, CON-BUS-02,
-    # DOM-RULE-01, NFR-DATA-02 และ AC-DOR-12
+    # DOM-RULE-01, NFR-DATA-02, AC-DOR-12 และ ASM-20
     dormitory = next(
         (
             item
