@@ -1,171 +1,105 @@
 # แผนทางเทคนิค: จัดการบัญชีผู้ใช้
 
-ไฟล์ข้อกำหนดอ้างอิง: `spec.md`
+ไฟล์ข้อกำหนดอ้างอิง: [spec.md](./spec.md)
 
 Spec ID: `SPEC-ACCOUNT-001` | สถานะข้อกำหนด: `Draft v2`
 
 ## 1. สรุปแนวทาง
 
-1. สร้างหน้าจัดการบัญชีสำหรับ Resident ที่เข้าสู่ระบบแล้วตาม `FR-ACCOUNT-01`
-2. ดึงข้อมูลบัญชีของผู้ใช้จากระบบและแสดงบนหน้า Manage Account
-3. รองรับการแก้ไขข้อมูลส่วนตัว เช่น ชื่อ เบอร์โทรศัพท์ อีเมล และข้อมูลติดต่อ ตาม `FR-ACCOUNT-02`
-4. ตรวจสอบความถูกต้องของข้อมูลก่อนบันทึกตาม `FR-ACCOUNT-03`
-5. บันทึกข้อมูลที่ผ่าน validation ลงฐานข้อมูลตาม `FR-ACCOUNT-04`
-6. แสดงข้อความยืนยันและข้อมูลล่าสุดหลังบันทึกสำเร็จตาม `FR-ACCOUNT-05`
-7. แยก flow สำหรับการเปลี่ยนรหัสผ่าน โดยรับรหัสผ่านเดิม รหัสผ่านใหม่ และการยืนยันรหัสผ่านใหม่ตาม `FR-ACCOUNT-06`
-8. ตรวจสอบรหัสผ่านเดิมก่อนอนุญาตให้เปลี่ยนรหัสผ่านตาม `FR-ACCOUNT-07`
-9. หากผู้ใช้ยกเลิกการแก้ไข ต้องคืนค่าข้อมูลเดิมและไม่ส่งข้อมูลไปบันทึกตาม `FR-ACCOUNT-08`
-10. ตรวจสอบ session ก่อนอนุญาตให้เข้าถึงหน้าจัดการบัญชีตาม `FR-ACCOUNT-09`
-11. วางแผนทดสอบ Acceptance Criteria ทั้งหมด รวมถึง performance และ security requirements
+1. ให้ Resident ดูข้อมูลบัญชีปัจจุบันและแก้ชื่อ เบอร์โทรศัพท์ และอีเมลตาม `FR-ACCOUNT-01` ถึง `FR-ACCOUNT-05`.
+2. แยก flow เปลี่ยนรหัสผ่าน ตรวจรหัสผ่านเดิม ใช้ Argon2 และยกเลิก session ปัจจุบันตาม `FR-ACCOUNT-06`, `FR-ACCOUNT-07`, `CON-SEC-01` และ `CON-SEC-02`.
+3. ยกเลิกได้เฉพาะการแก้ข้อมูลส่วนตัว และป้องกันการเข้าถึงโดยไม่มี session/ไม่มีสิทธิ์ตาม `FR-ACCOUNT-08`, `FR-ACCOUNT-09` และ `NFR-SEC-02`.
+4. ใช้ React/Vite, FastAPI และ SQLite ที่พบใน repository; ใช้ authentication/session identity เป็น dependency ของ UC-07.
+5. รองรับ layout หลายอุปกรณ์และการตอบสนองภายใน 2 วินาที; คง Q-01 ถึง Q-03 ไว้โดยไม่กำหนดคำตอบแทนทีม.
 
 ## 2. เทคโนโลยีที่ใช้
 
 | สิ่งที่เลือก | มาจาก | หมายเหตุ |
 |---|---|---|
-| React (Vite) | ทีมเลือกเอง ไม่ได้มาจาก spec | ใช้สร้างหน้า Manage Account และจัดการ form state |
-| Backend API | ทีมเลือกเอง ไม่ได้มาจาก spec | ใช้ตรวจสอบสิทธิ์และอัปเดตข้อมูลบัญชี |
-| ฐานข้อมูลเชิงสัมพันธ์ | ทีมเลือกเอง ไม่ได้มาจาก spec | ใช้เก็บข้อมูลบัญชีและข้อมูลที่ผู้ใช้แก้ไข |
-| Session / Authentication mechanism | ทีมเลือกเอง ไม่ได้มาจาก spec | ใช้ตรวจสอบว่าผู้ใช้ Login แล้วและระบุตัวผู้ใช้ |
-| Password hashing mechanism | ทีมเลือกเอง ไม่ได้มาจาก spec | ใช้ปกป้องรหัสผ่านก่อนจัดเก็บ |
-| เครื่องมือทดสอบของ stack | ทีมเลือกเอง ไม่ได้มาจาก spec | ใช้ทดสอบ behavior ตาม Acceptance Criteria |
+| React 18 / Vite 6 / React Router | ทีมเลือกเอง ไม่ได้มาจาก spec | พบใน `frontend/package.json`; ใช้สร้างหน้า Manage Account |
+| Python FastAPI | ทีมเลือกเอง ไม่ได้มาจาก spec | พบใน `backend/requirements.txt`; ใช้ทำ API และ validation ฝั่ง server |
+| SQLite ผ่าน `sqlite3` | ทีมเลือกเอง ไม่ได้มาจาก spec | พบใน `backend/app/database.py`; User/Session schema ยังไม่มีและเป็น dependency จาก UC-07 |
+| Argon2 salted password hash | `CON-SEC-02` | ทีมเลือก Argon2; ห้ามจัดเก็บ password แบบ plain text และรับส่งผ่าน HTTPS ตาม `CON-SEC-01`, `CON-SEC-02`, `NFR-SEC-01` |
+| Session/token ที่ตรวจสอบฝั่ง server | `CON-ACCOUNT-01`, `CON-ACCOUNT-02`, `NFR-SEC-02` | พึ่งพาการจัดให้จาก UC-07; ไม่เลือกชนิด session/token ซ้ำใน UC-08 |
+| pytest และ Vitest/Testing Library | ทีมเลือกเอง ไม่ได้มาจาก spec | พบในชุดทดสอบปัจจุบัน; ใช้ตรวจ backend และ frontend ตาม AC |
 
-> หมายเหตุ: เทคโนโลยีที่ทีมเลือกเองสามารถเปลี่ยนได้ตาม stack จริงของโครงการ
+หมายเหตุเกี่ยวกับโครงสร้างปัจจุบัน: ยังไม่พบ User/Session table หรือ authentication dependency ที่พร้อมใช้; owner API ใช้ `X-Owner-Id` แบบ prototype ซึ่งไม่ใช่ identity สำหรับ UC-08. UC-07 มี plan สำหรับ User/Session แต่ยังไม่มี implementation; จึงต้องเชื่อมกับ contract จาก UC-07 ก่อนใช้งานจริง. ไม่พบ `specs/000-shared/`.
 
 ## 3. โมเดลข้อมูล
 
-| Entity | ฟิลด์หลัก | รองรับ |
+| Entity | ฟิลด์หลัก/บทบาท | รองรับ |
 |---|---|---|
-| `User` | `id`, ข้อมูลส่วนตัว/ข้อมูลติดต่อ (เช่น `name`, `phone`, `email`), `password_hash`, `role`, `account_status` | `FR-ACCOUNT-01`, `FR-ACCOUNT-02`, `FR-ACCOUNT-04` |
-| `Session` | `id`, `user_id`, `created_at`, `expires_at` | `FR-ACCOUNT-09` |
+| `User` จาก UC-07 | `id`, `username`, `email`, `password_hash`, `role`, `account_status` ตามโมเดลใน plan UC-07; UC-08 ใช้/เพิ่ม `name`, `phone` | `FR-ACCOUNT-01`, `FR-ACCOUNT-02`, `FR-ACCOUNT-04`, `FR-ACCOUNT-06`, `FR-ACCOUNT-07` |
+| Session/token จาก UC-07 | ตัวตนที่ตรวจสอบบน server และข้อมูลที่จำเป็นต่อการยกเลิก session ปัจจุบันหลังเปลี่ยนรหัสผ่าน | `FR-ACCOUNT-09`, `CON-ACCOUNT-01`, `CON-ACCOUNT-02`, `NFR-SEC-02`, `AC-ACCOUNT-02`, `AC-ACCOUNT-07` |
 
 กติกาข้อมูล:
 
-- ต้องระบุ `user_id` จาก session ที่ผ่านการ authentication แล้ว
-- ผู้ใช้ต้องแก้ไขได้เฉพาะข้อมูลของบัญชีตนเอง
-- ข้อมูลใหม่ต้องผ่าน validation ก่อนบันทึก
-- หาก validation ไม่ผ่าน ต้องไม่อัปเดตฐานข้อมูล
-- รหัสผ่านใหม่ต้องไม่ถูกจัดเก็บเป็น plain text
-- การเปลี่ยนรหัสผ่านต้องตรวจสอบรหัสผ่านเดิมก่อน
-- การกดยกเลิกต้องไม่ส่งข้อมูลที่แก้ไขไปบันทึก
+- ใช้ identity จาก session/token ที่ UC-07 ตรวจสอบฝั่ง server; ไม่รับ user ID เป้าหมายจาก client (`CON-ACCOUNT-01`, `CON-ACCOUNT-02`, `NFR-SEC-02`).
+- เพิ่ม/ใช้ข้อมูล `name`, `phone`, `email` กับ User ที่แชร์กับ UC-07; requiredness และกฎตรวจชื่อ/required fields ยังไม่กำหนดจนได้คำตอบ `Q-01` (`FR-ACCOUNT-02`, `FR-ACCOUNT-03`).
+- ตรวจเบอร์โทรศัพท์เป็นตัวเลข 10 หลักและตรวจรูปแบบอีเมลตาม spec ก่อนบันทึก (`FR-ACCOUNT-03`, `CON-ACCOUNT-03`).
+- เปลี่ยน password ด้วย Argon2 hash หลังตรวจ password เดิมและ validation; ห้ามจัดเก็บ password แบบ plain text และรับส่งข้อมูลผ่าน HTTPS (`FR-ACCOUNT-06`, `FR-ACCOUNT-07`, `CON-ACCOUNT-04`, `CON-SEC-01`, `CON-SEC-02`, `NFR-SEC-01`).
+- ไม่ส่ง `password_hash` กลับไปยัง frontend (`NFR-SEC-01`).
 
 ## 4. API / หน้าจอ
 
 | รายการ | Input หลัก | Output หลัก | รองรับ |
 |---|---|---|---|
-| `GET /account` | session | ข้อมูลบัญชีของผู้ใช้ | `FR-ACCOUNT-01` |
-| `PUT /account` | ข้อมูลส่วนตัวที่แก้ไข | สถานะการอัปเดตและข้อมูลล่าสุด | `FR-ACCOUNT-02`, `FR-ACCOUNT-03`, `FR-ACCOUNT-04`, `FR-ACCOUNT-05` |
-| `PUT /account/password` | current password, new password, confirm password | สถานะการเปลี่ยนรหัสผ่าน | `FR-ACCOUNT-06`, `FR-ACCOUNT-07` |
-| Session Guard | session | อนุญาตหรือปฏิเสธการเข้าถึง | `FR-ACCOUNT-09` |
-| หน้าจัดการบัญชี | ข้อมูลบัญชี | แบบฟอร์มแก้ไขข้อมูล | `NFR-USE-01` |
-| ปุ่มยกเลิก | - | คืนค่าข้อมูลเดิม | `FR-ACCOUNT-08` |
+| `GET /account` | identity จาก session/token ที่ UC-07 ตรวจสอบแล้ว | ข้อมูลบัญชีปัจจุบัน โดยไม่ส่ง password/hash กลับ | `FR-ACCOUNT-01`, `NFR-SEC-02` |
+| `PUT /account` | `name`, `phone`, `email`; ไม่รับ user ID จาก client; ตรวจเบอร์ 10 หลักและรูปแบบอีเมล | ข้อมูลล่าสุดหรือ field validation errors | `FR-ACCOUNT-02`, `FR-ACCOUNT-03`, `FR-ACCOUNT-04`, `FR-ACCOUNT-05`, `CON-ACCOUNT-02`, `CON-ACCOUNT-03` |
+| `PUT /account/password` | current password, new password, confirmation; identity จาก UC-07 | ผลสำเร็จ/validation error; เมื่อสำเร็จยกเลิก session ปัจจุบันและนำผู้ใช้ไป Login | `FR-ACCOUNT-06`, `FR-ACCOUNT-07`, `CON-ACCOUNT-04`, `CON-SEC-01`, `CON-SEC-02`, `NFR-SEC-01` |
+| Authorization dependency | verified session/token และ account ownership | ไม่มี session: ปฏิเสธและนำ UI ไป Login; authenticated แต่ไม่มีสิทธิ์: HTTP 403 | `FR-ACCOUNT-09`, `CON-ACCOUNT-01`, `CON-ACCOUNT-02`, `NFR-SEC-02` |
+| หน้า Manage Account | ข้อมูลบัญชีปัจจุบัน; form ข้อมูลส่วนตัวและ form รหัสผ่านแยกกัน | แสดงข้อมูลล่าสุด, success/error, responsive layout | `FR-ACCOUNT-01`, `FR-ACCOUNT-05`, `FR-ACCOUNT-08`, `NFR-USE-01`, `CON-UI-01` |
+| ปุ่มยกเลิกข้อมูลส่วนตัว | ค่า form ที่แก้ไขในหน้าเท่านั้น | คืนค่าข้อมูลเดิมโดยไม่ส่ง update; ไม่ยกเลิก flow เปลี่ยนรหัสผ่าน | `FR-ACCOUNT-08` |
 
-แนวทางการทำงานของการแก้ไขข้อมูล:
+แนวทางหน้าจอและ API:
 
-1. ตรวจสอบ session
-2. ดึงข้อมูลบัญชีของผู้ใช้
-3. แสดงข้อมูลบนแบบฟอร์ม
-4. ผู้ใช้แก้ไขข้อมูล
-5. ตรวจสอบ validation
-6. หากข้อมูลถูกต้อง ส่งข้อมูลไป Backend
-7. Backend ตรวจสอบสิทธิ์ของผู้ใช้
-8. บันทึกข้อมูลลงฐานข้อมูล
-9. ส่งข้อมูลล่าสุดกลับไปยัง Frontend
-10. แสดงข้อความบันทึกสำเร็จ
-
-> การแก้ไขอีเมลจะต้องยืนยันผ่านอีเมลหรือไม่ยังเป็น Open Question; ห้ามสมมติว่าการแก้ไขอีเมลเสร็จสมบูรณ์หรือแสดงเป็นข้อมูลล่าสุดก่อนทีมยืนยัน flow นี้
-
-แนวทางการเปลี่ยนรหัสผ่าน:
-
-1. ตรวจสอบ session
-2. รับรหัสผ่านเดิม รหัสผ่านใหม่ และการยืนยันรหัสผ่านใหม่
-3. ตรวจสอบว่ารหัสผ่านใหม่สองช่องตรงกัน
-4. ตรวจสอบรหัสผ่านเดิม
-5. ตรวจสอบเงื่อนไขของรหัสผ่านใหม่ตามคำตอบของทีมเรื่องความยาวและความซับซ้อน (Open Question)
-6. ปกป้องรหัสผ่านใหม่ด้วย password hashing mechanism
-7. บันทึก password hash ใหม่
-8. แสดงข้อความยืนยันการเปลี่ยนรหัสผ่าน
-
-แนวทางการยกเลิก:
-
-1. ผู้ใช้แก้ไขข้อมูลในแบบฟอร์ม
-2. ผู้ใช้กดปุ่มยกเลิก
-3. Frontend ละทิ้งค่าที่แก้ไข
-4. โหลดหรือคืนค่าข้อมูลเดิม
-5. ไม่ส่งคำขอ update ไปยัง Backend
-
-> หมายเหตุ: ชื่อ API และ field เป็นแนวทางสำหรับการวางแผนเท่านั้น รายละเอียดจริงต้องยืนยันก่อน implementation
+- หลัง auth dependency จาก UC-07 ยืนยันตัวตนแล้ว อ่าน/แก้ได้เฉพาะบัญชีของ Resident ปัจจุบัน; คำขอไปยังบัญชีอื่นต้องถูกปฏิเสธด้วย HTTP 403 โดยไม่มีการเปลี่ยนข้อมูล (`CON-ACCOUNT-01`, `CON-ACCOUNT-02`, `NFR-SEC-02`, `AC-ACCOUNT-07`).
+- หากไม่มี session ให้ปฏิเสธ API และนำผู้ใช้ไปหน้า Login ผ่าน frontend (`FR-ACCOUNT-09`, `AC-ACCOUNT-07`).
+- แยกส่วนแก้ข้อมูลส่วนตัวกับเปลี่ยนรหัสผ่าน; ปุ่มยกเลิกคืนเฉพาะข้อมูลส่วนตัวและไม่เรียก API update (`FR-ACCOUNT-08`, `NFR-USE-01`, `AC-ACCOUNT-06`).
+- ใช้ HTTPS สำหรับการรับส่ง; response ของ profile/password ห้ามมี password/hash (`CON-SEC-02`, `NFR-SEC-01`).
+- ชื่อ path/method เป็นข้อเสนอทางเทคนิคจาก plan เดิมและรูปแบบ API ปัจจุบัน ไม่เพิ่ม behavior นอก spec; ปรับให้ตรง contract ของ UC-07 ก่อน implementation ได้.
 
 ## 5. ตารางตรวจ Constraints
 
 | Constraint ID | ถูกนำไปใช้ที่ไหนใน plan | สถานะ |
 |---|---|---|
-| `CON-ACCOUNT-01` | Session Guard ก่อนเปิดหน้า Manage Account | ใช้แล้ว |
-| `CON-ACCOUNT-02` | ใช้ `user_id` จาก session และจำกัดการ update เฉพาะบัญชีของผู้ใช้ | ใช้แล้ว |
-| `CON-ACCOUNT-03` | Validation ก่อนส่งและก่อนบันทึกข้อมูล | ใช้แล้ว |
-| `CON-ACCOUNT-04` | ตรวจสอบ current password ก่อนเปลี่ยนรหัสผ่าน | ใช้แล้ว |
-| `CON-SEC-01` | ใช้ password hash แทน plain text | ใช้แล้ว |
-| `CON-SEC-02` | Password hashing ก่อนบันทึกข้อมูล | ใช้แล้ว |
-| `CON-UI-01` | ออกแบบหน้า Manage Account ให้รองรับอุปกรณ์ที่ระบบกำหนด | ใช้แล้ว |
+| `CON-ACCOUNT-01` | Auth dependency จาก UC-07 สำหรับอ่าน/แก้ไขบัญชี | ใช้แล้ว |
+| `CON-ACCOUNT-02` | ใช้ identity จาก server; ไม่รับ user ID จาก client; ตรวจ ownership และตอบ 403 | ใช้แล้ว |
+| `CON-ACCOUNT-03` | Validate input ฝั่ง backend ก่อนเขียน SQLite และแสดง field errors | ใช้แล้ว |
+| `CON-ACCOUNT-04` | ตรวจ current password ก่อนเปลี่ยนรหัสผ่าน | ใช้แล้ว |
+| `CON-SEC-01` | จัดเก็บ Argon2 hash แทน plain text และไม่ส่ง hash ไป frontend | ใช้แล้ว |
+| `CON-SEC-02` | จัดเก็บ salted Argon2 hash และใช้ HTTPS สำหรับการรับส่ง | ใช้แล้ว |
+| `CON-UI-01` | หน้า Manage Account ปรับตามขนาดจอมือถือ แท็บเล็ต และคอมพิวเตอร์ | ใช้แล้ว |
 
 ## 6. แผนทดสอบจาก Acceptance Criteria
 
 | AC ID | ชื่อ test | ทดสอบอย่างไร |
 |---|---|---|
-| `AC-ACCOUNT-01` | `test_AC_ACCOUNT_01_update_profile` | Login เป็น Resident แก้ไขข้อมูลส่วนตัว แล้วตรวจว่าข้อมูลใหม่ถูกบันทึกและแสดงผลถูกต้อง |
-| `AC-ACCOUNT-02` | `test_AC_ACCOUNT_02_change_password` | กรอกรหัสผ่านเดิมที่ถูกต้องและรหัสผ่านใหม่ที่ถูกต้อง ตรวจว่าสามารถเปลี่ยนรหัสผ่านได้ |
-| `AC-ACCOUNT-03` | `test_AC_ACCOUNT_03_invalid_profile_data` | กรอกข้อมูลที่ไม่ครบหรือผิดรูปแบบ ตรวจว่าไม่สามารถบันทึกและมีข้อความแจ้งเตือน |
-| `AC-ACCOUNT-04` | `test_AC_ACCOUNT_04_wrong_current_password` | กรอกรหัสผ่านเดิมผิด ตรวจว่าไม่สามารถเปลี่ยนรหัสผ่านได้ |
-| `AC-ACCOUNT-05` | `test_AC_ACCOUNT_05_update_success_message` | แก้ไขข้อมูลด้วยข้อมูลที่ถูกต้อง ตรวจว่าระบบแสดงข้อความยืนยันหลังบันทึกสำเร็จ |
-| `AC-ACCOUNT-06` | `test_AC_ACCOUNT_06_cancel_update` | แก้ไขข้อมูลแล้วกดยกเลิก ตรวจว่าข้อมูลเดิมยังคงอยู่และไม่มีการ update ฐานข้อมูล |
-| `AC-ACCOUNT-07` | `test_AC_ACCOUNT_07_session_required` | ไม่มี session แล้วพยายามเปิดหน้า Manage Account ตรวจว่าระบบปฏิเสธและนำไปหน้า Login |
-| `AC-ACCOUNT-08` | `test_AC_ACCOUNT_08_update_response_under_two_seconds` | อัปเดตข้อมูลบัญชีภายใต้สภาวะปกติและตรวจว่า response อยู่ภายใน 2 วินาที |
+| `AC-ACCOUNT-01` | `test_AC_ACCOUNT_01_profile_display_update_responsive` | ตรวจข้อมูลปัจจุบัน การแก้ไข/บันทึก/แสดงข้อมูลล่าสุด และ layout แยกส่วนบน viewport มือถือ แท็บเล็ต และคอมพิวเตอร์ |
+| `AC-ACCOUNT-02` | `test_AC_ACCOUNT_02_change_password_and_invalidate_session` | ใช้ current password ถูกต้องและรหัสผ่านใหม่ยาวอย่างน้อย 8 ตัวอักษร; ตรวจ Argon2 hash, HTTPS, invalidation และ redirect Login |
+| `AC-ACCOUNT-03` | `test_AC_ACCOUNT_03_invalid_profile_and_password_data` | ตรวจ phone/email format, ข้อมูลไม่ครบตามคำตอบ `Q-01` เมื่อได้ข้อสรุป, confirmation mismatch และ password สั้นกว่า 8 โดยไม่บันทึก |
+| `AC-ACCOUNT-04` | `test_AC_ACCOUNT_04_wrong_current_password` | ส่ง current password ไม่ถูกต้อง; ตรวจว่าไม่เปลี่ยน password/hash และมีข้อความแจ้งข้อผิดพลาด |
+| `AC-ACCOUNT-05` | `test_AC_ACCOUNT_05_success_confirmation` | บันทึกข้อมูลบัญชีสำเร็จและตรวจข้อความยืนยัน |
+| `AC-ACCOUNT-06` | `test_AC_ACCOUNT_06_cancel_profile_changes` | แก้ form ข้อมูลส่วนตัวแล้ว cancel; ตรวจค่าเดิมและไม่มี update request; flow รหัสผ่านแยกกัน |
+| `AC-ACCOUNT-07` | `test_AC_ACCOUNT_07_session_and_ownership_guard` | ไม่มี session ให้นำไป Login; มีตัวตนแต่ขอแก้บัญชีอื่นให้ได้ 403 และไม่มีข้อมูลเปลี่ยน |
+| `AC-ACCOUNT-08` | `test_AC_ACCOUNT_08_save_response_under_two_seconds` | จับเวลาตั้งแต่กดบันทึกจนแสดง success/error; ทดสอบภายใต้เงื่อนไขที่ทีมกำหนดตาม `Q-03` |
 
-การทดสอบเพิ่มเติม:
-
-- ตรวจว่า Resident ไม่สามารถแก้ไขข้อมูลของบัญชีอื่น
-- ตรวจว่า password hash ไม่ถูกแสดงกลับไปยัง Frontend
-- ตรวจว่ารหัสผ่านใหม่ไม่ถูกจัดเก็บเป็น plain text
-- ตรวจว่าการเปลี่ยนรหัสผ่านต้องใช้ current password ที่ถูกต้อง
-- ตรวจ validation ของ email และเบอร์โทรศัพท์
-- ตรวจ responsive layout ของหน้า Manage Account
-- ตรวจว่าการกดยกเลิกไม่ส่ง request update ไปยัง Backend
+เครื่องมือทดสอบตาม stack ปัจจุบัน: pytest สำหรับ API/database และ Vitest/Testing Library สำหรับหน้าเว็บ; หลักฐานทดสอบ HTTPS/Argon2 ต้องตรวจจาก configuration และข้อมูลที่จัดเก็บจริง ไม่สรุปจาก mock เพียงอย่างเดียว (`CON-SEC-01`, `CON-SEC-02`, `NFR-SEC-01`).
 
 ## 7. ลำดับงาน
 
-1. ตรวจสอบ `spec.md` และยืนยัน requirements กับทีม
-2. ตรวจสอบโครงสร้าง `User` และ `Session` ที่มีอยู่
-3. สร้าง API สำหรับดึงข้อมูลบัญชีของผู้ใช้
-4. สร้าง API สำหรับแก้ไขข้อมูลส่วนตัว
-5. เพิ่ม validation สำหรับข้อมูลบัญชี
-6. เพิ่ม Session Guard และตรวจสอบสิทธิ์ของผู้ใช้
-7. สร้างหน้า Manage Account
-8. เชื่อมแบบฟอร์มกับ API
-9. เพิ่ม flow เปลี่ยนรหัสผ่าน
-10. เพิ่มการตรวจสอบ current password
-11. เพิ่ม password hashing ก่อนบันทึก
-12. เพิ่มปุ่มยกเลิกและการคืนค่าข้อมูลเดิม
-13. เพิ่มข้อความแจ้งเตือนเมื่อสำเร็จหรือเกิดข้อผิดพลาด
-14. เพิ่ม automated tests ตาม `AC-ACCOUNT-01` ถึง `AC-ACCOUNT-08`
-15. ตรวจสอบ security, performance และ responsive layout
-16. ตรวจสอบ traceability ระหว่าง `spec.md` และ implementation ก่อนส่งงาน
+1. รับ contract จาก UC-07 สำหรับ User identity, session/token verification และการยกเลิก session; เป็น prerequisite ของ `CON-ACCOUNT-01`, `CON-ACCOUNT-02`, `FR-ACCOUNT-09`, `NFR-SEC-02`, `AC-ACCOUNT-02`, `AC-ACCOUNT-07`.
+2. ตอบ `Q-01` ก่อนกำหนด requiredness และ validation ของชื่อ/ข้อมูล profile; ระหว่างรอไม่กำหนด schema constraints ของฟิลด์เหล่านี้ (`FR-ACCOUNT-02`, `FR-ACCOUNT-03`, `AC-ACCOUNT-03`).
+3. เพิ่มหรือเชื่อม User persistence ใน SQLite กับ UC-07 และข้อมูล `name`, `phone`, `email` ตามข้อสรุป `Q-01` (`FR-ACCOUNT-01`, `FR-ACCOUNT-02`, `FR-ACCOUNT-04`).
+4. ทำ server-side authorization dependency และ API อ่าน/แก้บัญชี; ตรวจ ownership, validation, 403 และไม่เปลี่ยนข้อมูลเมื่อผิดพลาด (`FR-ACCOUNT-01` ถึง `FR-ACCOUNT-05`, `AC-ACCOUNT-01`, `AC-ACCOUNT-03`, `AC-ACCOUNT-07`).
+5. ทำ API เปลี่ยน password โดยตรวจ current password, validation, Argon2, HTTPS และ session invalidation จาก UC-07 (`FR-ACCOUNT-06`, `FR-ACCOUNT-07`, `CON-SEC-01`, `CON-SEC-02`, `AC-ACCOUNT-02` ถึง `AC-ACCOUNT-04`).
+6. ทำหน้า responsive แยก form ข้อมูลส่วนตัว/รหัสผ่าน, success/error states และ cancel เฉพาะข้อมูลส่วนตัว (`FR-ACCOUNT-05`, `FR-ACCOUNT-08`, `NFR-USE-01`, `CON-UI-01`, `AC-ACCOUNT-01`, `AC-ACCOUNT-05`, `AC-ACCOUNT-06`).
+7. เพิ่ม pytest/Vitest tests ครบ AC และ security ownership/session cases (`AC-ACCOUNT-01` ถึง `AC-ACCOUNT-07`, `NFR-SEC-01`, `NFR-SEC-02`).
+8. กำหนด test environment หลังได้คำตอบ `Q-02` และ `Q-03`; ตรวจ usability/performance ก่อนยืนยันผล acceptance (`NFR-USE-01`, `NFR-PERF-01`, `AC-ACCOUNT-01`, `AC-ACCOUNT-08`).
 
 ## 8. สิ่งที่ยังไม่ทำ
 
-ฟังก์ชันต่อไปนี้จะไม่ถูกสร้างภายใน UC-08:
-
-- การสมัครสมาชิก
-- การเข้าสู่ระบบ
-- การรีเซ็ตรหัสผ่านกรณีลืมรหัสผ่าน
-- การจัดการบัญชีของผู้ใช้อื่น
-- การเปลี่ยน role
-- การลบบัญชี
-- การจัดการข้อมูลหอพัก
-
-UC-08 มีหน้าที่หลักในการ:
-
-1. แสดงข้อมูลบัญชีของ Resident ที่เข้าสู่ระบบแล้ว
-2. แก้ไขข้อมูลส่วนตัวและข้อมูลติดต่อ
-3. ตรวจสอบข้อมูลก่อนบันทึก
-4. เปลี่ยนรหัสผ่านโดยตรวจสอบรหัสผ่านเดิม
-5. ป้องกันการแก้ไขบัญชีของผู้ใช้อื่น
-6. ยกเลิกการแก้ไขโดยไม่บันทึกข้อมูล
+- `Q-01` ชื่อ เบอร์โทรศัพท์ และอีเมล จำเป็นต้องกรอกทุกฟิลด์หรือไม่ และชื่อมีเงื่อนไขการตรวจสอบเพิ่มเติมหรือไม่ (ทีมผู้กำหนด UC-08) — ส่วนที่เกี่ยวข้องกับ requiredness, validation และ schema จะยังไม่สร้างจนกว่าจะได้คำตอบ
+- `Q-02` จะใช้เกณฑ์ใดประเมินว่า NFR-USE-01 ใช้งานง่ายและไม่ซับซ้อน (ทีมเอง) — ส่วนที่เกี่ยวข้องกับเกณฑ์ประเมิน usability จะยังไม่สร้างจนกว่าจะได้คำตอบ; จะไม่เดาเกณฑ์เพิ่มจาก spec
+- `Q-03` สภาพแวดล้อมทดสอบปกติสำหรับ NFR-PERF-01 มีเงื่อนไขด้านเครือข่ายหรือปริมาณการใช้งานอย่างไร (ทีมเอง) — ส่วนที่เกี่ยวข้องกับสภาพแวดล้อมวัดผล performance จะยังไม่กำหนดจนกว่าจะได้คำตอบ
+- การสมัครสมาชิก (UC-02), การ Login โดยละเอียด (UC-07), การรีเซ็ตรหัสผ่าน, การจัดการบัญชีผู้อื่น, การเปลี่ยน role, การลบบัญชี, การจัดการข้อมูลหอพัก และการยืนยันอีเมลใหม่อยู่นอกขอบเขต; UC-08 ตรวจ ownership เพื่อปฏิเสธคำขอ แต่ไม่จัดการบัญชีผู้อื่น (`FR-ACCOUNT-02`, `FR-ACCOUNT-09`, `NFR-SEC-02`).

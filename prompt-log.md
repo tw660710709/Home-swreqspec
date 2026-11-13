@@ -1450,3 +1450,176 @@
 - ผล test: pytest 91 ผ่าน, Vitest 67 ผ่าน
 - ย้าย F-04 ไปหัวข้อ 4 "แก้แล้ว" ใน rtm.md
 
+---
+
+## 2569-11-13 19:30:41 UTC คำสั่ง: /clarify specs/008-manage-account/spec.md
+
+- เครื่องมือ: Copilot ใน Codespaces
+- ไฟล์: `specs/008-manage-account/spec.md` (UC-08 Manage Account)
+
+### คำถามที่ AI ถาม (ทั้งหมด)
+
+1. ต้องแก้ไขข้อมูลติดต่อฟิลด์ใดบ้าง เงื่อนไขการกรอกและรูปแบบเป็นอย่างไร และอีเมลใหม่ต้องยืนยันหรือไม่?
+2. รหัสผ่านใหม่ต้องมีเงื่อนไขใด และเมื่อยืนยันรหัสผ่านใหม่ไม่ตรงกันระบบต้องแจ้งผลอย่างไร?
+3. หลังเปลี่ยนรหัสผ่านสำเร็จ session เดิมต้องใช้งานต่อได้หรือไม่?
+4. การยกเลิกครอบคลุมเฉพาะการแก้ข้อมูลบัญชี หรือรวมถึงการเปลี่ยนรหัสผ่านด้วย?
+5. การตรวจรับเวลา 2 วินาทีจะเริ่มและหยุดจับเวลาที่จุดใด และจะกำหนดสภาวะการใช้งานปกติอย่างไร?
+6. มีเกณฑ์ตรวจรับด้านความง่ายในการใช้งานและรายการอุปกรณ์ที่ต้องรองรับหรือไม่?
+7. ต้องใช้เกณฑ์หรือหลักฐานใดในการยืนยันว่ารหัสผ่านได้รับการปกป้องตามข้อกำหนด?
+8. จะตรวจอย่างไรว่าผู้ใช้แก้ไขได้เฉพาะบัญชีของตนเอง และกรณีไม่มีสิทธิ์ต้องได้ผลลัพธ์ใด?
+
+### คำตอบของทีมและเหตุผล
+
+1. ฟิลด์ที่แก้ไขได้คือชื่อ เบอร์โทรศัพท์ และอีเมล; เบอร์โทรศัพท์เป็นตัวเลข 10 หลัก; อีเมลต้องมีรูปแบบถูกต้อง และไม่ต้องยืนยันอีเมลใหม่ใน UC-08
+2. รหัสผ่านใหม่มีความยาวอย่างน้อย 8 ตัวอักษร; ช่องยืนยันต้องตรงกัน; หากไม่ตรงต้องแจ้งข้อผิดพลาดและไม่บันทึก
+3. เมื่อเปลี่ยนรหัสผ่านสำเร็จให้ยกเลิก session เดิมและให้ผู้ใช้เข้าสู่ระบบใหม่
+4. การยกเลิกครอบคลุมเฉพาะการแก้ไขข้อมูลส่วนตัว; การเปลี่ยนรหัสผ่านเป็นกระบวนการแยกต่างหาก
+5. เริ่มจับเวลาตั้งแต่ผู้ใช้กดบันทึกจนระบบแสดงผลสำเร็จหรือข้อผิดพลาด เป้าหมายไม่เกิน 2 วินาทีในสภาพแวดล้อมทดสอบปกติ
+6. รองรับมือถือ แท็บเล็ต และคอมพิวเตอร์ โดยหน้าจอปรับตามขนาดอุปกรณ์
+7. จัดเก็บรหัสผ่านเป็น salted password hash เช่น Argon2 หรือ bcrypt; รับส่งข้อมูลผ่าน HTTPS; ห้ามจัดเก็บเป็น plain text
+8. ตรวจสอบตัวตนจาก session/token ฝั่ง server และให้แก้ไขเฉพาะบัญชีของผู้ใช้ที่เข้าสู่ระบบ; ผู้ไม่มีสิทธิ์ให้ปฏิเสธด้วย HTTP 403; ผู้ไม่มี session ให้ปฏิเสธและนำไปหน้า Login
+
+### สิ่งที่แก้ใน spec.md
+
+- ปรับ Goal, Scope และ FR-ACCOUNT-02 ให้ระบุฟิลด์ชื่อ เบอร์โทรศัพท์ และอีเมล และระบุว่าไม่ต้องยืนยันอีเมลใหม่
+- ปรับ FR-ACCOUNT-03 และ FR-ACCOUNT-06 ให้ระบุรูปแบบเบอร์โทรศัพท์ อีเมล เงื่อนไขรหัสผ่านขั้นต่ำ และการยืนยันรหัสผ่าน
+- ปรับ FR-ACCOUNT-08 ให้การยกเลิกมีผลเฉพาะการแก้ไขข้อมูลส่วนตัว
+- ปรับ CON-SEC-02, CON-UI-01, NFR-USE-01, NFR-PERF-01, NFR-SEC-01 และ NFR-SEC-02 ตามคำตอบของทีม
+- ขยาย AC-ACCOUNT-01, AC-ACCOUNT-02, AC-ACCOUNT-03 และ AC-ACCOUNT-07 สำหรับการแสดงข้อมูลปัจจุบันและรูปแบบหน้าจอ การจัดเก็บรหัสผ่าน การปฏิเสธรหัสผ่านที่ไม่ตรง/สั้นกว่าเกณฑ์ และการปฏิเสธผู้ไม่มีสิทธิ์ โดยคง AC ID เดิม
+- ปรับ Traceability ให้ครอบคลุม FR, NFR และ CON ที่มีอยู่
+- เก็บประเด็นที่ยังไม่มีคำตอบไว้ใน Open Questions: เงื่อนไขการกรอก/ตรวจชื่อ, เกณฑ์ตรวจรับความง่ายในการใช้งาน และรายละเอียดสภาพแวดล้อมทดสอบประสิทธิภาพ
+- คง Requirement ID และ Acceptance Criteria ID เดิม; ไม่แก้ Use Case ของสมาชิกคนอื่น และไม่สร้างโค้ด/แผน/Tasks
+- ไม่พบ `docs/prompt-log-template.md` ใน repository จึงใช้รูปแบบรายการ Clarify ที่มีอยู่ใน `prompt-log.md`
+
+---
+
+## 2569-11-13 19:35:08 UTC คำสั่ง: ตรวจสอบ specs/008-manage-account/spec.md ฉบับล่าสุด
+
+- เครื่องมือ: Copilot ใน Codespaces
+- ไฟล์ที่ตรวจ: `specs/008-manage-account/spec.md`
+
+### คำสั่งที่ใช้
+
+1. ตรวจว่า Requirement ทุกข้อมี Acceptance Criteria รองรับ
+2. ตรวจ Traceability ให้ครบทั้ง FR, NFR และ CON
+3. ตรวจว่าไม่มี Requirement ขัดแย้งกัน
+4. ตรวจ Open Questions ที่เหลือ โดยไม่เดาคำตอบแทนทีม
+5. คง ID เดิมทั้งหมด ไม่แก้ Use Case ของสมาชิกคนอื่น และไม่สร้างโค้ด
+6. บันทึก prompt และผลการตรวจลง `prompt-log.md`
+
+### ผลการตรวจ
+
+- FR-ACCOUNT-01 ถึง FR-ACCOUNT-09 ทุกข้อมี AC อ้างอิงใน Traceability และมีสถานการณ์ทดสอบที่เกี่ยวข้องใน AC-ACCOUNT-01 ถึง AC-ACCOUNT-07
+- NFR-PERF-01 เชื่อมกับ AC-ACCOUNT-08; NFR-SEC-01 เชื่อมกับ AC-ACCOUNT-02; NFR-SEC-02 เชื่อมกับ AC-ACCOUNT-07
+- CON-ACCOUNT-01 ถึง CON-ACCOUNT-04, CON-SEC-01, CON-SEC-02 และ CON-UI-01 มี AC อ้างอิงครบใน Traceability
+- ไม่พบ Requirement ที่ขัดแย้งกันระหว่าง Goal, Scope, Constraints, Requirements และ Acceptance Criteria
+- NFR-USE-01 เชื่อมกับ AC-ACCOUNT-01 ใน Traceability และ AC ครอบคลุมการแบ่งส่วนข้อมูลกับการปรับหน้าจอตามอุปกรณ์ แต่ถ้อยคำ “ใช้งานง่ายและไม่ซับซ้อน” ยังไม่มีเกณฑ์วัดเชิงวัตถุ ซึ่งคงไว้ใน Q-02 โดยไม่กำหนดแทนทีม
+- Open Questions ที่ยังคงอยู่: Q-01 เงื่อนไขการกรอกและการตรวจชื่อ; Q-02 เกณฑ์วัด usability; Q-03 รายละเอียดเงื่อนไขของสภาพแวดล้อมทดสอบประสิทธิภาพ
+- ไม่แก้ไข ID หรือ `spec.md`; ไม่แก้ Use Case ของสมาชิกคนอื่น และไม่สร้างโค้ด
+- ไฟล์ที่แก้ในรอบตรวจนี้: `prompt-log.md` เท่านั้น
+
+---
+
+## 2569-11-13 19:37:14 UTC คำสั่ง: /plan specs/008-manage-account/spec.md
+
+- เครื่องมือ: Copilot ใน Codespaces
+- ไฟล์ข้อกำหนด: `specs/008-manage-account/spec.md` (UC-08 Manage Account, Draft v2)
+- คำสั่ง: ทำ Implementation Plan จาก spec ล่าสุด; ตรวจโครงสร้างและเทคโนโลยีจริง; ครอบคลุม FR/NFR/CON/AC, Dependencies และวิธีทดสอบ; คง Q-01 ถึง Q-03; ไม่แก้ Use Case อื่นและไม่สร้างโค้ด; ปรับ `specs/008-manage-account/plan.md` โดยรักษาข้อมูลเดิมที่ยังถูกต้อง
+
+### คำตอบทีมก่อนสรุปแผน
+
+- Authentication/session และ identity ของ UC-08 ให้เป็น dependency จาก UC-07; ไม่รวมหน้า Login หรือ implementation ของ authentication ใน UC-08.
+- เลือก Argon2 จากตัวเลือก salted password hash ใน `CON-SEC-02`.
+- `Q-01` ถึง `Q-03` ยังคงเป็น Open Questions; ไม่กำหนดคำตอบแทนทีม.
+
+### ผลการทำงาน
+
+- อ่าน spec ล่าสุดและ `AGENTS.md`; ไม่พบ `specs/000-shared/`.
+- ตรวจ stack จริง: React 18/Vite 6/React Router, Python FastAPI, SQLite ผ่าน `sqlite3`, pytest และ Vitest/Testing Library.
+- ตรวจพบว่ายังไม่มี User/Session table หรือ authentication dependency ใน implementation; UC-07 มี plan สำหรับ User/Session แต่ยังไม่มี code; owner endpoint ใช้ `X-Owner-Id` แบบ prototype จึงไม่ได้ใช้เป็น identity ของ UC-08.
+- ปรับปรุง `specs/008-manage-account/plan.md` โดยคงแนวคิดเดิมที่ยังใช้ได้ และจัดให้ครบ 8 หัวข้อ: สรุป 5 บรรทัด, เทคโนโลยี, โมเดลข้อมูล, API/หน้าจอ, ตาราง Constraints, test ครบ AC-ACCOUNT-01 ถึง AC-ACCOUNT-08, ลำดับงาน/Dependencies และ Open Questions.
+- ระบุ UC-07 เป็น prerequisite สำหรับ User identity, session/token verification และการยกเลิก session; ไม่เพิ่ม login flow หรือเลือกชนิด session/token แทน UC-07.
+- คง Q-01 ถึง Q-03 ในหัวข้อสิ่งที่ยังไม่ทำ และไม่ตัดสิน requiredness, usability criteria หรือ performance test environment.
+- ไฟล์ที่แก้: `specs/008-manage-account/plan.md`, `prompt-log.md`; ไม่สร้างหรือแก้โค้ด และไม่แก้ Use Case ของสมาชิกคนอื่น.
+
+---
+
+## 2569-11-13 19:54:28 UTC คำสั่ง: `/tasks specs/008-manage-account/spec.md`
+
+- เครื่องมือ: Copilot ใน Codespaces
+- ไฟล์อ้างอิง: `specs/008-manage-account/spec.md`, `specs/008-manage-account/plan.md`
+- คำสั่ง: สร้าง `specs/008-manage-account/tasks.md`; แบ่ง Phase ตาม Dependencies ใน plan; แยก Backend, Frontend, Database และ Testing; ทุก Task อ้าง ID ที่เกี่ยวข้อง; ใช้ checkbox; ระบุ UC-07 dependency และไม่สร้าง Authentication ซ้ำ; คง Q-01 ถึง Q-03; ไม่แก้ Use Case อื่นและไม่สร้างโค้ด
+
+### ผลการทำงาน
+
+- สร้าง `tasks.md` โดยมีข้อมูลอ้างอิง, ลำดับงาน, งานรอคำตอบ/Dependency, ตาราง AC ครบ `AC-ACCOUNT-01` ถึง `AC-ACCOUNT-08` และตาราง Constraint ครบ `CON-ACCOUNT-01` ถึง `CON-ACCOUNT-04`, `CON-SEC-01`, `CON-SEC-02`, `CON-UI-01`.
+- แบ่ง Phase เป็น UC-07 prerequisite, Database, Backend, Frontend และ Testing; ทุก task มี checkbox, dependency และ FR/NFR/CON/AC/Open Question ที่เกี่ยวข้อง.
+- ระบุ UC-07 เป็นเจ้าของ Authentication/session contract; UC-08 ใช้ auth dependency เดิม ไม่สร้าง Login/session/token mechanism ซ้ำ.
+- คง `Q-01` ถึง `Q-03` เป็นรายการรอคำตอบ โดยไม่ตัดสิน requiredness/name validation, usability criteria หรือ performance test environment แทนทีม.
+- ไฟล์ที่แก้: `specs/008-manage-account/tasks.md`, `prompt-log.md`; ไม่สร้างโค้ดและไม่แก้ Use Case ของสมาชิกคนอื่น.
+
+---
+
+## 2569-11-13 20:10:18 UTC คำสั่ง: สร้าง Test Cases สำหรับ UC-08 Manage Account
+
+- เครื่องมือ: Copilot ใน Codespaces
+- ไฟล์อ้างอิง: `specs/008-manage-account/spec.md`, `specs/008-manage-account/plan.md`, `specs/008-manage-account/tasks.md`
+- คำสั่ง: สร้าง `specs/008-manage-account/test-cases.md` ให้ครอบคลุม `AC-ACCOUNT-01` ถึง `AC-ACCOUNT-08`; ทุก Test Case มี ID, Requirement/AC ID, Objective, Preconditions, Test Data, Steps และ Expected Result; ครอบคลุมกรณีปกติ/ผิดรูปแบบ/ไม่มี session/ไม่มีสิทธิ์, แก้ไขและยกเลิกข้อมูลส่วนตัว, เปลี่ยนรหัสผ่าน, password ขั้นต่ำ 8 ตัวอักษร/confirmation/hash; ครอบคลุม NFR/CON โดยไม่กำหนดเกณฑ์แทนทีม; คง Q-01 ถึง Q-03; ไม่แก้ Use Case อื่นและไม่สร้าง/แก้โค้ด
+
+### ผลการทำงาน
+
+- สร้าง `test-cases.md` จำนวน 14 Test Cases ครอบคลุม AC ทั้ง 8 ข้อ รวมกรณีแสดง/แก้ข้อมูล, validation เบอร์โทรศัพท์และอีเมล, password success/mismatch/ความยาวต่ำกว่า 8/รหัสผ่านเดิมผิด, cancel, ไม่มี session, HTTP 403, performance และ usability.
+- เพิ่มตารางตามรอย FR-ACCOUNT-01 ถึง FR-ACCOUNT-09, NFR-USE-01, NFR-PERF-01, NFR-SEC-01, NFR-SEC-02 และ CON-ACCOUNT-01 ถึง CON-ACCOUNT-04, CON-SEC-01, CON-SEC-02, CON-UI-01.
+- คง Q-01, Q-02 และ Q-03 ไว้; กรณีที่ต้องอาศัยคำตอบถูกระบุว่ารอคำตอบ โดยไม่สร้างกฎตรวจชื่อ/requiredness หรือเกณฑ์ usability/performance เพิ่มเติม.
+- ไฟล์ที่แก้: `specs/008-manage-account/test-cases.md`, `prompt-log.md`; ไม่สร้างหรือแก้โค้ด และไม่แก้ Use Case ของสมาชิกคนอื่น.
+
+---
+
+## 2569-11-13 20:15:11 UTC คำสั่ง: สร้าง Requirements Traceability Matrix สำหรับ UC-08
+
+- เครื่องมือ: Copilot ใน Codespaces
+- ไฟล์อ้างอิง: `specs/008-manage-account/spec.md`, `specs/008-manage-account/plan.md`, `specs/008-manage-account/tasks.md`, `specs/008-manage-account/test-cases.md`
+- คำสั่ง: สร้าง `specs/008-manage-account/rtm.md`; เชื่อม FR/NFR/CON/AC กับ Test Case ID ที่มีอยู่จริง; แสดง Covered/Not Covered; อธิบายรายการที่ยังไม่มี coverage; คง Q-01 ถึง Q-03; ห้ามแก้ spec, plan, tasks หรือ Use Case อื่น; ตรวจความครบถ้วนเทียบเอกสารอ้างอิง
+
+### ผลการทำงาน
+
+- สร้าง RTM ครบ 28 IDs จาก spec: FR 9 ข้อ, NFR 4 ข้อ, CON 7 ข้อ และ AC 8 ข้อ
+- ตรวจข้ามไฟล์พบว่า Test Case ID ที่ RTM อ้างทั้ง 14 ID มีอยู่จริงใน `test-cases.md`; ไม่มี ID ที่อ้างแต่ไม่มีจริง และไม่มี FR/NFR/CON/AC จาก spec ตกหล่นใน RTM
+- ระบุ `NFR-USE-01` เป็น Not Covered (partial) เพราะส่วนเกณฑ์ “ใช้งานง่ายและไม่ซับซ้อน” ยังรอ Q-02; ระบุ `AC-ACCOUNT-03` เป็น Not Covered (partial) เพราะยังไม่มีกรณีข้อมูลส่วนตัวขาด required field จนกว่าจะได้คำตอบ Q-01
+- ระบุกรณีที่มี Test Case แล้วแต่ยังรอ Q-01/Q-03 ว่าการดำเนินการหรือการวัดผลยังรอคำตอบ; คง Q-01, Q-02 และ Q-03 เป็น Open Questions โดยไม่ตัดสินใจแทนทีม
+- ไฟล์ที่แก้: `specs/008-manage-account/rtm.md`, `prompt-log.md`; ไม่แก้ `spec.md`, `plan.md`, `tasks.md`, `test-cases.md`, Use Case อื่น หรือโค้ด
+
+---
+
+## 2569-11-13 20:19:18 UTC คำสั่ง: ตรวจและปรับปรุง Test Cases/RTM สำหรับ UC-08
+
+- เครื่องมือ: Copilot ใน Codespaces
+- ไฟล์อ้างอิงที่อ่าน: `specs/008-manage-account/spec.md`, `plan.md`, `tasks.md`, `test-cases.md`, `rtm.md`
+- คำสั่ง: ตรวจความหมายและ traceability ของ `CON-ACCOUNT-03`; ปรับ `TC-ACCOUNT-12` ให้แยกการอ่าน/แก้บัญชีผู้อื่น; ปรับ `TC-ACCOUNT-10` ให้ตรวจการกด Cancel ไม่กระทบการบันทึก/ยกเลิกฟอร์มรหัสผ่าน; ตรวจ `TC-ACCOUNT-06`; ตรวจ IDs และสถานะใน RTM; คง Q-01 ถึง Q-03; ห้ามแก้ spec/plan/tasks/Use Case อื่นและห้ามเขียนโค้ด
+
+### ผลการทำงาน
+
+- ปรับ `test-cases.md`: เชื่อม `CON-ACCOUNT-03` กับกรณี validation ข้อมูลส่วนตัวและรหัสผ่านตามรายละเอียดใน FR ที่เกี่ยวข้อง โดยไม่เพิ่มความหมายหรือ validation rule ให้ CON
+- ขยาย `TC-ACCOUNT-06` ให้ระบุการเปลี่ยนรหัสผ่าน, salted hash, ไม่เก็บ plain text, HTTPS, การใช้ session เดิมไม่ได้ และการนำไปหน้า Login
+- ขยาย `TC-ACCOUNT-10` ให้ตรวจไม่มีการบันทึกข้อมูลส่วนตัวหรือคำขอเปลี่ยนรหัสผ่าน และไม่เปลี่ยนสถานะรหัสผ่าน/session หรือยกเลิกข้อมูลในฟอร์มรหัสผ่านโดยไม่ตั้งใจ
+- ปรับ `TC-ACCOUNT-12` ให้ทดสอบการอ่านและการแก้บัญชี Resident อื่นแยกขั้นตอน แต่ละคำขอต้องได้ HTTP 403 และตรวจว่าข้อมูลบัญชีเป้าหมายไม่เปลี่ยน
+- ปรับ `rtm.md` ให้ตามรอย `CON-ACCOUNT-03` ครบทั้ง profile/password validation และระบุชัดว่า Covered คือมี Test Case mapping ไม่ใช่ผลทดสอบผ่าน
+- ตรวจพบ Test Case ID ที่อ้างใน RTM ทั้ง 14 ID มีอยู่จริง; RTM ครบ 28 IDs จาก spec โดยคง partial gaps ของ `AC-ACCOUNT-03`/Q-01 และ `NFR-USE-01`/Q-02 ไว้
+- ไฟล์ที่แก้: `specs/008-manage-account/test-cases.md`, `specs/008-manage-account/rtm.md`, `prompt-log.md`; ไม่แก้ `spec.md`, `plan.md`, `tasks.md`, Use Case อื่น หรือโค้ด
+
+---
+
+## 2569-11-13 20:23:19 UTC คำสั่ง: ตรวจสอบเอกสาร UC-08 รอบสุดท้าย
+
+- เครื่องมือ: Copilot ใน Codespaces
+- ไฟล์อ้างอิง: `specs/008-manage-account/spec.md`, `plan.md`, `tasks.md`, `test-cases.md`, `rtm.md`
+- คำสั่ง: เพิ่มใน TC-ACCOUNT-06 การตรวจว่ามี Salt และ hash รหัสผ่านทดสอบเดียวกันซ้ำแล้ว Salt ต่างกัน โดยไม่แสดง password/hash ในผล; ระบุใน RTM ว่า NFR-PERF-01 และ AC-ACCOUNT-08 มี Test Case แล้วแต่รอ Q-03; ตรวจ IDs และตาราง traceability; คง Q-01 ถึง Q-03; แก้เฉพาะ test-cases.md, rtm.md และ prompt-log.md; ไม่เขียนโค้ด
+
+### ผลการทำงาน
+
+- ปรับ `TC-ACCOUNT-06` ให้ parser ตรวจว่ามี Salt, เปรียบเทียบ Salt จากการ hash รหัสผ่านทดสอบเดียวกันสองครั้ง และยืนยันว่า output/log ไม่แสดงรหัสผ่าน, hash หรือ Salt
+- ปรับสถานะ `NFR-PERF-01` และ `AC-ACCOUNT-08` ใน RTM ให้ชัดว่ามี `TC-ACCOUNT-13` แล้ว แต่รอทดสอบภายใต้เงื่อนไข Q-03
+- ตรวจครบ 28 IDs ใน spec (FR 9, NFR 4, CON 7, AC 8); Test Case ID ทั้ง 14 รายการที่ RTM อ้างมีอยู่จริง และตาราง traceability ใน `test-cases.md` กับ `rtm.md` ตรงกัน
+- คง Q-01, Q-02 และ Q-03 เป็น Open Questions โดยไม่กำหนด requiredness, usability หรือ performance conditions เพิ่ม
+- ไฟล์ที่แก้: `specs/008-manage-account/test-cases.md`, `specs/008-manage-account/rtm.md`, `prompt-log.md`; ไม่แก้ `spec.md`, `plan.md`, `tasks.md`, Use Case อื่น หรือโค้ด
+
