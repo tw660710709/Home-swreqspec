@@ -204,7 +204,7 @@ AI จะเปิดอ่านเมื่อ spec.md ไม่ชัด แ�
 <details>
 <summary>UC-05 | ดูสถิติหอพัก</summary>
   
-![UC-05](images/uc-05-view_dormitory_statistics.png)
+![UC-05](docs/srs/images/smells/uc-05-view_dormitory_statistics.png)
 
 **ผู้รับผิดชอบ:** 670710729 พิทักษ์พล ชยานนท์นุรักษ์<br>
 </details>
@@ -212,7 +212,7 @@ AI จะเปิดอ่านเมื่อ spec.md ไม่ชัด แ�
 <details>
 <summary>UC-06 | นัดหมายดูห้องพัก</summary>
 
-![UC-06](images/uc-06-schedule_a_room_viewing.png)
+![UC-06](docs/srs/images/smells/uc-06-schedule_a_room_viewing.png)
 
 **ผู้รับผิดชอบ:** 670710729 พิทักษ์พล ชยานนท์นุรักษ์<br>
 </details>
