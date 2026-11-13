@@ -45,9 +45,11 @@ AI จะเปิดอ่านเมื่อ spec.md ไม่ชัด แ�
 670710746 ณัฎฐพล ดาเจริญ<br>
 
 ## architecture overview
-<img width="1702" height="744" alt="image" src="https://github.com/user-attachments/assets/570568a3-8d8a-4353-b397-c93da26c3cd7" />
+<img width="1702" height="744" alt="image" src="https://github.com/user-attachments/assets/570568a3-8d8a-4353-b397-c93da26c3cd7" /><br>
 **ผู้รับผิดชอบ**<br>
 670710729 พิทักษ์พล ชยานนท์นุรักษ์<br>
+
+
 ## use case diagram
 
 ## use case specification
@@ -134,9 +136,25 @@ AI จะเปิดอ่านเมื่อ spec.md ไม่ชัด แ�
 </details>
 
 <details>
+<summary>UC-05 | ดูสถิติหอพัก</summary>
+  
+<img width="795" height="563" alt="image" src="https://github.com/user-attachments/assets/885959b2-8436-4c07-a80c-638969e97763" />
+
+**ผู้รับผิดชอบ:** 670710729 พิทักษ์พล ชยานนท์นุรักษ์<br>
+</details>
+
+<details>
+<summary>UC-06 | นัดหมายดูห้องพัก</summary>
+
+<img width="809" height="608" alt="image" src="https://github.com/user-attachments/assets/216373ac-cb51-4135-99c5-ec5d6f89eba8" />
+
+**ผู้รับผิดชอบ:** 670710729 พิทักษ์พล ชยานนท์นุรักษ์<br>
+</details>
+
+<details>
 <summary>UC-07 | เข้าสู่ระบบ</summary>
 
-![UC-07]<img width="946" height="794" alt="image" src="https://github.com/user-attachments/assets/4b28d2be-2962-4d97-abb8-20d3259cbc4e" />
+<img width="946" height="794" alt="image" src="https://github.com/user-attachments/assets/4b28d2be-2962-4d97-abb8-20d3259cbc4e" />
 
 **ผู้รับผิดชอบ:** 670710746 ณัฎฐพล ดาเจริญ
 </details>
@@ -144,7 +162,7 @@ AI จะเปิดอ่านเมื่อ spec.md ไม่ชัด แ�
 <details>
 <summary>UC-08 | จัดการบัญชีผู้ใช้</summary>
 
-![UC-08]<img width="959" height="782" alt="image" src="https://github.com/user-attachments/assets/b9f9557a-f6ad-44c9-bc59-a9a6259c5ebe" />
+<img width="959" height="782" alt="image" src="https://github.com/user-attachments/assets/b9f9557a-f6ad-44c9-bc59-a9a6259c5ebe" />
 
 **ผู้รับผิดชอบ:** 670710746 ณัฎฐพล ดาเจริญ
 </details>
