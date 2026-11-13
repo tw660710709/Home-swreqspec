@@ -8,6 +8,8 @@ import OwnerDormitoriesPage from "./pages/OwnerDormitoriesPage.jsx";
 import OwnerDormitoryFormPage from "./pages/OwnerDormitoryFormPage.jsx";
 import OwnerRoomsPage from "./pages/OwnerRoomsPage.jsx";
 import ManageAccountPage from "./pages/ManageAccountPage.jsx";
+import AdminDormitoryReviewPage from "./pages/AdminDormitoryReviewPage.jsx";
+import OwnerNotificationsPage from "./pages/OwnerNotificationsPage.jsx";
 
 // รองรับ FR-DOR-09 ถึง FR-DOR-12 และ AC-DOR-07 ถึง AC-DOR-08
 export default function App() {
@@ -53,6 +55,14 @@ export default function App() {
             element={<OwnerDormitoryFormPage />}
           />
           <Route path="/owner/rooms" element={<OwnerRoomsPage />} />
+          <Route
+            path="/admin/dormitories"
+            element={<AdminDormitoryReviewPage />}
+          />
+          <Route
+            path="/owner/notifications"
+            element={<OwnerNotificationsPage />}
+          />
           <Route
             path="/owner/dormitories/:dormitoryId/rooms"
             element={<OwnerRoomsPage />}

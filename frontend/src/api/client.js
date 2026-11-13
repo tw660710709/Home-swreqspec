@@ -476,3 +476,81 @@ export async function downloadDormitoryStatisticsReport({
   }
   return response.blob();
 }
+
+async function approvalJsonRequest(path, { method = "GET", body, headers = {} } = {}) {
+  const response = await fetch(path, {
+    method,
+    headers: {
+      ...headers,
+      ...(body === undefined ? {} : { "Content-Type": "application/json" }),
+    },
+    ...(body === undefined ? {} : { body: JSON.stringify(body) }),
+  });
+  if (!response.ok) {
+    const payload = await response.json();
+    const message =
+      typeof payload?.detail === "string"
+        ? payload.detail
+        : `คำขอไม่สำเร็จ (${response.status})`;
+    throw new Error(message);
+  }
+  return response.json();
+}
+
+// รองรับ FR-ADM-01 และ AC-ADM-01
+export async function getPendingDormitories() {
+  return approvalJsonRequest("/admin/dormitories/pending");
+}
+
+// รองรับ FR-ADM-02, FR-ADM-03 และ AC-ADM-01
+export async function getDormitoryForReview(dormitoryId) {
+  return approvalJsonRequest(
+    `/admin/dormitories/${encodeURIComponent(dormitoryId)}`,
+  );
+}
+
+// รองรับ FR-ADM-04, FR-ADM-08, FR-ADM-09 และ AC-ADM-02
+export async function approveDormitory(dormitoryId, reason) {
+  return approvalJsonRequest(
+    `/admin/dormitories/${encodeURIComponent(dormitoryId)}/approve`,
+    { method: "POST", body: { reason: reason || null } },
+  );
+}
+
+// รองรับ FR-ADM-05, CON-ADM-03 และ AC-ADM-03
+export async function requestDormitoryRevision(dormitoryId, reason) {
+  return approvalJsonRequest(
+    `/admin/dormitories/${encodeURIComponent(dormitoryId)}/revision`,
+    { method: "POST", body: { reason } },
+  );
+}
+
+// รองรับ FR-ADM-06, CON-ADM-03 และ AC-ADM-04
+export async function rejectDormitory(dormitoryId, reason) {
+  return approvalJsonRequest(
+    `/admin/dormitories/${encodeURIComponent(dormitoryId)}/reject`,
+    { method: "POST", body: { reason } },
+  );
+}
+
+// รองรับ FR-ADM-08, NFR-AUD-01 และ AC-ADM-05
+export async function getDormitoryApprovalHistory(dormitoryId) {
+  return approvalJsonRequest(
+    `/admin/dormitories/${encodeURIComponent(dormitoryId)}/history`,
+  );
+}
+
+// รองรับ FR-ADM-09 และ AC-ADM-03, AC-ADM-04
+export async function getOwnerNotifications() {
+  return approvalJsonRequest("/owner/notifications", {
+    headers: prototypeOwnerHeaders,
+  });
+}
+
+// รองรับ FR-ADM-07, CON-ADM-06 และ ASM-08
+export async function resubmitDormitoryForReview(dormitoryId) {
+  return approvalJsonRequest(
+    `/owner/dormitories/${encodeURIComponent(dormitoryId)}/resubmit-review`,
+    { method: "POST", headers: prototypeOwnerHeaders },
+  );
+}

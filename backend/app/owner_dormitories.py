@@ -212,7 +212,12 @@ def update_owner_dormitory(
             """
             UPDATE owner_dormitories
             SET name = ?, location = ?, type = ?, contact_info = ?,
-                amenities = ?, rules = ?, approval_status = ?
+                amenities = ?, rules = ?,
+                approval_status = CASE
+                    WHEN approval_status = 'Need Revision'
+                    THEN approval_status
+                    ELSE ?
+                END
             WHERE dormitory_id = ? AND owner_id = ?
             """,
             (

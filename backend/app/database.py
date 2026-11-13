@@ -69,6 +69,50 @@ def _create_owner_management_schema(connection: sqlite3.Connection) -> None:
                 OR (dormitory_id IS NULL AND room_id IS NOT NULL)
             )
         );
+        CREATE TABLE IF NOT EXISTS approval_history (
+            history_id TEXT PRIMARY KEY,
+            dormitory_id TEXT NOT NULL
+                REFERENCES owner_dormitories(dormitory_id),
+            admin_id TEXT NOT NULL,
+            action TEXT NOT NULL
+                CHECK (action IN ('Approved', 'Need Revision', 'Rejected')),
+            reason TEXT,
+            created_at TEXT NOT NULL,
+            CHECK (
+                action = 'Approved'
+                OR (
+                    reason IS NOT NULL
+                    AND length(reason) BETWEEN 1 AND 500
+                    AND length(trim(reason)) > 0
+                )
+            )
+        );
+        CREATE INDEX IF NOT EXISTS idx_approval_history_dormitory
+            ON approval_history(dormitory_id, created_at);
+        CREATE TABLE IF NOT EXISTS owner_notifications (
+            notification_id TEXT PRIMARY KEY,
+            owner_id TEXT NOT NULL,
+            dormitory_id TEXT NOT NULL
+                REFERENCES owner_dormitories(dormitory_id),
+            action TEXT NOT NULL
+                CHECK (action IN ('Approved', 'Need Revision', 'Rejected')),
+            message TEXT NOT NULL,
+            reason TEXT,
+            is_read INTEGER NOT NULL DEFAULT 0,
+            created_at TEXT NOT NULL
+        );
+        CREATE INDEX IF NOT EXISTS idx_owner_notifications
+            ON owner_notifications(owner_id, created_at);
+        CREATE TRIGGER IF NOT EXISTS approval_history_no_update
+        BEFORE UPDATE ON approval_history
+        BEGIN
+            SELECT RAISE(ABORT, 'ApprovalHistory is append-only');
+        END;
+        CREATE TRIGGER IF NOT EXISTS approval_history_no_delete
+        BEFORE DELETE ON approval_history
+        BEGIN
+            SELECT RAISE(ABORT, 'ApprovalHistory is append-only');
+        END;
         """
     )
     image_columns = {
