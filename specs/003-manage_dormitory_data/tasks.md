@@ -48,11 +48,11 @@ Dependency ก่อนเริ่มเฟส 1: plan ระบุให้ใ
 ### T-03 ทำหน้ารายการและฟอร์มดูข้อมูลเดิม
 - รองรับ: FR-DOR-09, FR-DOR-11, AC-DOR-07, CON-ACC-01, CON-AUTH-01
 - ตรวจด้วย: AC-DOR-07
-- ไฟล์ที่แตะ: `frontend/src/pages/OwnerDormitoriesPage.jsx`, `frontend/src/pages/OwnerDormitoryFormPage.jsx`, `frontend/src/App.jsx`, `frontend/src/api/client.js`, `frontend/src/__tests__/AC-DOR-07-owner-list.test.jsx`
+- ไฟล์ที่แตะ: `frontend/src/pages/OwnerDormitoriesPage.jsx`, `frontend/src/pages/OwnerDormitoryFormPage.jsx`, `frontend/src/App.jsx`, `frontend/src/api/client.js`, `frontend/src/__tests__/AC-DOR-07-owner-list.test.jsx`, `frontend/vite.config.js` (ทีมอนุญาตเพิ่ม proxy `/owners`)
 - แบบหน้าจอ: ไม่มี UI ID/mockup ใน spec; ทดสอบหน้าจอโดยจำลอง client
 - ต้องทำหลัง: T-02
 - เสร็จเมื่อ: `test_AC_DOR_07_owner_list_renders_only_owner_rows` และ `test_AC_DOR_07_edit_form_shows_existing_data` ผ่าน; หน้าจอแสดงรายการของเจ้าของพร้อมทางเลือกเพิ่ม/แก้ไข และเมื่อเลือกแก้ไขแสดงข้อมูลเดิม โดยเรียก API ผ่าน `frontend/src/api/client.js`
-- สถานะ: พร้อมทำ
+- สถานะ: เสร็จ
 
 #### จุดตรวจเฟส 1
 - test ที่ต้องผ่านทั้งหมด: `test_owner_dormitory_schema_supports_owner_rooms_and_images`, `test_AC_DOR_07_lists_only_authenticated_owners_dormitories`, `test_NFR_SEC_02_rejects_foreign_dormitory_and_room_access`, `test_AC_DOR_07_owner_list_renders_only_owner_rows`, `test_AC_DOR_07_edit_form_shows_existing_data`

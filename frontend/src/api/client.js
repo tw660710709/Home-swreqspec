@@ -1,3 +1,6 @@
+// รองรับ CON-ACC-01 และ CON-AUTH-01; ตัวตนจำลองตามมติทีมจนกว่า 007 จะพร้อม
+const prototypeOwnerHeaders = { "X-Owner-Id": "owner-1" };
+
 // รองรับ FR-DOR-01, FR-DOR-02 และ CON-ACC-01
 export async function searchDormitories(filters = {}) {
   const params = new URLSearchParams();
@@ -15,6 +18,39 @@ export async function searchDormitories(filters = {}) {
   const data = await response.json();
   if (!Array.isArray(data)) {
     throw new Error("รูปแบบข้อมูลรายการหอพักไม่ถูกต้อง");
+  }
+  return data;
+}
+
+// รองรับ CON-ACC-01, CON-AUTH-01, FR-DOR-09 และ AC-DOR-07
+export async function getOwnerDormitories() {
+  const response = await fetch("/owners/dormitories", {
+    headers: prototypeOwnerHeaders,
+  });
+  if (!response.ok) {
+    throw new Error(`ไม่สามารถโหลดรายการหอพักของเจ้าของได้ (${response.status})`);
+  }
+
+  const data = await response.json();
+  if (!Array.isArray(data)) {
+    throw new Error("รูปแบบข้อมูลรายการหอพักของเจ้าของไม่ถูกต้อง");
+  }
+  return data;
+}
+
+// รองรับ CON-ACC-01, CON-AUTH-01, FR-DOR-11 และ AC-DOR-07
+export async function getOwnerDormitory(dormitoryId) {
+  const response = await fetch(
+    `/owners/dormitories/${encodeURIComponent(dormitoryId)}`,
+    { headers: prototypeOwnerHeaders },
+  );
+  if (!response.ok) {
+    throw new Error(`ไม่สามารถโหลดข้อมูลหอพักได้ (${response.status})`);
+  }
+
+  const data = await response.json();
+  if (!data || typeof data !== "object" || Array.isArray(data)) {
+    throw new Error("รูปแบบข้อมูลหอพักไม่ถูกต้อง");
   }
   return data;
 }

@@ -1171,3 +1171,10 @@
 - ผลลัพธ์: เพิ่ม API รายการ/รายละเอียดที่กรองตาม `X-Owner-Id`, ใช้ `get_current_owner()` เป็น dependency สำหรับทุก API ของ 003 ใน task นี้ และเพิ่มตัวตรวจความเป็นเจ้าของห้องพัก; เปลี่ยนสถานะ T-02 เป็น "เสร็จ รอทีมตรวจ"
 - ผล test: `PYTHONPATH=. pytest -q backend/tests/test_AC_DOR_07.py` ผ่าน 2 tests; `PYTHONPATH=. pytest -q backend/tests` ผ่าน 49 tests
 - ประเด็นที่ spec/plan ไม่ได้กำหนด: response code/ข้อความปฏิเสธ; implementation ใช้ 401 เมื่อไม่มี header และ 404 เมื่อไม่พบข้อมูลของเจ้าของ โดย test ตรวจว่าถูกปฏิเสธระดับ 4xx ไม่ล็อกข้อความ
+
+## 2569-11-13 คำสั่ง: `/implement T-03 specs/003-manage_dormitory_data/tasks.md`
+- ไฟล์ที่แก้/สร้าง: `frontend/src/pages/OwnerDormitoriesPage.jsx`, `frontend/src/pages/OwnerDormitoryFormPage.jsx`, `frontend/src/App.jsx`, `frontend/src/api/client.js`, `frontend/src/__tests__/AC-DOR-07-owner-list.test.jsx`, `frontend/vite.config.js`, `specs/003-manage_dormitory_data/tasks.md`
+- ผลลัพธ์: เพิ่มเมนูและหน้ารายการหอพักที่โหลดผ่าน API, ทางเลือกเพิ่ม/แก้ไข และฟอร์มแสดงข้อมูลเดิม; client ส่ง `X-Owner-Id: owner-1`; เพิ่ม Vite proxy `/owners` ตามที่ทีมอนุญาต; เปลี่ยนสถานะ T-03 เป็น "เสร็จ รอทีมตรวจ"
+- มติทีม: ใช้ `owner-1` เป็นตัวตนจำลองเริ่มต้น และอนุญาตเพิ่ม `frontend/vite.config.js` เพื่อ proxy `/owners`
+- ผล test: test เป้าหมาย 3 tests ผ่าน; frontend ทั้งชุด 34 tests ผ่าน; `npm run build` ผ่าน; smoke test ผ่าน โดยเรียก `/owners/dormitories` ผ่าน Vite proxy ได้ผล `[]`
+- สิ่งที่เกือบต้องเดาแต่ถามแทน: แหล่ง owner ID สำหรับ frontend และการขยายรายการไฟล์เพื่อเพิ่ม proxy; ทีมยืนยันใช้ `owner-1` และอนุญาตแก้ `vite.config.js`
