@@ -204,7 +204,7 @@ AI จะเปิดอ่านเมื่อ spec.md ไม่ชัด แ�
 <details>
 <summary>UC-05 | ดูสถิติหอพัก</summary>
   
-<img width="795" height="563" alt="image" src="https://github.com/user-attachments/assets/885959b2-8436-4c07-a80c-638969e97763" />
+![UC-05](images/uc-05-view_dormitory_statistics.png)
 
 **ผู้รับผิดชอบ:** 670710729 พิทักษ์พล ชยานนท์นุรักษ์<br>
 </details>
@@ -212,7 +212,7 @@ AI จะเปิดอ่านเมื่อ spec.md ไม่ชัด แ�
 <details>
 <summary>UC-06 | นัดหมายดูห้องพัก</summary>
 
-<img width="809" height="608" alt="image" src="https://github.com/user-attachments/assets/216373ac-cb51-4135-99c5-ec5d6f89eba8" />
+![UC-06](images/uc-06-schedule_a_room_viewing.png)
 
 **ผู้รับผิดชอบ:** 670710729 พิทักษ์พล ชยานนท์นุรักษ์<br>
 </details>
