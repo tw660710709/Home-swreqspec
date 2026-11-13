@@ -177,6 +177,30 @@ AI จะเปิดอ่านเมื่อ spec.md ไม่ชัด แ�
 </details>
 
 <details>
+<summary>UC-02 | สมัครสมาชิก</summary>
+
+![UC-02](images/smells/UC-02-register.png)
+
+**ผู้รับผิดชอบ:** 660710709 ธนกฤต เวทยนุกูล
+</details>
+
+<details>
+<summary>UC-03 | จัดการข้อมูลหอพัก</summary>
+
+![UC-03](images/smells/Smell03.png)
+
+**ผู้รับผิดชอบ:** 670710713 ชนัสถ์นันท์ วะรีวะราช
+</details>
+
+<details>
+<summary>UC-04 | อัพเดทสถานะห้องว่าง</summary>
+
+![UC-03](images/smells/Smell04.png)
+
+**ผู้รับผิดชอบ:** 670710713 ชนัสถ์นันท์ วะรีวะราช
+</details>
+
+<details>
 <summary>UC-05 | ดูสถิติหอพัก</summary>
   
 <img width="795" height="563" alt="image" src="https://github.com/user-attachments/assets/885959b2-8436-4c07-a80c-638969e97763" />
@@ -208,10 +232,13 @@ AI จะเปิดอ่านเมื่อ spec.md ไม่ชัด แ�
 **ผู้รับผิดชอบ:** 670710746 ณัฎฐพล ดาเจริญ
 </details>
 
+<details>
+<summary>UC-09 | เขียนและแก้ไขรีวิวหอพัก</summary>
 
+![UC-03](images/smells/Smell09.png)
 
-
-
+**ผู้รับผิดชอบ:** 670710713 ชนัสถ์นันท์ วะรีวะราช
+</details>
 
 
 <details>
