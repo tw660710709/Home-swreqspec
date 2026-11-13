@@ -34,7 +34,7 @@ AI จะเปิดอ่านเมื่อ spec.md ไม่ชัด แ�
 670710713 ชนัสถ์นันท์ วะรีวะราช<br>
 
 ## Requirements Prioritization
-![Requirements Prioritization](images/Requirements-Prioritizaแtion.png)
+![Requirements Prioritization](images/Requirements-Prioritization.png)
 **ผู้รับผิดชอบ**<br>
 660710709 ธนกฤต เวทยนุกูล รับผิดชอบ UC-01<br>
 670710713 ชนัสถ์นันท์ วะรีวะราช รับผิดชอบ UC-03<br>
