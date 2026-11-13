@@ -38,6 +38,7 @@ AI จะเปิดอ่านเมื่อ spec.md ไม่ชัด แ�
 **ผู้รับผิดชอบ**<br>
 660710709 ธนกฤต เวทยนุกูล รับผิดชอบ UC-01<br>
 670710713 ชนัสถ์นันท์ วะรีวะราช รับผิดชอบ UC-03<br>
+670710322 ธันยธรณ์ บุญมาก รับผิดชอบ UC-13<br>
 
 ## system context
 <img width="695" height="645" alt="image" src="https://github.com/user-attachments/assets/192212b6-9d79-4f4d-91b6-a79dc69bbd50" /><br>
