@@ -1393,3 +1393,11 @@
 - ผล test ทั้งชุด: pytest 90 ผ่าน, 1 ไม่ผ่าน; Vitest 66 ผ่าน, 1 ไม่ผ่าน (44 ไฟล์)
 - ข้อค้นพบ: pytest พบว่าชื่อที่เป็นช่องว่างล้วนถูกบันทึกสำเร็จ (HTTP 200) แทนการแจ้งข้อผิดพลาด; จุดตรวจ `backend/app/owner_dormitories.py` บรรทัด 32 ใช้ `min_length=1` ซึ่งไม่ปฏิเสธ whitespace-only. Vitest พบว่าการปฏิเสธราคาห้องไม่แสดงข้อผิดพลาดผูกกับช่องราคาใน `OwnerRoomsPage`; test ล้มเมื่อช่องไม่มี `aria-invalid`/`aria-describedby`
 - ไม่แก้ `test-cases.md` หรือโค้ดระบบ; หยุดตาม prompt เพราะ test ใหม่ไม่ผ่านและเป็นความไม่ตรงกับ AC ที่ต้องให้ทีมพิจารณา
+
+## 2569-11-13 19:45 คำสั่ง: แก้ตาม F-04 ใน specs/003-manage_dormitory_data/rtm.md
+- เครื่องมือ: Claude (เครดิต Copilot หมด)
+- ไฟล์ที่แก้: backend/app/owner_dormitories.py, frontend/src/api/client.js, frontend/src/pages/OwnerRoomsPage.jsx, specs/003-manage_dormitory_data/rtm.md
+- สิ่งที่แก้: ปฏิเสธช่องข้อความบังคับที่เป็นช่องว่างล้วน; ราคาห้องต้องเป็นตัวเลขมากกว่า 0 (ASM-21, AC-DOR-09); หน้าห้องพักแสดงข้อผิดพลาดใต้ช่องราคา
+- ไม่แก้ test ที่ขึ้นต้นด้วย test_TC_ หรือไฟล์ TC-*.test.jsx
+- ผล test: pytest 91 ผ่าน, Vitest 67 ผ่าน
+- ย้าย F-04 ไปหัวข้อ 4 "แก้แล้ว" ใน rtm.md
