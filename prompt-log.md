@@ -1216,3 +1216,10 @@
 - ผลลัพธ์: แปลง `422 detail` เป็นข้อผิดพลาดใต้ช่องที่เกี่ยวข้อง; แสดงเหตุผลภาษาไทยสำหรับฟิลด์บังคับที่ขาด/ว่าง ล้างข้อความเมื่อแก้ช่อง และไม่แสดงผลสำเร็จเมื่อ validation ล้มเหลว; เปลี่ยนสถานะ T-10 เป็น "เสร็จ รอทีมตรวจ"
 - ผล test: `npm test -- --run src/__tests__/AC-DOR-09-field-errors.test.jsx` ผ่าน 3 tests; `npm test` ผ่าน 42 tests ใน 24 ไฟล์; `npm run build` ผ่าน
 - สิ่งที่เกือบต้องเดาแต่ถามแทน: ใช้เฉพาะ error types ของ required fields ที่ T-09 มีอยู่; ไม่เพิ่ม validation rules สำหรับค่าที่กรอกครบแต่ไม่ถูกต้องซึ่ง spec ยังไม่ระบุ
+
+## 2569-11-13 09:38:31 คำสั่ง: `/implement T-11 specs/003-manage_dormitory_data/tasks.md`
+- ไฟล์ที่แก้/สร้าง: `backend/app/owner_dormitories.py`, `backend/app/config.py`, `backend/tests/test_AC_DOR_10.py`, `backend/requirements.txt`, `specs/003-manage_dormitory_data/tasks.md`
+- ผลลัพธ์: เพิ่ม API อัปโหลดรูปของหอพัก/ห้องพัก ตรวจชนิด ขนาด 5 MB และจำนวน 10 รูปแยกต่อรายการ ปฏิเสธเฉพาะไฟล์ที่ไม่ผ่านและจัดเก็บไฟล์ที่ผ่านลง local filesystem พร้อม metadata; ตรวจสิทธิ์เจ้าของ/ความสัมพันธ์ห้อง; เปลี่ยนสถานะ T-11 เป็น "เสร็จ รอทีมตรวจ"
+- หมายเหตุ: ทีมเลือก local filesystem เอง ไม่ได้มาจาก spec/plan; เพิ่ม `python-multipart` ใน manifest ตามที่ทีมอนุญาต; ไม่แก้ `database.py` เพราะ schema metadata รูปที่สร้างใน T-01 รองรับการบันทึกแล้ว
+- ผล test: `PYTHONPATH=.. pytest -q tests/test_AC_DOR_10.py` ผ่าน 5 tests; `PYTHONPATH=.. pytest -q tests` ผ่าน 63 tests
+- สิ่งที่เกือบต้องเดาแต่ถามแทน: ถามทีมก่อนเลือกเทคโนโลยีจัดเก็บรูปและก่อนแตะ `backend/requirements.txt`; ทีมยืนยัน local filesystem และอนุญาตเพิ่ม dependency; ไม่พบประเด็นกำกวมอื่นที่ต้องตัดสินใจแทนทีม

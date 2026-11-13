@@ -153,11 +153,11 @@ Dependency ก่อนเริ่มเฟส 1: plan ระบุให้ใ
 ### T-11 ทำ API ตรวจและจัดเก็บรูปเป็นรายไฟล์
 - รองรับ: FR-DOR-14, FR-DOR-18, CON-FILE-01, CON-AUTH-01
 - ตรวจด้วย: AC-DOR-10
-- ไฟล์ที่แตะ: `backend/app/owner_dormitories.py`, `backend/app/database.py`, `backend/tests/test_AC_DOR_10.py`; เทคโนโลยีที่จัดเก็บรูปภาพให้ทีมเลือกตาม plan (spec/plan ไม่ได้ระบุผลิตภัณฑ์)
+- ไฟล์ที่แตะ: `backend/app/owner_dormitories.py`, `backend/app/database.py`, `backend/app/config.py`, `backend/tests/test_AC_DOR_10.py`, `backend/requirements.txt`; เทคโนโลยีจัดเก็บรูปภาพทีมเลือกเป็น local filesystem ไม่ได้มาจาก spec
 - แบบหน้าจอ: ไม่มี
 - ต้องทำหลัง: T-01, T-02
 - เสร็จเมื่อ: `test_AC_DOR_10_rejects_only_invalid_or_over_limit_images` ผ่านทั้งชนิดไฟล์ ขนาด 5 MB และจำนวน 10 รูปแยกต่อหอพัก/ห้อง โดยปฏิเสธเฉพาะไฟล์ที่ไม่ผ่านและรับไฟล์ถูกต้องต่อ
-- สถานะ: พร้อมทำ
+- สถานะ: เสร็จ 
 
 ### T-12 แสดงผลอัปโหลดและให้เลือกไฟล์แทน
 - รองรับ: FR-DOR-14, FR-DOR-18, AC-DOR-10, CON-FILE-01

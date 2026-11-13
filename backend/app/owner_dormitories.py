@@ -2,12 +2,14 @@ import json
 import sqlite3
 from contextlib import closing
 from decimal import Decimal
+from pathlib import Path
 from typing import Optional
 from uuid import uuid4
 
-from fastapi import APIRouter, Depends, Header, HTTPException
+from fastapi import APIRouter, Depends, File, Header, HTTPException, UploadFile
 from pydantic import BaseModel, Field
 
+from .config import MAX_IMAGE_SIZE_BYTES, MAX_IMAGES_PER_TARGET
 from .database import _connect, get_database_path, initialize_database
 
 
@@ -282,3 +284,162 @@ def update_owner_dormitory_room(
             raise HTTPException(status_code=404)
         connection.commit()
     return get_owned_dormitory_room(owner_id, dormitory_id, room_id)
+
+
+def _image_file_type(filename: Optional[str], content: bytes) -> Optional[str]:
+    # รองรับ CON-FILE-01, FR-DOR-14 และ FR-DOR-18
+    extension = Path(filename or "").suffix.lower()
+    if extension in {".jpg", ".jpeg"} and content.startswith(b"\xff\xd8\xff"):
+        return extension[1:].upper()
+    if extension == ".png" and content.startswith(b"\x89PNG\r\n\x1a\n"):
+        return "PNG"
+    return None
+
+
+def _store_owner_image(
+    dormitory_id: str,
+    room_id: Optional[str],
+    file_type: str,
+    content: bytes,
+) -> Optional[str]:
+    # รองรับ CON-AUTH-01, CON-FILE-01 และ FR-DOR-14; local filesystem เป็นการเลือกของทีม
+    initialize_database()
+    image_id = str(uuid4())
+    storage_directory = (
+        get_database_path().resolve().parent / "owner_dormitory_images"
+    )
+    image_path = storage_directory / f"{image_id}.{file_type.lower()}"
+    temporary_path = storage_directory / f".{image_id}.tmp"
+    with closing(_connect(get_database_path().resolve())) as connection:
+        try:
+            connection.execute("BEGIN IMMEDIATE")
+            if room_id is None:
+                image_count = connection.execute(
+                    """
+                    SELECT COUNT(*) FROM owner_dormitory_images
+                    WHERE dormitory_id = ?
+                    """,
+                    (dormitory_id,),
+                ).fetchone()[0]
+            else:
+                image_count = connection.execute(
+                    """
+                    SELECT COUNT(*) FROM owner_dormitory_images
+                    WHERE room_id = ?
+                    """,
+                    (room_id,),
+                ).fetchone()[0]
+            if image_count >= MAX_IMAGES_PER_TARGET:
+                connection.rollback()
+                return None
+
+            storage_directory.mkdir(parents=True, exist_ok=True)
+            with temporary_path.open("xb") as image_file:
+                image_file.write(content)
+            connection.execute(
+                """
+                INSERT INTO owner_dormitory_images (
+                    image_id, dormitory_id, room_id, file_type, file_size_bytes
+                ) VALUES (?, ?, ?, ?, ?)
+                """,
+                (
+                    image_id,
+                    dormitory_id if room_id is None else None,
+                    room_id,
+                    file_type,
+                    len(content),
+                ),
+            )
+            temporary_path.replace(image_path)
+            connection.commit()
+        except Exception:
+            connection.rollback()
+            if temporary_path.exists():
+                temporary_path.unlink()
+            if image_path.exists():
+                image_path.unlink()
+            raise
+    return image_id
+
+
+async def _upload_owner_images(
+    dormitory_id: str,
+    room_id: Optional[str],
+    files: list[UploadFile],
+) -> dict[str, list[dict[str, object]]]:
+    # รองรับ CON-FILE-01, FR-DOR-14, FR-DOR-18 และ AC-DOR-10
+    accepted: list[dict[str, object]] = []
+    rejected: list[dict[str, object]] = []
+    for uploaded_file in files:
+        filename = uploaded_file.filename or ""
+        try:
+            content = await uploaded_file.read(MAX_IMAGE_SIZE_BYTES + 1)
+        finally:
+            await uploaded_file.close()
+
+        if len(content) > MAX_IMAGE_SIZE_BYTES:
+            rejected.append(
+                {
+                    "filename": filename,
+                    "reason": "ไฟล์ต้องเป็น JPG, JPEG หรือ PNG และไม่เกิน 5 MB",
+                }
+            )
+            continue
+
+        file_type = _image_file_type(filename, content)
+        if file_type is None:
+            rejected.append(
+                {
+                    "filename": filename,
+                    "reason": "ไฟล์ต้องเป็น JPG, JPEG หรือ PNG และไม่เกิน 5 MB",
+                }
+            )
+            continue
+
+        image_id = _store_owner_image(
+            dormitory_id,
+            room_id,
+            file_type,
+            content,
+        )
+        if image_id is None:
+            rejected.append(
+                {
+                    "filename": filename,
+                    "reason": "อัปโหลดได้ไม่เกิน 10 รูป",
+                }
+            )
+            continue
+        accepted.append(
+            {
+                "image_id": image_id,
+                "filename": filename,
+                "file_type": file_type,
+                "file_size_bytes": len(content),
+            }
+        )
+
+    return {"accepted": accepted, "rejected": rejected}
+
+
+@router.post("/owners/dormitories/{dormitory_id}/images")
+async def upload_owner_dormitory_images(
+    dormitory_id: str,
+    files: list[UploadFile] = File(...),
+    owner_id: str = Depends(get_current_owner),
+) -> dict[str, list[dict[str, object]]]:
+    # รองรับ CON-AUTH-01, CON-FILE-01, FR-DOR-14, FR-DOR-18 และ AC-DOR-10
+    get_owned_dormitory(owner_id, dormitory_id)
+    return await _upload_owner_images(dormitory_id, None, files)
+
+
+@router.post("/owners/dormitories/{dormitory_id}/rooms/{room_id}/images")
+async def upload_owner_room_images(
+    dormitory_id: str,
+    room_id: str,
+    files: list[UploadFile] = File(...),
+    owner_id: str = Depends(get_current_owner),
+) -> dict[str, list[dict[str, object]]]:
+    # รองรับ CON-AUTH-01, FR-DOR-12, FR-DOR-14, FR-DOR-18 และ AC-DOR-10
+    get_owned_dormitory_room(owner_id, dormitory_id, room_id)
+    return await _upload_owner_images(dormitory_id, room_id, files)
