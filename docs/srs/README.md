@@ -206,13 +206,14 @@ AI จะเปิดอ่านเมื่อ spec.md ไม่ชัด แ�
   
 
 ![uc-05](images/smells/uc-05-view_dormitory_statistics.png)
+
 **ผู้รับผิดชอบ:** 670710729 พิทักษ์พล ชยานนท์นุรักษ์<br>
 </details>
 
 <details>
 <summary>UC-06 | นัดหมายดูห้องพัก</summary>
 
-![UC-06](docs/srs/images/smells/uc-06-schedule_a_room_viewing.png)
+![uc-06](images/smells/uc-06-schedule_a_room_viewing.png)
 
 **ผู้รับผิดชอบ:** 670710729 พิทักษ์พล ชยานนท์นุรักษ์<br>
 </details>
