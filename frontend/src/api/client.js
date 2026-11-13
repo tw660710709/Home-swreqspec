@@ -95,6 +95,91 @@ export async function updateOwnerDormitory(dormitoryId, dormitory) {
   );
 }
 
+// รองรับ CON-AUTH-01, FR-DOR-12 และ ASM-17
+export async function getOwnerDormitoryRooms(dormitoryId) {
+  const response = await fetch(
+    `/owners/dormitories/${encodeURIComponent(dormitoryId)}/rooms`,
+    { headers: prototypeOwnerHeaders },
+  );
+  if (!response.ok) {
+    throw new Error(`ไม่สามารถโหลดข้อมูลห้องพักได้ (${response.status})`);
+  }
+
+  const data = await response.json();
+  if (
+    !Array.isArray(data) ||
+    data.some(
+      (room) =>
+        !room ||
+        typeof room !== "object" ||
+        typeof room.room_id !== "string" ||
+        room.dormitory_id !== dormitoryId ||
+        !["string", "number"].includes(typeof room.monthly_rent),
+    )
+  ) {
+    throw new Error("รูปแบบข้อมูลห้องพักไม่ถูกต้อง");
+  }
+  return data;
+}
+
+// รองรับ CON-DATA-01, CON-BUS-01, FR-DOR-12 และ ASM-16
+async function saveOwnerDormitoryRoom(path, method, room) {
+  const response = await fetch(path, {
+    method,
+    headers: {
+      ...prototypeOwnerHeaders,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(room),
+  });
+  if (!response.ok) {
+    throw new Error(`ไม่สามารถบันทึกข้อมูลห้องพักได้ (${response.status})`);
+  }
+
+  const data = await response.json();
+  if (
+    !data ||
+    typeof data !== "object" ||
+    Array.isArray(data) ||
+    typeof data.room_id !== "string" ||
+    typeof data.dormitory_id !== "string" ||
+    !["string", "number"].includes(typeof data.monthly_rent)
+  ) {
+    throw new Error("รูปแบบข้อมูลห้องพักที่บันทึกไม่ถูกต้อง");
+  }
+  return data;
+}
+
+// รองรับ CON-ACC-01, CON-AUTH-01, CON-DATA-01, CON-BUS-01, FR-DOR-12 และ ASM-16
+export async function createOwnerDormitoryRoom(dormitoryId, room) {
+  const data = await saveOwnerDormitoryRoom(
+    `/owners/dormitories/${encodeURIComponent(dormitoryId)}/rooms`,
+    "POST",
+    room,
+  );
+  if (data.dormitory_id !== dormitoryId) {
+    throw new Error("ห้องพักที่บันทึกไม่เชื่อมโยงกับหอพักที่เลือก");
+  }
+  return data;
+}
+
+// รองรับ CON-ACC-01, CON-AUTH-01, CON-DATA-01, CON-BUS-01, FR-DOR-12 และ ASM-16
+export async function updateOwnerDormitoryRoom(
+  dormitoryId,
+  roomId,
+  room,
+) {
+  const data = await saveOwnerDormitoryRoom(
+    `/owners/dormitories/${encodeURIComponent(dormitoryId)}/rooms/${encodeURIComponent(roomId)}`,
+    "PUT",
+    room,
+  );
+  if (data.dormitory_id !== dormitoryId || data.room_id !== roomId) {
+    throw new Error("ข้อมูลห้องพักที่บันทึกไม่ตรงกับหอพักหรือห้องที่เลือก");
+  }
+  return data;
+}
+
 // รองรับ FR-DOR-07, CON-BUS-01 และ ASM-05
 export async function getRecommendedDormitories(filters = {}) {
   const params = new URLSearchParams();

@@ -1198,3 +1198,9 @@
 - ผลลัพธ์: เพิ่มฟอร์มสร้าง/แก้ไขข้อมูลหอพักและเชื่อม POST/PUT ผ่าน client โดยคงรหัสหอพักเป็นข้อมูลอ่านอย่างเดียว ไม่ส่งราคาห้องพัก และแสดงข้อมูลล่าสุดกับสถานะ “รออนุมัติ”; เปลี่ยนสถานะ T-06 เป็น "เสร็จ รอทีมตรวจ"
 - ผล test: `npm test -- --run src/__tests__/AC-DOR-08-dormitory-form.test.jsx` ผ่าน 3 tests; `npm test` ผ่าน 37 tests ใน 22 ไฟล์; `npm run build` ผ่าน
 - สิ่งที่เกือบต้องเดาแต่ถามแทน: ไม่มีประเด็นกำกวมที่ต้องถามเพิ่ม; ใช้การแสดงสิ่งอำนวยความสะดวกแบบคั่น comma ตามฟอร์มเดิมใน T-03 และไม่เพิ่มข้อความ validation รายช่องซึ่งเป็นขอบเขตของ T-09
+
+## 2569-11-13 คำสั่ง: `/implement T-07 specs/003-manage_dormitory_data/tasks.md`
+- ไฟล์ที่แก้/สร้าง: `frontend/src/pages/OwnerRoomsPage.jsx`, `frontend/src/App.jsx`, `frontend/src/api/client.js`, `frontend/src/__tests__/AC-DOR-08-rooms-page.test.jsx`, `specs/003-manage_dormitory_data/tasks.md`
+- ผลลัพธ์: เพิ่มทางเลือกเลือกหอพักและหน้าจัดการห้องพักแยก; อ่าน/เพิ่ม/แก้ไขห้องผ่าน client โดยส่งเฉพาะ `monthly_rent` และเชื่อมด้วย ID ที่ระบบกำหนด; เปลี่ยนสถานะ T-07 เป็น "เสร็จ รอทีมตรวจ"
+- ผล test: `npm test -- --run src/__tests__/AC-DOR-08-rooms-page.test.jsx` ผ่าน 2 tests; `npm test` ผ่าน 39 tests ใน 23 ไฟล์; `npm run build` ผ่าน
+- สิ่งที่เกือบต้องเดาแต่ถามแทน: spec/plan ไม่กำหนดชื่อห้องหรือช่วงราคา จึงใช้ `room_id` ที่ระบบสร้างกับราคาเท่านั้น และไม่เพิ่มฟิลด์ห้องหรือข้อจำกัดราคา
