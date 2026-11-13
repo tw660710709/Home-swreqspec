@@ -1165,3 +1165,9 @@
 - การตัดสินใจจากทีม: เก็บ metadata/ความสัมพันธ์ของรูปก่อน และให้เลือก storage จริงใน T-11
 - ผล test: `PYTHONPATH=. pytest -q backend/tests/test_dormitory_management.py` ผ่าน 1 test; `PYTHONPATH=. pytest -q backend/tests` ผ่าน 47 tests
 - สิ่งที่เกือบต้องเดาแต่ถามทีมก่อน: วิธีจัดเก็บไฟล์รูปจริง; ทีมเลือก metadata-only สำหรับ T-01 และเลื่อนการเลือก storage จริงไป T-11
+
+## 2569-11-13 คำสั่ง: `/implement T-02 specs/003-manage_dormitory_data/tasks.md`
+- ไฟล์ที่แก้/สร้าง: `backend/app/owner_dormitories.py`, `backend/app/main.py`, `backend/tests/test_AC_DOR_07.py`, `specs/003-manage_dormitory_data/tasks.md`
+- ผลลัพธ์: เพิ่ม API รายการ/รายละเอียดที่กรองตาม `X-Owner-Id`, ใช้ `get_current_owner()` เป็น dependency สำหรับทุก API ของ 003 ใน task นี้ และเพิ่มตัวตรวจความเป็นเจ้าของห้องพัก; เปลี่ยนสถานะ T-02 เป็น "เสร็จ รอทีมตรวจ"
+- ผล test: `PYTHONPATH=. pytest -q backend/tests/test_AC_DOR_07.py` ผ่าน 2 tests; `PYTHONPATH=. pytest -q backend/tests` ผ่าน 49 tests
+- ประเด็นที่ spec/plan ไม่ได้กำหนด: response code/ข้อความปฏิเสธ; implementation ใช้ 401 เมื่อไม่มี header และ 404 เมื่อไม่พบข้อมูลของเจ้าของ โดย test ตรวจว่าถูกปฏิเสธระดับ 4xx ไม่ล็อกข้อความ

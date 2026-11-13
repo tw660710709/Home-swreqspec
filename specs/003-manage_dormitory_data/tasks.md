@@ -43,7 +43,7 @@ Dependency ก่อนเริ่มเฟส 1: plan ระบุให้ใ
 - แบบหน้าจอ: ไม่มี
 - ต้องทำหลัง: T-01 และ dependency การยืนยันตัวตนตาม plan ต้องพร้อม
 - เสร็จเมื่อ: `test_AC_DOR_07_lists_only_authenticated_owners_dormitories` และ `test_NFR_SEC_02_rejects_foreign_dormitory_and_room_access` ผ่าน โดยรายการและคำขออ่าน/แก้ไขจำกัดตามเจ้าของที่ยืนยันตัวตน
-- สถานะ: พร้อมทำ
+- สถานะ: เสร็จ
 
 ### T-03 ทำหน้ารายการและฟอร์มดูข้อมูลเดิม
 - รองรับ: FR-DOR-09, FR-DOR-11, AC-DOR-07, CON-ACC-01, CON-AUTH-01
