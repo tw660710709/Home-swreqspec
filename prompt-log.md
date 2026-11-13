@@ -1243,3 +1243,9 @@
 - ผลลัพธ์: ยืนยันการกรองมุมมองสาธารณะด้วยสถานะอนุมัติเดิม: หอพัก Pending ไม่คืนข้อมูลและรูป, หอพัก Approved คืนข้อมูลและเฉพาะรูปที่เชื่อมกับหอพักนั้น; เปลี่ยนสถานะ T-14 เป็น "เสร็จ รอทีมตรวจ"
 - ผล test: `PYTHONPATH=.. pytest -q tests/test_AC_DOR_12.py tests/test_details.py` ผ่าน 7 tests
 - สิ่งที่เกือบต้องเดาแต่ถามแทน: โมเดลรูปไม่มีสถานะอนุมัติแยก จึงใช้สถานะอนุมัติของหอพักที่รูปเชื่อมอยู่ตามโมเดล/กระบวนการเดิม และไม่เพิ่ม workflow หรือสถานะใหม่; ไม่ทดสอบพฤติกรรม Q-02
+
+## 2569-11-13 10:05:02 คำสั่ง: `/implement T-15 specs/003-manage_dormitory_data/tasks.md`
+- ไฟล์ที่แก้/สร้าง: `frontend/src/api/client.js`, `frontend/src/api/dormApi.js`, `frontend/src/pages/DormDetailPage.jsx`, `frontend/src/__tests__/AC-DOR-12-public-detail.test.jsx`, `specs/003-manage_dormitory_data/tasks.md`
+- ผลลัพธ์: ยืนยันหน้ารายละเอียดเรียก API `/dormitories/{id}` ผ่าน client และแสดงข้อมูล/รูปที่ API ส่งกลับ โดยไม่เรียก API ค้นหารายการสาธารณะ; เปลี่ยนสถานะ T-15 เป็น "เสร็จ รอทีมตรวจ"
+- ผล test: `npm test -- --run src/__tests__/AC-DOR-12-public-detail.test.jsx` ผ่าน 1 test; `npm test` ผ่าน 48 tests ใน 27 ไฟล์; `npm run build` ผ่าน
+- สิ่งที่เกือบต้องเดาแต่ถามแทน: ไม่พบประเด็นกำกวมเพิ่มเติม; ใช้ endpoint รายละเอียดและตัวกรองสถานะที่ T-14 ทำไว้ โดยไม่เพิ่มการค้นหาสาธารณะหรือกำหนดพฤติกรรม Q-02

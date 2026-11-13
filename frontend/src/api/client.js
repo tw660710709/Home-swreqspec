@@ -325,7 +325,7 @@ export async function getRecommendedDormitories(filters = {}) {
   return data;
 }
 
-// รองรับ FR-DOR-03, FR-DOR-04, FR-DOR-05 และ CON-ACC-01
+// รองรับ FR-DOR-03, FR-DOR-04, FR-DOR-05, CON-ACC-01, NFR-DATA-02 และ AC-DOR-12
 export async function getDormitoryDetail(dormitoryId) {
   const response = await fetch(
     `/dormitories/${encodeURIComponent(dormitoryId)}`,

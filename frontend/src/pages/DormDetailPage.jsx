@@ -11,6 +11,7 @@ function Section({ title, children }) {
   );
 }
 
+// รองรับ NFR-DATA-02 และ AC-DOR-12 ด้วยข้อมูลรายละเอียดจาก API สาธารณะ
 function DormitoryDetail({ detail }) {
   const mainImage = detail.images?.[0];
 
@@ -120,6 +121,7 @@ function DormitoryDetail({ detail }) {
   );
 }
 
+// รองรับ NFR-DATA-02 และ AC-DOR-12
 export default function DormDetailPage() {
   const { id } = useParams();
   const [detail, setDetail] = useState(null);
