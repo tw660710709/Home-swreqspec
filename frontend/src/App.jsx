@@ -7,6 +7,7 @@ import DormitoryStatisticsPage from "./pages/DormitoryStatisticsPage.jsx";
 import OwnerDormitoriesPage from "./pages/OwnerDormitoriesPage.jsx";
 import OwnerDormitoryFormPage from "./pages/OwnerDormitoryFormPage.jsx";
 import OwnerRoomsPage from "./pages/OwnerRoomsPage.jsx";
+import ManageAccountPage from "./pages/ManageAccountPage.jsx";
 
 // รองรับ FR-DOR-09 ถึง FR-DOR-12 และ AC-DOR-07 ถึง AC-DOR-08
 export default function App() {
@@ -14,12 +15,18 @@ export default function App() {
     <>
       <Navbar />
       <nav
-        aria-label="เมนูจัดการข้อมูลหอพัก"
+        aria-label="เมนูการจัดการ"
         className="border-b border-sand px-6 py-3"
       >
         <Link
-          to="/owner/dormitories"
+          to="/account"
           className="font-medium text-primary hover:underline"
+        >
+          จัดการบัญชี
+        </Link>
+        <Link
+          to="/owner/dormitories"
+          className="ml-6 font-medium text-primary hover:underline"
         >
           จัดการข้อมูลหอพัก
         </Link>
@@ -33,6 +40,7 @@ export default function App() {
       <main>
         <Routes>
           <Route path="/" element={<HomePage />} />
+          <Route path="/account" element={<ManageAccountPage />} />
           <Route path="/dorms/:id" element={<DormDetailPage />} />
           <Route path="/dorms/:id/statistics" element={<DormitoryStatisticsPage />} />
           <Route path="/owner/dormitories" element={<OwnerDormitoriesPage />} />

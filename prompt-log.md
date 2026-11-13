@@ -1623,3 +1623,112 @@
 - คง Q-01, Q-02 และ Q-03 เป็น Open Questions โดยไม่กำหนด requiredness, usability หรือ performance conditions เพิ่ม
 - ไฟล์ที่แก้: `specs/008-manage-account/test-cases.md`, `specs/008-manage-account/rtm.md`, `prompt-log.md`; ไม่แก้ `spec.md`, `plan.md`, `tasks.md`, Use Case อื่น หรือโค้ด
 
+---
+
+## 2569-11-13 20:48:42 UTC คำสั่ง: `/implement T-01 specs/008-manage-account/spec.md`
+
+- เครื่องมือ: Copilot ใน Codespaces
+- ไฟล์อ้างอิง: `specs/008-manage-account/spec.md`, `plan.md`, `tasks.md`, `specs/007-login/spec.md`
+- คำสั่ง: Implement T-01 ของ UC-08 โดยยึด spec; ไม่สร้าง Authentication ซ้ำ.
+
+### ผลการตรวจและสถานะ
+
+- T-01 ใน `specs/008-manage-account/tasks.md` คือการรับ auth/session contract จาก UC-07 สำหรับ verified identity, session/token verification และการยกเลิก session ปัจจุบัน ไม่ใช่การสร้าง Authentication ใหม่.
+- `specs/007-login/spec.md` ระบุว่าการ Login สำเร็จสร้าง session แต่ไม่กำหนด contract/API สำหรับตรวจ session หรือยกเลิก session; Q-02 ยังเปิดถามเรื่อง session ที่ต้องใช้กับฟังก์ชันต่าง ๆ.
+- ในโค้ดปัจจุบันยังไม่มี auth/session dependency ของ UC-07; `backend/app/owner_dormitories.py` ใช้ `X-Owner-Id` prototype และระบุว่าเป็นจุดเปลี่ยนเมื่อ 007 พร้อม.
+- ยังไม่ได้แก้โค้ด เพราะการกำหนดหรือสร้าง contract เองจะเป็นการเดาและอาจสร้าง Authentication ซ้ำ; รอทีมชี้ contract/จุดเชื่อมต่อของ UC-07 หรือยืนยันให้เลื่อน T-01 จนกว่า dependency จะพร้อม.
+- ถามทีมให้เลือกว่าจะให้ contract หรือเลื่อน T-01; ได้คำตอบว่า `provide_contract` แต่ไม่มี path/รายละเอียดในช่อง contract และคำขอรายละเอียดเพิ่มเติมยังไม่มีข้อมูล จึงคงสถานะ blocked และไม่สร้าง interface แทนทีม.
+
+---
+
+## 2569-11-13 20:52:34 UTC คำสั่ง: `/implement T-02 specs/008-manage-account/spec.md`
+
+- เครื่องมือ: Copilot ใน Codespaces
+- ไฟล์อ้างอิง: `specs/008-manage-account/spec.md`, `plan.md`, `tasks.md`, `specs/007-login/spec.md`, `backend/app/database.py`
+- คำสั่ง: Implement T-02 สำหรับ User persistence และฟิลด์บัญชี UC-08 โดยไม่สร้าง User/session/authentication ซ้ำ และไม่เดา requiredness/name validation ที่ยังรอ Q-01
+
+### ผลการตรวจและสถานะ
+
+- T-02 ระบุ dependency จาก T-01 และ Q-01; ทั้งคู่ยังไม่มีข้อมูลครบถ้วน
+- UC-07 spec ระบุการสร้าง session แต่ยังไม่มี User persistence/auth contract ที่ implementation ใช้ได้; ใน backend ไม่พบ User model/table หรือ `password_hash` และ `database.py` มี schema สำหรับข้อมูลหอพักเท่านั้น
+- Q-01 ยังไม่ตัดสิน requiredness ของ name/phone/email และกฎตรวจชื่อ; จึงยังสร้าง schema/constraint สำหรับฟิลด์เหล่านี้โดยไม่เดาไม่ได้
+- ไม่ได้แก้โค้ดหรือ schema เพราะการสร้าง User persistence แยกขึ้นเองจะขัดกับ T-02 ที่กำหนดให้ใช้ persistence ของ UC-07; T-02 คงสถานะ blocked และขอข้อมูล prerequisites จากทีม
+- ทีมยืนยันว่าไม่พบ User persistence หรือ Authentication/Session implementation ใน backend และจะไม่สร้าง schema/authentication ซ้ำ จึงยังให้ path/function จริงของ T-01 ไม่ได้
+- คำตอบที่ได้รับสำหรับ Q-01 เป็นคำถามขอการตัดสินใจ (requiredness, nullability และกฎชื่อ) ไม่ใช่ข้อสรุปของทีม; Q-01 ยังคงเปิด และ T-02 ยัง blocked โดยไม่มีการแก้โค้ด/schema
+- ทีมยืนยันสถานะ T-02 เป็น `BLOCKED` จนกว่า UC-07 จะมี User persistence และ auth/session contract ที่ implement แล้ว ครอบคลุม verified identity, session/token verification และ current-session invalidation
+- ทีมยืนยัน Q-01 เป็น `OPEN`: requiredness/nullability ของ name/phone/email และ validation ของ name ยังไม่ตัดสิน; เงื่อนไขเดิมของ phone (10 ตัวเลข) และ email (รูปแบบอีเมล) ใช้เมื่อกรอกเท่านั้น ไม่มีการสมมติ schema/nullability หรือกฎชื่อ
+- ผลสุดท้าย: ไม่มีการสร้างหรือแก้ User schema และไม่มีการแก้โค้ด; รอ UC-07 dependencies และข้อสรุป Q-01
+
+---
+
+## 2569-11-13 20:59:28 UTC คำสั่ง: `/implement T-03 specs/008-manage-account/spec.md`
+
+- เครื่องมือ: Copilot ใน Codespaces
+- ไฟล์อ้างอิง: `specs/008-manage-account/spec.md`, `specs/008-manage-account/plan.md`, `specs/008-manage-account/tasks.md`, `specs/007-login/plan.md`
+- คำสั่ง: Implement T-03 โดยใช้ `password_hash` ใน User persistence ของ UC-07 สำหรับ Argon2 hash ไม่เก็บ plain text และไม่เพิ่ม session store นอก auth contract
+
+### ผลการตรวจและสถานะ
+
+- T-03 ระบุ dependency จาก T-01 และต้องใช้ User persistence ที่ UC-07 จัดให้; T-01 ยัง blocked ตามบันทึกก่อนหน้า
+- ตรวจ backend แล้วไม่พบ User model/table, `password_hash`, Argon2/bcrypt implementation หรือ auth/session contract; UC-07 plan ระบุ `password_hash` ในโมเดลที่วางแผนไว้ แต่ยังไม่มี implementation ให้เชื่อมต่อ
+- การเพิ่ม schema, password storage หรือ session store ใหม่เองจะไม่ใช่การใช้ persistence/auth contract ที่ UC-07 จัดให้ และเสี่ยงสร้างสิ่งซ้ำ/เดา implementation จึงไม่ทำ
+- T-03 คงสถานะ blocked; ไม่มีการแก้โค้ดหรือ schema และยังไม่ได้รันทดสอบ
+
+---
+
+## 2569-11-13 21:06:03 UTC คำสั่ง: `/implement T-07 specs/008-manage-account/spec.md`
+
+- เครื่องมือ: Copilot ใน Codespaces
+- ไฟล์อ้างอิง: `specs/008-manage-account/spec.md`, `specs/008-manage-account/plan.md`, `specs/008-manage-account/tasks.md`, `frontend/src/App.jsx`, `frontend/src/api/client.js`
+- คำสั่ง: Implement T-07 สำหรับหน้า Manage Account แสดงบัญชีปัจจุบัน แบ่งส่วนข้อมูลส่วนตัว/เปลี่ยนรหัสผ่าน และรองรับมือถือ แท็บเล็ต และคอมพิวเตอร์
+
+### ผลการตรวจและสถานะ
+
+- T-07 ระบุ dependency จาก T-04; T-04 ยังรอ T-01/T-02 ซึ่ง blocked เนื่องจากยังไม่มี User persistence และ auth/session contract ของ UC-07
+- ตรวจ frontend แล้วไม่พบหน้า/route Manage Account หรือ API client สำหรับอ่านข้อมูลบัญชี; `App.jsx` มีเฉพาะหน้า Home, Dormitory และ Owner ส่วน `client.js` ยังไม่มี account endpoint
+- การเพิ่มหน้าให้แสดงข้อมูลจริงต้องพึ่งพา T-04 และ contract response/auth ที่ยังไม่มี; การใส่ข้อมูลจำลองหรือสมมติ endpoint แทนจะไม่ทำตาม FR-ACCOUNT-01 และเสี่ยงเดา contract
+- T-07 คงสถานะรอ T-04; ไม่มีการแก้โค้ด และยังไม่ได้รันทดสอบ
+
+---
+
+## 2569-11-13 21:09:46 UTC คำสั่ง: `/implement T-01 specs/008-manage-account/spec.md`
+
+- เครื่องมือ: Copilot ใน Codespaces
+- ไฟล์อ้างอิง: `specs/008-manage-account/spec.md`, `specs/008-manage-account/tasks.md`, `specs/007-login/spec.md`, backend ปัจจุบัน
+- คำสั่ง: ตรวจและ implement T-01 โดยรับ/เชื่อม verified identity, session/token verification และ current-session invalidation จาก UC-07; ห้ามสร้าง Authentication ซ้ำ
+
+### ผลการตรวจและสถานะ
+
+- T-01 ยังคงต้องรอ contract จาก UC-07; ตรวจซ้ำแล้วยังไม่พบ User/session persistence, authentication dependency หรือ contract สำหรับ verification/invalidation ใน backend
+- `X-Owner-Id` ที่มีอยู่เป็น prototype ของ owner API ไม่ใช่ verified identity สำหรับ UC-08
+- ไม่มี contract ใหม่หรือ implementation จาก UC-07 ให้เชื่อม; การกำหนด interface หรือสร้าง Authentication/session เองจะเป็นการเดาและขัดกับขอบเขต T-01
+- T-01 คงสถานะ blocked; ไม่มีการแก้โค้ดและยังไม่ได้รันทดสอบ
+- ทีมยืนยันข้อความสรุปสถานะ: T-01 เป็น `BLOCKED` เพราะยังไม่มี UC-07 contract/implementation สำหรับ verified user identity, session/token verification และ current-session invalidation; จะไม่สร้าง Authentication, interface หรือ session contract ขึ้นเอง
+- Next Action: รอทีม UC-07 ส่งมอบ contract และ implementation ที่จำเป็นก่อนเริ่ม T-01
+
+---
+
+## 2569-11-13 21:13:42 UTC คำสั่ง: `/implement T-01 specs/008-manage-account/spec.md`
+
+- ตรวจ `spec.md`, นิยาม T-01 ใน `tasks.md` และค้น backend ซ้ำแล้ว; ยังไม่พบ implementation/contract สำหรับ verified identity, session/token verification หรือ current-session invalidation
+- ไม่มีข้อมูล contract ใหม่จาก UC-07; สร้าง Authentication/interface/session contract เองไม่ได้ตามขอบเขตงาน
+- สถานะ T-01 ยังคง `BLOCKED` รอทีม UC-07 ส่งมอบ contract และ implementation; ไม่มีการแก้โค้ดหรือรันทดสอบ
+
+---
+
+## 2569-11-13 21:15:52 UTC คำสั่ง: สร้าง prototype จาก `tasks.md` ของ UC-08 ใน `frontend/src/pages`
+
+- เครื่องมือ: Copilot ใน Codespaces
+- ไฟล์อ้างอิง: `specs/008-manage-account/spec.md`, `specs/008-manage-account/tasks.md`, โครงสร้าง `frontend/src`
+- คำถามเพื่อยืนยัน scope: เลือกทำเฉพาะ T-07 หรือ UI prototype T-07 ถึง T-10 และเลือกข้อมูลที่แสดง
+- คำตอบทีม: `T-07 only`; ใช้ช่องว่าง/placeholder ไม่มีข้อมูลบัญชีปลอม
+
+### ผลการทำงาน
+
+- สร้าง `frontend/src/pages/ManageAccountPage.jsx` เป็น prototype แสดงส่วนข้อมูลส่วนตัวและส่วนเปลี่ยนรหัสผ่านแยกกัน พร้อม layout responsive สำหรับ T-07 (`FR-ACCOUNT-01`, `NFR-USE-01`, `CON-UI-01`, `AC-ACCOUNT-01`)
+- เพิ่ม route `/account` และลิงก์เข้าหน้า prototype ใน `frontend/src/App.jsx`
+- เพิ่ม UI test `frontend/src/__tests__/AC-ACCOUNT-01-manage-account-page.test.jsx` ตรวจการแสดงสองส่วนและ placeholder
+- ไม่เพิ่ม form/การบันทึกข้อมูล ไม่เชื่อม API หรือ Authentication และแสดงชัดว่าเป็น prototype; T-07 สำหรับใช้งานจริงยังรอ T-04/UC-07
+- ตรวจสอบ: targeted Vitest ผ่าน 1 test; `npm run build` ผ่าน
+- ไฟล์ที่แก้: `frontend/src/pages/ManageAccountPage.jsx`, `frontend/src/App.jsx`, `frontend/src/__tests__/AC-ACCOUNT-01-manage-account-page.test.jsx`, `prompt-log.md`
+
