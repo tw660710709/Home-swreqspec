@@ -260,3 +260,89 @@ class OwnerDormitoryValidationTests(unittest.IsolatedAsyncioTestCase):
             [item["id"] for item in public_list_response.json()],
         )
         self.assertEqual(public_detail_response.status_code, 404)
+
+    async def test_TC_DOR_09_4_invalid_value_shows_reason_without_saving(
+        self,
+    ) -> None:
+        # Given ข้อมูลครบแต่มีช่องข้อความจำเป็นเป็นช่องว่างล้วน
+        before_dormitories = await self.client.get(
+            "/owners/dormitories",
+            headers={"X-Owner-Id": "owner-1"},
+        )
+        before_dormitory_ids = {
+            dormitory["dormitory_id"] for dormitory in before_dormitories.json()
+        }
+
+        # When เจ้าของยืนยันบันทึกหอพักที่มีชื่อเป็นช่องว่างล้วน
+        whitespace_response = await self.client.post(
+            "/owners/dormitories",
+            headers={"X-Owner-Id": "owner-1"},
+            json={
+                "name": "   ",
+                "location": "ทำเลทดสอบ",
+                "type": "หอพักรวม",
+                "contact_info": "ช่องทางติดต่อทดสอบ",
+            },
+        )
+
+        # Then แจ้งข้อผิดพลาดที่ช่องชื่อและไม่บันทึกข้อมูล
+        self.assertEqual(whitespace_response.status_code, 422)
+        whitespace_errors = _field_errors(whitespace_response.json())
+        self.assertIn("name", whitespace_errors)
+        self.assertTrue(whitespace_errors["name"].strip())
+        after_whitespace_dormitories = await self.client.get(
+            "/owners/dormitories",
+            headers={"X-Owner-Id": "owner-1"},
+        )
+        self.assertEqual(
+            {
+                dormitory["dormitory_id"]
+                for dormitory in after_whitespace_dormitories.json()
+            },
+            before_dormitory_ids,
+        )
+
+        created = await self.client.post(
+            "/owners/dormitories",
+            headers={"X-Owner-Id": "owner-1"},
+            json={
+                "name": "หอพักทดสอบ TC-DOR-09-4",
+                "location": "ทำเลทดสอบ",
+                "type": "หอพักรวม",
+                "contact_info": "ช่องทางติดต่อทดสอบ",
+            },
+        )
+        self.assertEqual(created.status_code, 200)
+        dormitory_id = created.json()["dormitory_id"]
+
+        # Given หอพักมีอยู่แล้วแต่ราคาห้องไม่ใช่ตัวเลขหรือไม่มากกว่า 0
+        for invalid_rent in ("not-a-number", "0", "-1"):
+            with self.subTest(monthly_rent=invalid_rent):
+                before_rooms = await self.client.get(
+                    f"/owners/dormitories/{dormitory_id}/rooms",
+                    headers={"X-Owner-Id": "owner-1"},
+                )
+                before_room_ids = {
+                    room["room_id"] for room in before_rooms.json()
+                }
+
+                # When เจ้าของยืนยันบันทึกห้องด้วยราคาที่ไม่ถูกต้อง
+                response = await self.client.post(
+                    f"/owners/dormitories/{dormitory_id}/rooms",
+                    headers={"X-Owner-Id": "owner-1"},
+                    json={"monthly_rent": invalid_rent},
+                )
+
+                # Then แจ้งข้อผิดพลาดที่ช่องราคาและไม่บันทึกห้อง
+                self.assertEqual(response.status_code, 422)
+                rent_errors = _field_errors(response.json())
+                self.assertIn("monthly_rent", rent_errors)
+                self.assertTrue(rent_errors["monthly_rent"].strip())
+                after_rooms = await self.client.get(
+                    f"/owners/dormitories/{dormitory_id}/rooms",
+                    headers={"X-Owner-Id": "owner-1"},
+                )
+                self.assertEqual(
+                    {room["room_id"] for room in after_rooms.json()},
+                    before_room_ids,
+                )

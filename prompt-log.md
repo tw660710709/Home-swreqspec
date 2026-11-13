@@ -1385,3 +1385,11 @@
   - Vitest ทั้ง frontend: ผ่าน 66 tests ใน 43 ไฟล์
 - ไฟล์ที่แก้/สร้าง: `backend/app/owner_dormitories.py`, `backend/app/details.py`, `backend/tests/test_AC_DOR_08.py`, `frontend/src/__tests__/TC-DOR-08-2.test.jsx`, `specs/003-manage_dormitory_data/tasks.md`, `prompt-log.md`
 - ข้อที่เกือบต้องเดา: ไม่ทำ TC-DOR-12-4 เป็น automated test หรืออ้างว่าผ่าน; รอทีมตรวจด้วยคนตามคำตอบ และปรับ T-16 เป็น “เสร็จ รอทีมตรวจ”
+
+## 2569-11-13 12:20 UTC คำสั่ง: `/testcases AC-DOR-09 specs/003-manage_dormitory_data/`
+- โหมด: เขียน test จากแถวสถานะ “ใช้ได้”
+- ตรวจจำนวนก่อนแก้: TC-DOR-09-1 ถึง TC-DOR-09-3 มี test อยู่แล้วฝั่ง pytest 3 ตัวและ Vitest 3 ตัว; TC-DOR-09-4 ยังไม่มี
+- เพิ่ม test: pytest `test_TC_DOR_09_4_invalid_value_shows_reason_without_saving`; Vitest `test_TC_DOR_09_4_invalid_value_shows_reason_without_saving` ใน `TC-DOR-09-4.test.jsx`; จำนวนเพิ่มฝั่งละ 1 ตัว
+- ผล test ทั้งชุด: pytest 90 ผ่าน, 1 ไม่ผ่าน; Vitest 66 ผ่าน, 1 ไม่ผ่าน (44 ไฟล์)
+- ข้อค้นพบ: pytest พบว่าชื่อที่เป็นช่องว่างล้วนถูกบันทึกสำเร็จ (HTTP 200) แทนการแจ้งข้อผิดพลาด; จุดตรวจ `backend/app/owner_dormitories.py` บรรทัด 32 ใช้ `min_length=1` ซึ่งไม่ปฏิเสธ whitespace-only. Vitest พบว่าการปฏิเสธราคาห้องไม่แสดงข้อผิดพลาดผูกกับช่องราคาใน `OwnerRoomsPage`; test ล้มเมื่อช่องไม่มี `aria-invalid`/`aria-describedby`
+- ไม่แก้ `test-cases.md` หรือโค้ดระบบ; หยุดตาม prompt เพราะ test ใหม่ไม่ผ่านและเป็นความไม่ตรงกับ AC ที่ต้องให้ทีมพิจารณา
