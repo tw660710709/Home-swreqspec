@@ -94,7 +94,7 @@
 | FR-ACC-05 | 008-manage-account | FR-ACC-05 | TC-ACCOUNT-05 | รอทดสอบ | ใช้ได้ | ทดสอบการเปลี่ยนรหัสผ่าน | 
 | FR-ACC-06 | 008-manage-account | FR-ACC-06 | TC-ACCOUNT-06 | รอทดสอบ | ใช้ได้ | ทดสอบการยืนยันรหัสผ่าน | 
 | CON-ACC-01 | 008-manage-account | CON-ACC-01 | TC-ACCOUNT-11, 12 | รอทดสอบ | ใช้ได้ | รอ Contract และ Implementation จาก UC-07 | 
-| CON-ACC-02 | 008-manage-account | CON-ACC-02 | TC-ACCOUNT-13 | 
+| CON-ACC-02 | 008-manage-account | CON-ACC-02 | TC-ACCOUNT-13 | รอทดสอบ | ใช้ได้ | รอยืนยันการทำงานร่วมกับ UC-07 | 
 
 
 ### Test Case ที่ยังไม่มี Req ต้นทาง
