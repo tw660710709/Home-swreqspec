@@ -2,7 +2,7 @@
 
 Spec ID: SPEC-LOGIN-001 | Source: UC-07 | Use case: UC-07
 
-Owner: ทีมพัฒนาระบบ | Status: Draft v2 | Updated: 2569-09-20
+Owner: ทีมพัฒนาระบบ | Status: Draft v2 | Updated: 2569-11-13
 
 ## Goal
 
@@ -45,15 +45,15 @@ Owner: ทีมพัฒนาระบบ | Status: Draft v2 | Updated: 2569-0
   <- UC-07 main flow ขั้น 1-4
 
 - FR-LOGIN-02 ระบบต้องตรวจสอบว่าข้อมูลบัญชีและรหัสผ่านถูกต้องก่อนอนุญาตให้เข้าสู่ระบบ
-  <- UC-07 main flow ขั้น 5, 7
+  <- UC-07 main flow ขั้น 5
 
-- FR-LOGIN-03 ระบบต้องตรวจสอบสถานะบัญชีก่อนสร้าง session และต้องปฏิเสธบัญชีที่ถูกระงับ
-  <- UC-07 main flow ขั้น 6, exception 5b
+- FR-LOGIN-03 ระบบต้องตรวจสอบสถานะบัญชีก่อนสร้าง session และต้องปฏิเสธบัญชีที่ถูกระงับ โดยแจ้งว่าบัญชีถูกระงับพร้อมช่องทางติดต่อผู้ดูแลระบบ และไม่อนุญาตให้ดำเนินการเข้าสู่ระบบต่อ
+  <- UC-07 exception 5b
 
 - FR-LOGIN-04 เมื่อเข้าสู่ระบบสำเร็จ ระบบต้องสร้าง session และบันทึกสถานะการเข้าสู่ระบบของผู้ใช้
   <- UC-07 main flow ขั้น 7
 
-- FR-LOGIN-05 ระบบต้องกำหนดสิทธิ์และนำผู้ใช้ไปยังหน้าที่เหมาะสมตาม role ได้แก่ Guest, Resident, Dormitory Owner และ Admin
+- FR-LOGIN-05 ระบบต้องกำหนดสิทธิ์และนำผู้ใช้ไปยังหน้าแรกตามสิทธิ์ของ role ได้แก่ Guest, Resident, Dormitory Owner และ Admin
   <- UC-07 main flow ขั้น 8
 
 - FR-LOGIN-06 หากชื่อผู้ใช้/อีเมลหรือรหัสผ่านไม่ถูกต้อง ระบบต้องแสดงข้อความแจ้งเตือนโดยไม่ระบุว่าข้อมูลส่วนใดผิด
@@ -96,7 +96,7 @@ Owner: ทีมพัฒนาระบบ | Status: Draft v2 | Updated: 2569-0
 
       When ระบบตรวจสอบ role ของผู้ใช้
 
-      Then ระบบนำผู้ใช้ไปยังหน้าที่ตรงกับสิทธิ์ของ role นั้น
+      Then ระบบนำผู้ใช้ไปยังหน้าแรกตามสิทธิ์ของ role นั้น
 
 - [ ] AC-LOGIN-03 (FR-LOGIN-06)
 
@@ -112,7 +112,7 @@ Owner: ทีมพัฒนาระบบ | Status: Draft v2 | Updated: 2569-0
 
       When ผู้ใช้พยายาม Login ด้วยข้อมูลบัญชีดังกล่าว
 
-      Then ระบบไม่อนุญาตให้เข้าสู่ระบบและไม่สร้าง session
+      Then ระบบไม่อนุญาตให้เข้าสู่ระบบ ไม่สร้าง session แจ้งว่าบัญชีถูกระงับ และแสดงช่องทางติดต่อผู้ดูแลระบบ
 
 - [ ] AC-LOGIN-05 (FR-LOGIN-07)
 
@@ -157,16 +157,24 @@ Owner: ทีมพัฒนาระบบ | Status: Draft v2 | Updated: 2569-0
 - ASM-04 การสมัครสมาชิกเป็น flow ที่แยกออกจาก UC-07 และอ้างอิง UC-02
 
 - ASM-05 การจัดการข้อมูลบัญชีผู้ใช้อ้างอิง UC-08
-
 - ASM-06 รายละเอียดของการรีเซ็ตรหัสผ่านจะกำหนดใน flow หรือ Use Case ที่เกี่ยวข้อง
+- ASM-07 UC-07 เริ่มเมื่อผู้ใช้มีบัญชีที่ลงทะเบียนแล้วและยังไม่ได้เข้าสู่ระบบ
+
+### Open Questions
+
+- Q-01 Guest เป็น role ที่มีบัญชีและเข้าสู่ระบบได้หรือหมายถึงผู้เยี่ยมชมที่ยังไม่เข้าสู่ระบบ และหน้าแรกของแต่ละ role คือหน้าใด (ทีมผู้กำหนด UC-07)
+- Q-02 “บันทึกสถานะการเข้าสู่ระบบ” ใน FR-LOGIN-04 ต้องบันทึกข้อมูลใด และฟังก์ชันใดบ้างที่ FR-LOGIN-09 กำหนดให้ต้องมี session (ทีมผู้กำหนด UC-07 และ Use Case ที่เกี่ยวข้อง)
+- Q-03 เกณฑ์ประเมิน NFR-USE-01 และอุปกรณ์ที่รองรับตาม CON-UI-01 คืออะไร (ทีมเอง)
+- Q-04 สภาวะเครือข่ายปกติและจุดเริ่ม/หยุดวัดเวลาตาม NFR-PERF-01 คืออะไร (ทีมเอง)
+- Q-05 ใช้หลักฐานใดตรวจรับการปกป้อง password ตาม NFR-SEC-01 และการเข้ารหัสการรับส่งตาม NFR-SEC-02 (ทีมเอง)
 
 ## Traceability
 
 | Requirements List | spec.md | AC |
 |---|---|---|
 | UC-07 Main Flow ขั้น 1-4 | FR-LOGIN-01 | AC-LOGIN-01 |
-| UC-07 Main Flow ขั้น 5, 7 | FR-LOGIN-02 | AC-LOGIN-01 |
-| UC-07 Main Flow ขั้น 6 | FR-LOGIN-03 | AC-LOGIN-04 |
+| UC-07 Main Flow ขั้น 5 | FR-LOGIN-02 | AC-LOGIN-01 |
+| UC-07 Exception 5b | FR-LOGIN-03 | AC-LOGIN-04 |
 | UC-07 Main Flow ขั้น 7 | FR-LOGIN-04 | AC-LOGIN-01 |
 | UC-07 Main Flow ขั้น 8 | FR-LOGIN-05 | AC-LOGIN-02 |
 | UC-07 Exception 5a | FR-LOGIN-06 | AC-LOGIN-03 |
@@ -175,4 +183,5 @@ Owner: ทีมพัฒนาระบบ | Status: Draft v2 | Updated: 2569-0
 | Authentication Requirement | FR-LOGIN-09 | AC-LOGIN-07 |
 | NFR การใช้งาน | NFR-USE-01 | - |
 | NFR การตอบสนอง | NFR-PERF-01 | AC-LOGIN-08 |
-| NFR ความปลอดภัย | NFR-SEC-01, NFR-SEC-02, NFR-SEC-03 | AC-LOGIN-01, AC-LOGIN-03, AC-LOGIN-04 |
+| NFR การไม่เปิดเผยข้อมูลรับรองที่ผิด | NFR-SEC-03 | AC-LOGIN-03 |
+| NFR การปกป้อง password และข้อมูลระหว่างส่ง | NFR-SEC-01, NFR-SEC-02 | - |

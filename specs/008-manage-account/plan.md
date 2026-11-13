@@ -35,9 +35,8 @@ Spec ID: `SPEC-ACCOUNT-001` | สถานะข้อกำหนด: `Draft v2
 
 | Entity | ฟิลด์หลัก | รองรับ |
 |---|---|---|
-| `User` | `id`, `username`, `email`, `password_hash`, `role`, `account_status` | `FR-ACCOUNT-01`, `FR-ACCOUNT-02`, `FR-ACCOUNT-04` |
+| `User` | `id`, ข้อมูลส่วนตัว/ข้อมูลติดต่อ (เช่น `name`, `phone`, `email`), `password_hash`, `role`, `account_status` | `FR-ACCOUNT-01`, `FR-ACCOUNT-02`, `FR-ACCOUNT-04` |
 | `Session` | `id`, `user_id`, `created_at`, `expires_at` | `FR-ACCOUNT-09` |
-| `AccountUpdate` | `user_id`, `updated_at` | `FR-ACCOUNT-04`, `FR-ACCOUNT-05` |
 
 กติกาข้อมูล:
 
@@ -73,13 +72,15 @@ Spec ID: `SPEC-ACCOUNT-001` | สถานะข้อกำหนด: `Draft v2
 9. ส่งข้อมูลล่าสุดกลับไปยัง Frontend
 10. แสดงข้อความบันทึกสำเร็จ
 
+> การแก้ไขอีเมลจะต้องยืนยันผ่านอีเมลหรือไม่ยังเป็น Open Question; ห้ามสมมติว่าการแก้ไขอีเมลเสร็จสมบูรณ์หรือแสดงเป็นข้อมูลล่าสุดก่อนทีมยืนยัน flow นี้
+
 แนวทางการเปลี่ยนรหัสผ่าน:
 
 1. ตรวจสอบ session
 2. รับรหัสผ่านเดิม รหัสผ่านใหม่ และการยืนยันรหัสผ่านใหม่
 3. ตรวจสอบว่ารหัสผ่านใหม่สองช่องตรงกัน
 4. ตรวจสอบรหัสผ่านเดิม
-5. ตรวจสอบเงื่อนไขของรหัสผ่านใหม่
+5. ตรวจสอบเงื่อนไขของรหัสผ่านใหม่ตามคำตอบของทีมเรื่องความยาวและความซับซ้อน (Open Question)
 6. ปกป้องรหัสผ่านใหม่ด้วย password hashing mechanism
 7. บันทึก password hash ใหม่
 8. แสดงข้อความยืนยันการเปลี่ยนรหัสผ่าน

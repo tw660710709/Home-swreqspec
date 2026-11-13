@@ -1401,3 +1401,69 @@
 - ไม่แก้ test ที่ขึ้นต้นด้วย test_TC_ หรือไฟล์ TC-*.test.jsx
 - ผล test: pytest 91 ผ่าน, Vitest 67 ผ่าน
 - ย้าย F-04 ไปหัวข้อ 4 "แก้แล้ว" ใน rtm.md
+
+## 2569-11-13 23:49 คำสั่ง: ทำไฟล์ 007 008 ให้เหมือนของ 001
+- ไฟล์ที่สร้าง:
+  - `specs/007-login/test-cases.md`, `tasks.md`, `rtm.md`
+  - `specs/008-manage-account/test-cases.md`, `tasks.md`, `rtm.md`
+- ผลลัพธ์: สร้างเอกสาร test cases, tasks และ RTM ให้ทั้งสองฟีเจอร์ โดยอ้างอิง `spec.md` และ `plan.md` ที่มีอยู่; ไม่แก้โค้ด
+- ข้อที่ยังรอคำตอบทีมใน `SPEC-ACCOUNT-001`: มาตรฐานเบอร์โทรศัพท์, การยืนยันอีเมล, เงื่อนไขรหัสผ่านใหม่ และสถานะ session หลังเปลี่ยนรหัสผ่าน
+- การตรวจสอบ: ตรวจเทียบ AC และ Constraints ใน tasks/RTM กับ spec; ไม่รันทดสอบ เนื่องจากเปลี่ยนเฉพาะเอกสาร
+
+## 2569-11-14 00:05 คำสั่ง: ทำให้สอดคล้องกันทั้งหมด ทั้ง 007 008
+- ไฟล์ที่แก้: `specs/007-login/plan.md`, `test-cases.md`, `tasks.md`, `rtm.md`; `specs/008-manage-account/plan.md`, `test-cases.md`, `tasks.md`, `rtm.md`
+- ผลลัพธ์: ปรับ traceability และ testcase ที่ไม่ตรง AC/Constraint; ทำข้อความ RTM ส่วนตามรอยย้อนกลับให้สอดคล้องกันและระบุว่า repository ยังไม่มี implementation ของ UC-07/UC-08; ระบุ Open Questions ของ UC-08 เฉพาะงานที่ได้รับผล และเอาโมเดล/กรณีทดสอบที่ไม่มีข้อกำหนดรองรับออก
+- การตรวจสอบ: ค้นหาไฟล์โค้ด Login/Manage Account แล้วไม่พบ; ตรวจ ID, AC coverage, test-to-RTM references และ `git diff --check` ผ่าน; ไม่รันทดสอบเพราะแก้เฉพาะเอกสาร
+
+## 2569-11-14 00:11 คำสั่ง: เขียนส่วน RTM ข้อ 2–3 ใหม่ให้อ่านเข้าใจง่ายและสอดคล้องกันทั้ง 007/008
+- ไฟล์ที่แก้: `specs/007-login/rtm.md`, `specs/008-manage-account/rtm.md`
+- คำถามที่ AI ถาม: ต้องการตัดข้อความซ้ำ หรือเขียนใหม่ให้อ่านเข้าใจง่ายและสอดคล้องกันทั้ง 007/008
+- คำตอบของทีม: เขียนใหม่ให้อ่านเข้าใจง่ายและสอดคล้องกันทั้ง 007/008
+- ผลลัพธ์: แยกความหมายของข้อ 2 (ยังไม่มีโค้ดให้ตามย้อนกลับ) กับข้อ 3 (งานและการตรวจสอบที่ยังค้าง) ให้ชัด โดยไม่ซ้ำข้อความ
+- การตรวจสอบ: ไม่รันทดสอบ เนื่องจากแก้เฉพาะเอกสาร
+
+## 2569-11-14 01:00 คำสั่ง: เอา rtm tasks.md test-cases.md ออก
+- ไฟล์ที่ลบ: `specs/008-manage-account/rtm.md`, `specs/008-manage-account/tasks.md`, `specs/008-manage-account/test-cases.md`
+- ผลลัพธ์: ลบเอกสารทั้งสามตามคำขอ; คง `spec.md` และ `plan.md` ไว้
+
+## 2569-11-14 01:11 คำสั่ง: `/clarify specs/007-login/spec.md` (พยายามลดจำนวนคำถาม)
+- เครื่องมือ: Copilot ใน Codespaces
+- ไฟล์: `specs/007-login/spec.md` (`SPEC-LOGIN-001`, เดิม `Draft v2`)
+
+### คำถามที่ AI ถาม
+
+1. Guest เป็น role ที่ Login ได้หรือไม่ และหน้าเป้าหมายของแต่ละ role คือหน้าใด
+2. FR-LOGIN-04 ต้องบันทึกข้อมูลใดเพื่อแทนสถานะ Login
+3. FR-LOGIN-09 คุ้มครองฟังก์ชันใดบ้าง
+4. เกณฑ์ประเมิน usability และอุปกรณ์ที่รองรับคืออะไร
+5. เงื่อนไขเครือข่ายปกติและจุดเริ่ม/หยุดวัดเวลาคืออะไร
+6. ใช้หลักฐานใดตรวจรับ password storage และ HTTPS/TLS
+
+### คำตอบของทีมและเหตุผล
+
+- ทีมส่งรายละเอียด Use Case UC-07 ซึ่งระบุ actor (Guest, Resident, Dormitory Owner, Admin), precondition (มีบัญชีและยังไม่ Login), การนำทางไปหน้าแรกตาม role, การแจ้งบัญชีถูกระงับพร้อมช่องทางติดต่อ Admin, NFR 2 วินาที/ความปลอดภัย/การใช้งาน และ Acceptance Criteria
+- รายละเอียดดังกล่าวยังไม่ระบุว่า Guest มีบัญชีและ Login ได้หรือไม่, ข้อมูลสถานะ Login ที่ต้องบันทึก, รายการฟังก์ชันที่ต้องมี session, เกณฑ์ usability/อุปกรณ์, เงื่อนไขวัด performance และหลักฐานตรวจรับ security
+
+### สิ่งที่แก้ใน spec.md
+
+- อัปเดต `FR-LOGIN-03` และ `AC-LOGIN-04` ให้ระบุข้อความบัญชีถูกระงับและช่องทางติดต่อผู้ดูแลระบบตาม UC-07
+- ปรับ `FR-LOGIN-05` และ `AC-LOGIN-02` ให้ระบุการนำทางไปหน้าแรกตาม role และเพิ่ม `ASM-07` สำหรับ precondition ที่ผู้ใช้ยังไม่ Login
+- แยก traceability ของ `NFR-SEC-03` ออกจาก `NFR-SEC-01`/`NFR-SEC-02`; ไม่อ้าง AC ที่ไม่ได้ตรวจ password storage หรือ TLS
+- เพิ่ม Open Questions `Q-01` ถึง `Q-05` เฉพาะประเด็นที่ยังไม่มีคำตอบ
+- อัปเดตวันที่เป็น `2569-11-13`; คงสถานะ `Draft v2` และ ID เดิม
+
+## 2569-11-14 01:15 คำสั่ง: `/plan specs/007-login/spec.md`
+- เครื่องมือ: Copilot ใน Codespaces
+- ผลลัพธ์: ปรับ `specs/007-login/plan.md` ให้มี 8 หัวข้อตาม template ของโครงการ และเชื่อมโยง FR, AC, Constraints และ Open Questions จาก `SPEC-LOGIN-001`
+- Constraint ที่ยังไม่ได้ใช้ครบ: `CON-UI-01` เพราะรายการอุปกรณ์ที่รองรับยังรอคำตอบ `Q-03`
+- AC ที่ทดสอบยาก: `AC-LOGIN-02` รอหน้าเป้าหมายของแต่ละ role; `AC-LOGIN-07` รอรายการฟังก์ชันที่ต้องมี session; `AC-LOGIN-08` รอเงื่อนไขการวัด
+- สิ่งที่ยังไม่เดา: Guest เป็น role ที่ Login ได้หรือไม่, ข้อมูลสถานะ Login, ขอบเขต Session Guard, usability/device criteria, เงื่อนไข performance และหลักฐาน security
+- การตรวจสอบ: ตรวจเทียบ FR/AC/Constraints/Open Questions กับ spec; ไม่รันทดสอบเพราะแก้เอกสาร
+
+## 2569-11-14 01:20 คำสั่ง: `/tasks specs/007-login/spec.md`
+- เครื่องมือ: Copilot ใน Codespaces
+- ผลลัพธ์: ปรับ `specs/007-login/tasks.md` ให้เชื่อมโยง FR/AC/Constraints และ Open Questions `Q-01` ถึง `Q-05`; งานที่ได้รับผลถูกตั้งสถานะรอคำตอบ
+- งานที่ยังถูก block: T-01/T-03 จาก Q-01; T-03/T-06 จาก Q-02; T-07 จาก Q-03; T-09 จาก Q-04; T-08 จาก Q-05
+- AC ที่ทดสอบยากในสภาพแวดล้อมนักศึกษา: `AC-LOGIN-02`, `AC-LOGIN-07`, `AC-LOGIN-08` จนกว่าจะได้คำตอบเรื่องปลายทาง/ขอบเขตและเงื่อนไขวัด
+- สิ่งที่ต้องระวัง: ไม่กำหนดความหมาย Guest, ข้อมูลสถานะ Login, รายชื่อฟังก์ชันที่ต้อง session, อุปกรณ์และเกณฑ์ usability, workload performance หรือหลักฐาน security แทนทีม
+- การตรวจสอบ: ตรวจการมีครบของ AC/Constraints/Open Questions และ `git diff --check`; ไม่รันทดสอบเพราะแก้เอกสาร
