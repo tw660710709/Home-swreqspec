@@ -1268,3 +1268,14 @@
 - ผลตรวจซ้ำหลังเก็บรายละเอียด: `PYTHONPATH=.. pytest -v tests/test_AC_DOR_08.py` ผ่าน 9 tests; Vitest ของ `TC-DOR-08-1` และ `TC-DOR-08-3` ผ่าน 2 tests
 - จำนวน test: backend เพิ่มจาก 6 เป็น 9 (+3); frontend เพิ่ม 1 ตัวในแต่ละไฟล์ใหม่ (+2 รวม)
 - หมายเหตุ: รายงานขั้นตอนทดสอบด้วยคนสำหรับ `TC-DOR-08-1`, `TC-DOR-08-3`, และ `TC-DOR-08-5` ถึง `TC-DOR-08-8`; ยังไม่ได้ทำ usability testing จริง โดย T-08 มีสถานะ "พร้อมทำ"
+
+## 2569-11-13 10:35:42 คำสั่ง: `/testcases AC-DOR-09 specs/003-manage_dormitory_data/`
+- โหมด: เขียน test จากแถวสถานะ "ใช้ได้"
+- มติทีม: แถวที่ระบุทั้ง pytest และ vitest เพิ่ม test ฝั่งละ 1 ตัวโดยใช้ชื่อเดียวกัน; นับจำนวนเพิ่มแยกตามฝั่ง
+- TC ID ที่เพิ่ม: `TC-DOR-09-1` ถึง `TC-DOR-09-3` ทั้ง pytest และ vitest
+- TC ID ที่ไม่เขียน test: `TC-DOR-09-4` สถานะ "ร่าง"
+- ไฟล์ที่แก้/สร้าง: `backend/tests/test_AC_DOR_09.py`, `frontend/src/__tests__/TC-DOR-09-1.test.jsx`, `frontend/src/__tests__/TC-DOR-09-2.test.jsx`, `frontend/src/__tests__/TC-DOR-09-3.test.jsx`; ไม่แก้ `test-cases.md` หรือโค้ดระบบ
+- ผล test ชุดเต็ม: `cd backend && PYTHONPATH=.. pytest -v` ผ่าน 75 tests; `cd frontend && npm test` ผ่าน 54 tests ใน 33 ไฟล์
+- ผล test เฉพาะ AC-DOR-09: pytest ผ่าน 6 tests; Vitest ผ่าน 3 tests
+- จำนวน test: backend เพิ่มจาก 3 เป็น 6 (+3); frontend เพิ่ม 1 ตัวในแต่ละไฟล์ใหม่ (+3 รวม)
+- หมายเหตุ: รายงานขั้นตอนทดสอบด้วยคนสำหรับ `TC-DOR-09-1` ถึง `TC-DOR-09-3`; `TC-DOR-09-4` ยังไม่เขียน test เพราะสถานะยังเป็น "ร่าง"

@@ -149,3 +149,114 @@ class OwnerDormitoryValidationTests(unittest.IsolatedAsyncioTestCase):
         )
         self.assertEqual(current_response.status_code, 200)
         self.assertEqual(current_response.json(), original)
+
+    async def test_TC_DOR_09_1_missing_required_fields_shows_reasons_without_saving(
+        self,
+    ) -> None:
+        # Given เจ้าของกรอกข้อมูลหอพักโดยเว้นชื่อ ทำเล ประเภท และช่องทางติดต่อ
+        before_response = await self.client.get(
+            "/owners/dormitories",
+            headers={"X-Owner-Id": "owner-1"},
+        )
+        before_ids = {
+            dormitory["dormitory_id"] for dormitory in before_response.json()
+        }
+
+        # When เจ้าของกดยืนยันการบันทึก
+        response = await self.client.post(
+            "/owners/dormitories",
+            headers={"X-Owner-Id": "owner-1"},
+            json={"name": "", "location": "", "type": ""},
+        )
+
+        # Then แจ้งเหตุผลแยกช่องและไม่บันทึกข้อมูล
+        self.assertEqual(response.status_code, 422)
+        errors = _field_errors(response.json())
+        self.assertEqual(
+            set(errors),
+            {"name", "location", "type", "contact_info"},
+        )
+        self.assertTrue(all(message.strip() for message in errors.values()))
+        after_response = await self.client.get(
+            "/owners/dormitories",
+            headers={"X-Owner-Id": "owner-1"},
+        )
+        after_ids = {
+            dormitory["dormitory_id"] for dormitory in after_response.json()
+        }
+        self.assertEqual(after_ids, before_ids)
+
+    async def test_TC_DOR_09_2_single_missing_location_shows_error_without_saving(
+        self,
+    ) -> None:
+        # Given เจ้าของกรอกข้อมูลจำเป็นครบ ยกเว้นที่อยู่/ทำเล
+        before_response = await self.client.get(
+            "/owners/dormitories",
+            headers={"X-Owner-Id": "owner-1"},
+        )
+        before_ids = {
+            dormitory["dormitory_id"] for dormitory in before_response.json()
+        }
+
+        # When เจ้าของกดยืนยันการบันทึก
+        response = await self.client.post(
+            "/owners/dormitories",
+            headers={"X-Owner-Id": "owner-1"},
+            json={
+                "name": "หอพัก TC-DOR-09-2",
+                "type": "หอพักรวม",
+                "contact_info": "ช่องทางติดต่อทดสอบ",
+            },
+        )
+
+        # Then แจ้งเฉพาะช่องที่อยู่/ทำเลและไม่บันทึกข้อมูล
+        self.assertEqual(response.status_code, 422)
+        errors = _field_errors(response.json())
+        self.assertEqual(set(errors), {"location"})
+        self.assertTrue(errors["location"].strip())
+        after_response = await self.client.get(
+            "/owners/dormitories",
+            headers={"X-Owner-Id": "owner-1"},
+        )
+        after_ids = {
+            dormitory["dormitory_id"] for dormitory in after_response.json()
+        }
+        self.assertEqual(after_ids, before_ids)
+
+    async def test_TC_DOR_09_3_valid_data_proceeds_to_save(self) -> None:
+        # Given เจ้าของกรอกข้อมูลครบและผ่านการตรวจสอบที่กำหนด
+        payload = {
+            "name": "หอพัก TC-DOR-09-3",
+            "location": "ทำเลทดสอบ",
+            "type": "หอพักรวม",
+            "contact_info": "ช่องทางติดต่อทดสอบ",
+        }
+
+        # When เจ้าของกดยืนยันการบันทึก
+        saved_response = await self.client.post(
+            "/owners/dormitories",
+            headers={"X-Owner-Id": "owner-1"},
+            json=payload,
+        )
+        self.assertEqual(saved_response.status_code, 200)
+        saved = saved_response.json()
+        dormitory_id = saved["dormitory_id"]
+        owner_response = await self.client.get(
+            f"/owners/dormitories/{dormitory_id}",
+            headers={"X-Owner-Id": "owner-1"},
+        )
+        public_list_response = await self.client.get("/dormitories")
+        public_detail_response = await self.client.get(
+            f"/dormitories/{dormitory_id}",
+        )
+
+        # Then ข้อมูลล่าสุดแสดงแก่เจ้าของ สถานะ Pending และผู้ใช้ทั่วไปไม่เห็นข้อมูล
+        self.assertEqual(owner_response.status_code, 200)
+        self.assertEqual(owner_response.json(), saved)
+        self.assertEqual(saved["name"], payload["name"])
+        self.assertEqual(saved["approval_status"], "Pending")
+        self.assertNotIn(
+            dormitory_id,
+            [item["id"] for item in public_list_response.json()],
+        )
+        self.assertEqual(public_detail_response.status_code, 404)
