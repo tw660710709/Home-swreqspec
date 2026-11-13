@@ -23,7 +23,7 @@ Dependency ก่อนเริ่มเฟส 1: plan ระบุให้ใ
 - แบบหน้าจอ: ไม่มี
 - ต้องทำหลัง: ไม่มี
 - เสร็จเมื่อ: `test_owner_dormitory_schema_supports_owner_rooms_and_images` ผ่าน และโมเดลรองรับเจ้าของหอพัก ความสัมพันธ์ห้องกับหอพัก และรูปของหอพัก/ห้องโดยไม่เพิ่มฟิลด์ห้องที่ spec ไม่ได้กำหนด
-- สถานะ: เสร็จ รอทีมตรวจ
+- สถานะ: เสร็จ
 
 #### จุดตรวจเฟส 0
 - test ที่ต้องผ่านทั้งหมด: `test_owner_dormitory_schema_supports_owner_rooms_and_images`
