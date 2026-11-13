@@ -6,7 +6,16 @@ from pathlib import Path
 from typing import Optional
 from uuid import uuid4
 
-from fastapi import APIRouter, Depends, File, Header, HTTPException, UploadFile
+from fastapi import (
+    APIRouter,
+    Depends,
+    File,
+    Header,
+    HTTPException,
+    Response,
+    UploadFile,
+)
+from fastapi.responses import FileResponse
 from pydantic import BaseModel, Field
 
 from .config import MAX_IMAGE_SIZE_BYTES, MAX_IMAGES_PER_TARGET
@@ -423,6 +432,238 @@ async def _upload_owner_images(
         )
 
     return {"accepted": accepted, "rejected": rejected}
+
+
+def _serialize_owner_image(row: sqlite3.Row) -> dict[str, object]:
+    # รองรับ CON-FILE-01, FR-DOR-12 และ FR-DOR-14
+    return {
+        "image_id": row["image_id"],
+        "file_type": row["file_type"],
+        "file_size_bytes": row["file_size_bytes"],
+        "approval_status": row["approval_status"],
+    }
+
+
+def _list_owner_images(
+    owner_id: str,
+    dormitory_id: str,
+    room_id: Optional[str],
+) -> list[dict[str, object]]:
+    # รองรับ CON-AUTH-01, CON-FILE-01 และ FR-DOR-12
+    if room_id is None:
+        get_owned_dormitory(owner_id, dormitory_id)
+        query = """
+            SELECT image_id, file_type, file_size_bytes, approval_status
+            FROM owner_dormitory_images
+            WHERE dormitory_id = ? AND room_id IS NULL
+            ORDER BY rowid
+        """
+        target_id = dormitory_id
+    else:
+        get_owned_dormitory_room(owner_id, dormitory_id, room_id)
+        query = """
+            SELECT image_id, file_type, file_size_bytes, approval_status
+            FROM owner_dormitory_images
+            WHERE room_id = ? AND dormitory_id IS NULL
+            ORDER BY rowid
+        """
+        target_id = room_id
+
+    initialize_database()
+    with closing(_connect(get_database_path().resolve())) as connection:
+        rows = connection.execute(query, (target_id,)).fetchall()
+    return [_serialize_owner_image(row) for row in rows]
+
+
+def _get_owner_image(
+    owner_id: str,
+    dormitory_id: str,
+    room_id: Optional[str],
+    image_id: str,
+) -> sqlite3.Row:
+    # รองรับ CON-AUTH-01, CON-FILE-01 และ FR-DOR-12
+    if room_id is None:
+        get_owned_dormitory(owner_id, dormitory_id)
+        query = """
+            SELECT image_id, file_type, file_size_bytes, approval_status
+            FROM owner_dormitory_images
+            WHERE image_id = ? AND dormitory_id = ? AND room_id IS NULL
+        """
+        target_id = dormitory_id
+    else:
+        get_owned_dormitory_room(owner_id, dormitory_id, room_id)
+        query = """
+            SELECT image_id, file_type, file_size_bytes, approval_status
+            FROM owner_dormitory_images
+            WHERE image_id = ? AND room_id = ? AND dormitory_id IS NULL
+        """
+        target_id = room_id
+
+    initialize_database()
+    with closing(_connect(get_database_path().resolve())) as connection:
+        row = connection.execute(query, (image_id, target_id)).fetchone()
+    if row is None:
+        raise HTTPException(status_code=404, detail="ไม่พบรูปภาพ")
+    return row
+
+
+def _owner_image_file_path(image: sqlite3.Row) -> Path:
+    media_types = {"JPG": "image/jpeg", "JPEG": "image/jpeg", "PNG": "image/png"}
+    if image["file_type"] not in media_types:
+        raise HTTPException(status_code=404, detail="ไม่พบรูปภาพ")
+    image_path = (
+        get_database_path().resolve().parent
+        / "owner_dormitory_images"
+        / f"{image['image_id']}.{image['file_type'].lower()}"
+    )
+    if not image_path.is_file():
+        raise HTTPException(status_code=404, detail="ไม่พบรูปภาพ")
+    return image_path
+
+
+def _delete_owner_image(
+    owner_id: str,
+    dormitory_id: str,
+    room_id: Optional[str],
+    image_id: str,
+) -> Response:
+    # รองรับ CON-AUTH-01, CON-FILE-01 และ FR-DOR-12
+    image = _get_owner_image(owner_id, dormitory_id, room_id, image_id)
+    image_path = (
+        get_database_path().resolve().parent
+        / "owner_dormitory_images"
+        / f"{image['image_id']}.{image['file_type'].lower()}"
+    )
+    staged_path = image_path.with_name(f".{image_path.name}.deleting")
+    if image_path.exists():
+        try:
+            image_path.replace(staged_path)
+        except OSError as error:
+            raise HTTPException(
+                status_code=500,
+                detail="ไม่สามารถลบไฟล์รูปภาพได้",
+            ) from error
+
+    initialize_database()
+    with closing(_connect(get_database_path().resolve())) as connection:
+        try:
+            if room_id is None:
+                cursor = connection.execute(
+                    """
+                    DELETE FROM owner_dormitory_images
+                    WHERE image_id = ? AND dormitory_id = ? AND room_id IS NULL
+                    """,
+                    (image_id, dormitory_id),
+                )
+            else:
+                cursor = connection.execute(
+                    """
+                    DELETE FROM owner_dormitory_images
+                    WHERE image_id = ? AND room_id = ? AND dormitory_id IS NULL
+                    """,
+                    (image_id, room_id),
+                )
+            if cursor.rowcount == 0:
+                connection.rollback()
+                if staged_path.exists():
+                    staged_path.replace(image_path)
+                raise HTTPException(status_code=404, detail="ไม่พบรูปภาพ")
+            connection.commit()
+        except sqlite3.Error as error:
+            connection.rollback()
+            if staged_path.exists():
+                staged_path.replace(image_path)
+            raise HTTPException(
+                status_code=500,
+                detail="ไม่สามารถลบข้อมูลรูปภาพได้",
+            ) from error
+
+    if staged_path.exists():
+        try:
+            staged_path.unlink()
+        except OSError as error:
+            raise HTTPException(
+                status_code=500,
+                detail="ไม่สามารถลบไฟล์รูปภาพได้",
+            ) from error
+    return Response(status_code=204)
+
+
+@router.get("/owners/dormitories/{dormitory_id}/images")
+def list_owner_dormitory_images(
+    dormitory_id: str,
+    owner_id: str = Depends(get_current_owner),
+) -> list[dict[str, object]]:
+    # รองรับ CON-AUTH-01, CON-FILE-01 และ FR-DOR-12
+    return _list_owner_images(owner_id, dormitory_id, None)
+
+
+@router.get("/owners/dormitories/{dormitory_id}/images/{image_id}")
+def get_owner_dormitory_image(
+    dormitory_id: str,
+    image_id: str,
+    owner_id: str = Depends(get_current_owner),
+) -> FileResponse:
+    # รองรับ CON-AUTH-01, CON-FILE-01 และ FR-DOR-12
+    image = _get_owner_image(owner_id, dormitory_id, None, image_id)
+    media_types = {"JPG": "image/jpeg", "JPEG": "image/jpeg", "PNG": "image/png"}
+    return FileResponse(
+        _owner_image_file_path(image),
+        media_type=media_types[image["file_type"]],
+    )
+
+
+@router.delete(
+    "/owners/dormitories/{dormitory_id}/images/{image_id}",
+    status_code=204,
+)
+def delete_owner_dormitory_image(
+    dormitory_id: str,
+    image_id: str,
+    owner_id: str = Depends(get_current_owner),
+) -> Response:
+    # รองรับ CON-AUTH-01, CON-FILE-01 และ FR-DOR-12
+    return _delete_owner_image(owner_id, dormitory_id, None, image_id)
+
+
+@router.get("/owners/dormitories/{dormitory_id}/rooms/{room_id}/images")
+def list_owner_room_images(
+    dormitory_id: str,
+    room_id: str,
+    owner_id: str = Depends(get_current_owner),
+) -> list[dict[str, object]]:
+    # รองรับ CON-AUTH-01, CON-FILE-01 และ FR-DOR-12
+    return _list_owner_images(owner_id, dormitory_id, room_id)
+
+
+@router.get("/owners/dormitories/{dormitory_id}/rooms/{room_id}/images/{image_id}")
+def get_owner_room_image(
+    dormitory_id: str,
+    room_id: str,
+    image_id: str,
+    owner_id: str = Depends(get_current_owner),
+) -> FileResponse:
+    # รองรับ CON-AUTH-01, CON-FILE-01 และ FR-DOR-12
+    image = _get_owner_image(owner_id, dormitory_id, room_id, image_id)
+    media_types = {"JPG": "image/jpeg", "JPEG": "image/jpeg", "PNG": "image/png"}
+    return FileResponse(
+        _owner_image_file_path(image),
+        media_type=media_types[image["file_type"]],
+    )
+
+
+@router.delete(
+    "/owners/dormitories/{dormitory_id}/rooms/{room_id}/images/{image_id}",
+    status_code=204,
+)
+def delete_owner_room_image(
+    dormitory_id: str,
+    room_id: str,
+    image_id: str,
+    owner_id: str = Depends(get_current_owner),
+) -> Response:
+    # รองรับ CON-AUTH-01, CON-FILE-01 และ FR-DOR-12
+    return _delete_owner_image(owner_id, dormitory_id, room_id, image_id)
 
 
 @router.post("/owners/dormitories/{dormitory_id}/images")

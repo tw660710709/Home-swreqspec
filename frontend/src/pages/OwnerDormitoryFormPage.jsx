@@ -7,6 +7,7 @@ import {
   updateOwnerDormitory,
   uploadOwnerDormitoryImages,
 } from "../api/client.js";
+import OwnerSavedImages from "../components/OwnerSavedImages.jsx";
 
 const emptyForm = {
   name: "",
@@ -71,6 +72,7 @@ export default function OwnerDormitoryFormPage() {
   const [success, setSuccess] = useState("");
   const [selectedImages, setSelectedImages] = useState([]);
   const [uploadingImages, setUploadingImages] = useState(false);
+  const [imageListRefreshKey, setImageListRefreshKey] = useState(0);
   const [imageUploadResult, setImageUploadResult] = useState({
     accepted: [],
     rejected: [],
@@ -153,6 +155,9 @@ export default function OwnerDormitoryFormPage() {
         accepted: [...current.accepted, ...result.accepted],
         rejected: result.rejected,
       }));
+      if (result.accepted.length > 0) {
+        setImageListRefreshKey((current) => current + 1);
+      }
       setSelectedImages([]);
     } catch (err) {
       setImageUploadError(
@@ -324,6 +329,12 @@ export default function OwnerDormitoryFormPage() {
                     ))}
                   </ul>
                 </div>
+              )}
+              {dormitory?.dormitory_id && (
+                <OwnerSavedImages
+                  dormitoryId={dormitory.dormitory_id}
+                  refreshKey={imageListRefreshKey}
+                />
               )}
             </div>
             <button

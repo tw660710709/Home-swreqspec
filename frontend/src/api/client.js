@@ -218,6 +218,93 @@ export async function uploadOwnerRoomImages(dormitoryId, roomId, files) {
   );
 }
 
+// รองรับ CON-AUTH-01, CON-FILE-01 และ FR-DOR-12
+async function getOwnerImages(path) {
+  const response = await fetch(path, { headers: prototypeOwnerHeaders });
+  if (!response.ok) {
+    throw new Error(`ไม่สามารถโหลดรูปภาพที่บันทึกแล้วได้ (${response.status})`);
+  }
+
+  const data = await response.json();
+  if (
+    !Array.isArray(data) ||
+    data.some(
+      (image) =>
+        !image ||
+        typeof image !== "object" ||
+        typeof image.image_id !== "string" ||
+        typeof image.file_type !== "string" ||
+        typeof image.file_size_bytes !== "number" ||
+        typeof image.approval_status !== "string",
+    )
+  ) {
+    throw new Error("รูปแบบรายการรูปภาพที่บันทึกแล้วไม่ถูกต้อง");
+  }
+  return data;
+}
+
+// รองรับ CON-AUTH-01 และ FR-DOR-12
+async function getOwnerImage(path) {
+  const response = await fetch(path, { headers: prototypeOwnerHeaders });
+  if (!response.ok) {
+    throw new Error(`ไม่สามารถโหลดรูปภาพได้ (${response.status})`);
+  }
+  return response.blob();
+}
+
+// รองรับ CON-AUTH-01 และ FR-DOR-12
+async function deleteOwnerImage(path) {
+  const response = await fetch(path, {
+    method: "DELETE",
+    headers: prototypeOwnerHeaders,
+  });
+  if (!response.ok) {
+    throw new Error(`ไม่สามารถลบรูปภาพได้ (${response.status})`);
+  }
+}
+
+// รองรับ CON-AUTH-01, CON-FILE-01 และ FR-DOR-12
+export async function getOwnerDormitoryImages(dormitoryId) {
+  return getOwnerImages(
+    `/owners/dormitories/${encodeURIComponent(dormitoryId)}/images`,
+  );
+}
+
+// รองรับ CON-AUTH-01, CON-FILE-01 และ FR-DOR-12
+export async function getOwnerRoomImages(dormitoryId, roomId) {
+  return getOwnerImages(
+    `/owners/dormitories/${encodeURIComponent(dormitoryId)}/rooms/${encodeURIComponent(roomId)}/images`,
+  );
+}
+
+// รองรับ CON-AUTH-01 และ FR-DOR-12
+export async function getOwnerDormitoryImage(dormitoryId, imageId) {
+  return getOwnerImage(
+    `/owners/dormitories/${encodeURIComponent(dormitoryId)}/images/${encodeURIComponent(imageId)}`,
+  );
+}
+
+// รองรับ CON-AUTH-01 และ FR-DOR-12
+export async function getOwnerRoomImage(dormitoryId, roomId, imageId) {
+  return getOwnerImage(
+    `/owners/dormitories/${encodeURIComponent(dormitoryId)}/rooms/${encodeURIComponent(roomId)}/images/${encodeURIComponent(imageId)}`,
+  );
+}
+
+// รองรับ CON-AUTH-01 และ FR-DOR-12
+export async function deleteOwnerDormitoryImage(dormitoryId, imageId) {
+  return deleteOwnerImage(
+    `/owners/dormitories/${encodeURIComponent(dormitoryId)}/images/${encodeURIComponent(imageId)}`,
+  );
+}
+
+// รองรับ CON-AUTH-01 และ FR-DOR-12
+export async function deleteOwnerRoomImage(dormitoryId, roomId, imageId) {
+  return deleteOwnerImage(
+    `/owners/dormitories/${encodeURIComponent(dormitoryId)}/rooms/${encodeURIComponent(roomId)}/images/${encodeURIComponent(imageId)}`,
+  );
+}
+
 // รองรับ CON-AUTH-01, FR-DOR-12 และ ASM-17
 export async function getOwnerDormitoryRooms(dormitoryId) {
   const response = await fetch(

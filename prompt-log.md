@@ -1330,3 +1330,10 @@
 - ผล test ชุดเต็ม: `cd backend && PYTHONPATH=.. pytest -v` ผ่าน 86 tests; `cd frontend && npm test` ผ่าน 62 tests ใน 41 ไฟล์; รวม 148 ผ่าน 0 ไม่ผ่าน
 - เอกสารตามรอย: ย้าย F-02 ไปหัวข้อ 4 "แก้แล้ว" ใน `rtm.md`; ปรับ `plan.md` และ T-14 ใน `tasks.md` ให้ตรงกับสถานะรายรูปและ test
 - ไฟล์ที่แก้/สร้าง: `backend/app/database.py`, `backend/app/details.py`, `backend/app/models.py`, `backend/app/owner_dormitories.py`, `backend/tests/test_AC_DOR_12.py`, `backend/tests/test_dormitory_management.py`, `frontend/src/__tests__/TC-DOR-12-2.test.jsx`, `specs/003-manage_dormitory_data/plan.md`, `specs/003-manage_dormitory_data/tasks.md`, `specs/003-manage_dormitory_data/rtm.md`, `prompt-log.md`; ไม่แก้ spec/test-cases หรือพฤติกรรม Q-02
+
+## 2569-11-13 11:33 UTC คำสั่ง: แก้ F-05 ตาม RTM
+- ผลลัพธ์: เพิ่ม API อ่านรายการ/อ่านไฟล์รูปของหอพักและห้องพัก และลบรูปเดิมโดยตรวจสิทธิ์เจ้าของ/ความสัมพันธ์ห้อง; ฟอร์มหอพักและหน้าห้องพักแสดงรูปเดิม ลบได้ และอัปโหลดรูปทดแทนได้ โดยคงเพดาน 10 รูปต่อเป้าหมาย
+- Tests ที่เพิ่ม: pytest `test_FR_DOR_12_owner_lists_and_views_saved_dormitory_and_room_images`, `test_FR_DOR_12_owner_deletes_saved_images_and_can_replace_under_limit`, `test_FR_DOR_12_image_read_and_delete_check_owner_and_room_link`; Vitest `test_FR_DOR_12_dormitory_form_displays_deletes_and_replaces_saved_images`, `test_FR_DOR_12_room_page_displays_deletes_and_replaces_saved_images`, `test_FR_DOR_12_image_api_sends_owner_identity_for_read_and_delete`
+- ผลตรวจ: pytest 89 ผ่าน; Vitest 65 ผ่านใน 42 ไฟล์; `npm run build` ผ่าน; `git diff --check` ผ่าน
+- เอกสารตามรอย: ย้าย F-05 ไปหัวข้อ 4 "แก้แล้ว" ใน `rtm.md`; เพิ่มเส้นทาง API รูปเดิมใน `plan.md`
+- ไฟล์ที่แก้/สร้าง: `backend/app/owner_dormitories.py`, `backend/tests/test_FR_DOR_12.py`, `frontend/src/api/client.js`, `frontend/src/components/OwnerSavedImages.jsx`, `frontend/src/pages/OwnerDormitoryFormPage.jsx`, `frontend/src/pages/OwnerRoomsPage.jsx`, `frontend/src/__tests__/FR-DOR-12-image-management.test.jsx`, `specs/003-manage_dormitory_data/plan.md`, `specs/003-manage_dormitory_data/rtm.md`, `prompt-log.md`; ไม่แก้ spec/test-cases และไม่เปลี่ยนพฤติกรรม Q-02

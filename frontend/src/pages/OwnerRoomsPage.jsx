@@ -8,6 +8,7 @@ import {
   updateOwnerDormitoryRoom,
   uploadOwnerRoomImages,
 } from "../api/client.js";
+import OwnerSavedImages from "../components/OwnerSavedImages.jsx";
 
 // รองรับ CON-ACC-01, CON-AUTH-01, CON-DATA-01, CON-FILE-01, FR-DOR-12,
 // FR-DOR-14, FR-DOR-18 และ AC-DOR-08, AC-DOR-10
@@ -25,6 +26,7 @@ export default function OwnerRoomsPage() {
   const [selectedRoomImages, setSelectedRoomImages] = useState({});
   const [roomImageResults, setRoomImageResults] = useState({});
   const [roomImageErrors, setRoomImageErrors] = useState({});
+  const [roomImageRefreshKeys, setRoomImageRefreshKeys] = useState({});
 
   useEffect(() => {
     let active = true;
@@ -38,6 +40,7 @@ export default function OwnerRoomsPage() {
     setSelectedRoomImages({});
     setRoomImageResults({});
     setRoomImageErrors({});
+    setRoomImageRefreshKeys({});
 
     async function loadRoomsPage() {
       try {
@@ -186,6 +189,12 @@ export default function OwnerRoomsPage() {
           },
         };
       });
+      if (result.accepted.length > 0) {
+        setRoomImageRefreshKeys((current) => ({
+          ...current,
+          [room.room_id]: (current[room.room_id] ?? 0) + 1,
+        }));
+      }
       setSelectedRoomImages((current) => ({
         ...current,
         [room.room_id]: [],
@@ -378,6 +387,11 @@ export default function OwnerRoomsPage() {
                           </ul>
                         </div>
                       )}
+                      <OwnerSavedImages
+                        dormitoryId={dormitoryId}
+                        roomId={room.room_id}
+                        refreshKey={roomImageRefreshKeys[room.room_id] ?? 0}
+                      />
                     </div>
                   </li>
                 );
