@@ -118,6 +118,47 @@ AI จะเปิดอ่านเมื่อ spec.md ไม่ชัด แ�
 **ผู้รับผิดชอบ:** 660710709 ธนกฤต เวทยนุกูล
 </details>
 
+
+<details>
+<summary>UC-10 | แจ้งซ่อม / รายงานปัญหา</summary>
+
+![UC-10](images/usecases/UC-10-report-repair.png)
+
+**ผู้รับผิดชอบ:** 670710322 ธันยธรณ์ บุญมาก
+</details>
+
+<details>
+<summary>UC-11 | ดูข้อมูลค่าใช้จ่ายห้องพัก</summary>
+
+![UC-11](images/usecases/UC-11-room-expenses.png)
+
+**ผู้รับผิดชอบ:** 670710322 ธันยธรณ์ บุญมาก
+</details>
+
+<details>
+<summary>UC-12 | จองห้องพัก</summary>
+
+![UC-12](images/usecases/UC-12-book-room.png)
+
+**ผู้รับผิดชอบ:** 670710322 ธันยธรณ์ บุญมาก
+</details>
+
+<details>
+<summary>UC-13 | ตรวจสอบและอนุมัติหอพัก</summary>
+
+![UC-13](images/usecases/UC-13-approve-dormitory.png)
+
+**ผู้รับผิดชอบ:** 670710322 ธันยธรณ์ บุญมาก
+</details>
+
+<details>
+<summary>UC-14 | ชำระเงิน</summary>
+
+![UC-14](images/usecases/UC-14-payment.png)
+
+**ผู้รับผิดชอบ:** 670710322 ธันยธรณ์ บุญมาก
+</details>
+
 ## Requirement Smells
 
 <details>
@@ -133,22 +174,6 @@ AI จะเปิดอ่านเมื่อ spec.md ไม่ชัด แ�
 ![UC-02](images/smells/UC-02-register.png)
 
 **ผู้รับผิดชอบ:** 660710709 ธนกฤต เวทยนุกูล
-</details>
-
-<details>
-<summary>UC-03 | จัดการข้อมูลหอพัก</summary>
-
-![UC-03](images/smells/Smell03.png)
-
-**ผู้รับผิดชอบ:** 670710713 ชนัสถ์นันท์ วะรีวะราช
-</details>
-
-<details>
-<summary>UC-04 | อัพเดทสถานะห้องว่าง</summary>
-
-![UC-04](images/smells/Smell04.png)
-
-**ผู้รับผิดชอบ:** 670710713 ชนัสถ์นันท์ วะรีวะราช
 </details>
 
 <details>
@@ -183,11 +208,25 @@ AI จะเปิดอ่านเมื่อ spec.md ไม่ชัด แ�
 **ผู้รับผิดชอบ:** 670710746 ณัฎฐพล ดาเจริญ
 </details>
 
+
+
+
+
+
+
 <details>
-<summary>UC-09 | เขียนเเละเเก้ไขรีวิวหอพัก</summary>
+<summary>UC-13 | ตรวจสอบและอนุมัติหอพัก</summary>
 
-![UC-09](images/smells/Smell09.png)
+![UC-13](images/smells/UC-13-approve-dormitory.png)
 
-**ผู้รับผิดชอบ:** 670710713 ชนัสถ์นันท์ วะรีวะราช
+**ผู้รับผิดชอบ:** 670710322 ธันยธรณ์ บุญมาก
+</details>
+
+<details>
+<summary>UC-14 | ชำระเงิน</summary>
+
+![UC-14](images/smells/UC-14-payment.png)
+
+**ผู้รับผิดชอบ:** 670710322 ธันยธรณ์ บุญมาก
 </details>
 
