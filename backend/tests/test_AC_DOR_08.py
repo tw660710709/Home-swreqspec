@@ -299,3 +299,121 @@ class OwnerDormitorySaveTests(unittest.IsolatedAsyncioTestCase):
             headers={"X-Owner-Id": "owner-1"},
         )
         self.assertEqual(rooms.json(), [])
+
+    async def test_TC_DOR_08_1_save_and_show_pending_data(self) -> None:
+        # Given เจ้าของอยู่ในฟอร์มจัดการหอพักและกรอกข้อมูลใหม่ที่ถูกต้อง
+        payload = {
+            "name": "หอพักทดสอบ TC-DOR-08-1",
+            "location": "ทำเลทดสอบ",
+            "type": "หอพักรวม",
+            "contact_info": "ช่องทางติดต่อทดสอบ",
+        }
+
+        # When เจ้าของยืนยันบันทึกข้อมูลหอพักใหม่
+        saved_response = await self.client.post(
+            "/owners/dormitories",
+            headers={"X-Owner-Id": "owner-1"},
+            json=payload,
+        )
+        self.assertEqual(saved_response.status_code, 200)
+        saved = saved_response.json()
+        dormitory_id = saved["dormitory_id"]
+        owner_response = await self.client.get(
+            f"/owners/dormitories/{dormitory_id}",
+            headers={"X-Owner-Id": "owner-1"},
+        )
+        public_list_response = await self.client.get("/dormitories")
+        public_detail_response = await self.client.get(
+            f"/dormitories/{dormitory_id}",
+        )
+
+        # Then บันทึกและอ่านข้อมูลล่าสุดได้ โดย Admin อยู่นอกขอบเขตให้ตรวจเฉพาะสถานะ
+        self.assertEqual(owner_response.status_code, 200)
+        self.assertEqual(owner_response.json()["name"], payload["name"])
+        self.assertEqual(owner_response.json()["approval_status"], "Pending")
+        self.assertEqual(saved["approval_status"], "Pending")
+        self.assertNotIn(
+            dormitory_id,
+            [item["id"] for item in public_list_response.json()],
+        )
+        self.assertEqual(public_detail_response.status_code, 404)
+
+    async def test_TC_DOR_08_3_room_management_is_separate_and_linked(
+        self,
+    ) -> None:
+        # Given เจ้าของเลือกหอพักที่บันทึกแล้วซึ่งมีหลายห้องเชื่อมโยงอยู่
+        dormitory_response = await self.client.post(
+            "/owners/dormitories",
+            headers={"X-Owner-Id": "owner-1"},
+            json={
+                "name": "หอพักทดสอบ TC-DOR-08-3",
+                "location": "ทำเลทดสอบ",
+                "type": "หอพักรวม",
+                "contact_info": "ช่องทางติดต่อทดสอบ",
+            },
+        )
+        self.assertEqual(dormitory_response.status_code, 200)
+        dormitory_id = dormitory_response.json()["dormitory_id"]
+        for monthly_rent in ("5000", "6000"):
+            room_response = await self.client.post(
+                f"/owners/dormitories/{dormitory_id}/rooms",
+                headers={"X-Owner-Id": "owner-1"},
+                json={"monthly_rent": monthly_rent},
+            )
+            self.assertEqual(room_response.status_code, 200)
+
+        # When เจ้าของเปิดหน้าจัดการห้องพักและเพิ่มห้องพร้อมราคาต่อเดือน
+        added_room_response = await self.client.post(
+            f"/owners/dormitories/{dormitory_id}/rooms",
+            headers={"X-Owner-Id": "owner-1"},
+            json={"monthly_rent": "7000"},
+        )
+        rooms_response = await self.client.get(
+            f"/owners/dormitories/{dormitory_id}/rooms",
+            headers={"X-Owner-Id": "owner-1"},
+        )
+
+        # Then หน้าจอแยกทดสอบใน Vitest และ API แสดงห้องหลายห้องที่ผูกกับหอพักพร้อมราคา
+        self.assertEqual(added_room_response.status_code, 200)
+        self.assertEqual(rooms_response.status_code, 200)
+        self.assertEqual(added_room_response.json()["monthly_rent"], "7000")
+        rooms = rooms_response.json()
+        self.assertEqual(len(rooms), 3)
+        self.assertEqual({room["dormitory_id"] for room in rooms}, {dormitory_id})
+        self.assertEqual(
+            {room["monthly_rent"] for room in rooms},
+            {"5000", "6000", "7000"},
+        )
+
+    async def test_TC_DOR_08_4_reject_room_without_required_rent(
+        self,
+    ) -> None:
+        # Given เจ้าของอยู่ในหน้าจัดการห้องพักและไม่ระบุราคาค่าเช่าต่อเดือน
+        dormitory_response = await self.client.post(
+            "/owners/dormitories",
+            headers={"X-Owner-Id": "owner-1"},
+            json={
+                "name": "หอพักทดสอบ TC-DOR-08-4",
+                "location": "ทำเลทดสอบ",
+                "type": "หอพักรวม",
+                "contact_info": "ช่องทางติดต่อทดสอบ",
+            },
+        )
+        self.assertEqual(dormitory_response.status_code, 200)
+        dormitory_id = dormitory_response.json()["dormitory_id"]
+
+        # When เจ้าของยืนยันบันทึกข้อมูลห้องโดยไม่มี monthly_rent
+        response = await self.client.post(
+            f"/owners/dormitories/{dormitory_id}/rooms",
+            headers={"X-Owner-Id": "owner-1"},
+            json={},
+        )
+        rooms_response = await self.client.get(
+            f"/owners/dormitories/{dormitory_id}/rooms",
+            headers={"X-Owner-Id": "owner-1"},
+        )
+
+        # Then ระบบไม่บันทึกห้องที่ขาดราคา โดยไม่กำหนดรูปแบบข้อความผิดพลาด
+        self.assertGreaterEqual(response.status_code, 400)
+        self.assertLess(response.status_code, 500)
+        self.assertEqual(rooms_response.json(), [])
