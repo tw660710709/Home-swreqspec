@@ -1311,3 +1311,15 @@
 - ผล test เฉพาะไฟล์ AC-DOR-12: pytest ผ่าน 4 tests; Vitest ใหม่ผ่าน 2 tests
 - จำนวน test: backend เพิ่มจาก 2 เป็น 4 (+2); frontend เพิ่ม 1 ตัวในแต่ละไฟล์ใหม่ (+2)
 - หมายเหตุ: รายงานขั้นตอนทดสอบด้วยคนสำหรับ `TC-DOR-12-1` ถึง `TC-DOR-12-3`; `TC-DOR-12-2` จำลองตาม Given ไม่ได้ด้วยโมเดลปัจจุบัน และ `TC-DOR-12-4` ยังรอคำตอบ Q-02
+
+## 2569-11-13 11:03 คำสั่ง: `/verify specs/003-manage_dormitory_data/`
+- ผล test ชุดเต็ม: `cd backend && PYTHONPATH=.. pytest -v` ผ่าน 83 tests; `cd frontend && npm test` ผ่าน 61 tests ใน 40 ไฟล์; รวม 144 ผ่าน 0 ไม่ผ่านเมื่อรันด้วย PYTHONPATH ที่จำเป็น
+- หมายเหตุการรันตาม prompt: `cd backend && pytest -v` ล้มเหลวตอน collection 19 modules ด้วย `ModuleNotFoundError: No module named 'backend'`; ไม่ได้แก้ไฟล์เพื่อทำให้คำสั่งผ่าน และใช้ `PYTHONPATH=..` รันทดแทน
+- ผลตรวจ RTM: 19 ID — ครบ 7, ยังไม่ถึง 1, รอ Q-xx 0, ช่องโหว่ 11
+- ข้อค้นพบใหม่: F-01 ถึง F-05; F-01 การยืนยันตัวตนใช้ owner ID จาก header, F-02 owner data/images ไม่เชื่อมกับ public view และไม่มี test รูป Pending แยก, F-03 ไม่พบมุมมอง Admin, F-04 ไม่มี test กรณี invalid value ที่กรอกครบ, F-05 จัดการรูปที่บันทึกแล้วไม่ได้
+- งานที่ยังรอคำตอบ: T-16 รอ Q-02; ไม่กำหนดพฤติกรรมการแสดงข้อมูลเดิมแทนทีม
+- ไฟล์ที่สร้าง/แก้: `specs/003-manage_dormitory_data/rtm.md`, เพิ่มบันทึกนี้ท้าย `prompt-log.md`; ไม่แก้โค้ด, test, spec, plan หรือ tasks
+
+## 2569-11-13 11:09 UTC คำสั่ง: กรอกคอลัมน์ "ทีมตัดสิน" ใน RTM
+- คำตัดสินทีม: F-01 ไม่แก้ ยอมรับชั่วคราวตามมติใน plan.md จนกว่า 007 login เสร็จ; F-02 แก้; F-03 ไม่แก้เพราะหน้า Admin อยู่ใน UC-13 ซึ่งเป็น Out of scope; F-04 ไม่แก้ตอนนี้ รอ /clarify นิยาม "ข้อมูลไม่ถูกต้อง" พร้อม Q-02; F-05 แก้
+- ไฟล์ที่แก้: เติมเฉพาะคอลัมน์ "ทีมตัดสิน" ของ F-01 ถึง F-05 ใน `specs/003-manage_dormitory_data/rtm.md` และเพิ่มบันทึกนี้ท้าย `prompt-log.md`; ไม่แก้ส่วนอื่น
