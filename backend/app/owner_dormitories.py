@@ -17,7 +17,7 @@ PENDING_APPROVAL_STATUS = "Pending"
 
 
 class OwnerDormitoryInput(BaseModel):
-    # รองรับ CON-DATA-01, FR-DOR-10 และ FR-DOR-12
+    # รองรับ CON-DATA-01, FR-DOR-10, FR-DOR-12, FR-DOR-13 และ FR-DOR-17
     name: str = Field(min_length=1)
     location: str = Field(min_length=1)
     type: str = Field(min_length=1)

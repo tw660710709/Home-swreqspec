@@ -1204,3 +1204,9 @@
 - ผลลัพธ์: เพิ่มทางเลือกเลือกหอพักและหน้าจัดการห้องพักแยก; อ่าน/เพิ่ม/แก้ไขห้องผ่าน client โดยส่งเฉพาะ `monthly_rent` และเชื่อมด้วย ID ที่ระบบกำหนด; เปลี่ยนสถานะ T-07 เป็น "เสร็จ รอทีมตรวจ"
 - ผล test: `npm test -- --run src/__tests__/AC-DOR-08-rooms-page.test.jsx` ผ่าน 2 tests; `npm test` ผ่าน 39 tests ใน 23 ไฟล์; `npm run build` ผ่าน
 - สิ่งที่เกือบต้องเดาแต่ถามแทน: spec/plan ไม่กำหนดชื่อห้องหรือช่วงราคา จึงใช้ `room_id` ที่ระบบสร้างกับราคาเท่านั้น และไม่เพิ่มฟิลด์ห้องหรือข้อจำกัดราคา
+
+## 2569-11-13 คำสั่ง: `/implement T-09 specs/003-manage_dormitory_data/tasks.md`
+- ไฟล์ที่แก้/สร้าง: `backend/app/owner_dormitories.py`, `backend/tests/test_AC_DOR_09.py`, `specs/003-manage_dormitory_data/tasks.md`
+- ผลลัพธ์: ยืนยันการตรวจ required fields ของ Pydantic ที่ปฏิเสธข้อมูลว่าง/ขาดก่อนเข้า endpoint และคืน `422 detail` แยกตามช่อง; เพิ่ม tests ว่าการสร้างไม่บันทึกเมื่อผิดและการแก้ไขไม่เปลี่ยนข้อมูลเดิม; เปลี่ยนสถานะ T-09 เป็น "เสร็จ รอทีมตรวจ"
+- ผล test: `PYTHONPATH=.. pytest -q tests/test_AC_DOR_09.py` ผ่าน 3 tests; `PYTHONPATH=.. pytest -q tests` ผ่าน 58 tests
+- สิ่งที่เกือบต้องเดาแต่ถามแทน: `TC-DOR-09-4` ยังเป็น "ร่าง" เพราะ spec ไม่ระบุกฎสำหรับค่าที่กรอกครบแต่ไม่ถูกต้อง; จึงไม่เพิ่มกฎตรวจรูปแบบช่องทางติดต่อ ประเภทหอพัก หรือการ trim whitespace
