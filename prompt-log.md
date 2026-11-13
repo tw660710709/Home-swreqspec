@@ -1289,3 +1289,14 @@
 - ผล test เฉพาะ AC-DOR-10: pytest ผ่าน 10 tests; Vitest ผ่าน 3 tests
 - จำนวน test: backend เพิ่มจาก 5 เป็น 10 (+5); frontend เพิ่ม 1 ตัวในแต่ละไฟล์ใหม่ (+3 รวม)
 - หมายเหตุ: รายงานขั้นตอนทดสอบด้วยคนสำหรับ `TC-DOR-10-1`; TC อื่นตรวจตาม runner ที่ระบุในตาราง
+
+## 2569-11-13 10:46:03 คำสั่ง: `/testcases AC-DOR-11 specs/003-manage_dormitory_data/`
+- โหมด: เขียน test จากแถวสถานะ "ใช้ได้"
+- มติทีม: แถวที่ระบุทั้ง pytest และ vitest เพิ่ม test ฝั่งละ 1 ตัวโดยใช้ชื่อเดียวกัน; นับจำนวนเพิ่มแยกตามฝั่ง
+- TC ID ที่เพิ่ม: `TC-DOR-11-1` (pytest และ vitest); `TC-DOR-11-2` (vitest)
+- TC ID ที่ตรวจด้วยคนเท่านั้น: `TC-DOR-11-3`; ผลที่คาดหวังระบุว่า spec ไม่ได้บอก จึงไม่มี assert
+- ไฟล์ที่สร้าง: `backend/tests/test_AC_DOR_11.py`, `frontend/src/__tests__/TC-DOR-11-1.test.jsx`, `frontend/src/__tests__/TC-DOR-11-2.test.jsx`; ไม่แก้ `test-cases.md` หรือโค้ดระบบ
+- ผล test ชุดเต็ม: `cd backend && PYTHONPATH=.. pytest -v` ผ่าน 81 tests; `cd frontend && npm test` ผ่าน 59 tests ใน 38 ไฟล์
+- ผล test เฉพาะ AC-DOR-11: pytest ผ่าน 1 test; Vitest ผ่าน 2 tests
+- จำนวน test: backend เพิ่มจาก 0 เป็น 1 (+1); frontend เพิ่ม 1 ตัวในแต่ละไฟล์ใหม่ (+2)
+- หมายเหตุ: รายงานขั้นตอนทดสอบด้วยคนสำหรับ `TC-DOR-11-1` ถึง `TC-DOR-11-3`; กรณี `TC-DOR-11-3` ต้องให้ทีมตัดสินพฤติกรรมก่อนจึงจะกำหนดผลที่คาดหวังได้
