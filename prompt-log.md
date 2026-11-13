@@ -1300,3 +1300,14 @@
 - ผล test เฉพาะ AC-DOR-11: pytest ผ่าน 1 test; Vitest ผ่าน 2 tests
 - จำนวน test: backend เพิ่มจาก 0 เป็น 1 (+1); frontend เพิ่ม 1 ตัวในแต่ละไฟล์ใหม่ (+2)
 - หมายเหตุ: รายงานขั้นตอนทดสอบด้วยคนสำหรับ `TC-DOR-11-1` ถึง `TC-DOR-11-3`; กรณี `TC-DOR-11-3` ต้องให้ทีมตัดสินพฤติกรรมก่อนจึงจะกำหนดผลที่คาดหวังได้
+
+## 2569-11-13 10:51:54 คำสั่ง: `/testcases AC-DOR-12 specs/003-manage_dormitory_data/`
+- โหมด: เขียน test จากแถวสถานะ "ใช้ได้" เฉพาะกรณีที่สร้าง fixture ตามตารางได้โดยไม่เพิ่มสมมติฐาน
+- TC ID ที่เพิ่ม: `TC-DOR-12-1` และ `TC-DOR-12-3` ทั้ง pytest และ vitest ใช้ชื่อเดียวกัน
+- TC ID ที่ยังไม่เขียน: `TC-DOR-12-2` แม้สถานะ "ใช้ได้" เนื่องจาก Given กำหนดรูป Pending แยกในหอพัก Approved แต่โมเดล `DormitoryImage` ไม่มีสถานะรายรูป และ T-14 ใช้สถานะอนุมัติของหอพักร่วมกับรูป; ต้องให้ทีมปรับความเข้าใจ/ข้อกำหนดก่อน
+- TC ID ที่ไม่เขียน: `TC-DOR-12-4` รอ Q-02
+- ไฟล์ที่แก้/สร้าง: `backend/tests/test_AC_DOR_12.py`, `frontend/src/__tests__/TC-DOR-12-1.test.jsx`, `frontend/src/__tests__/TC-DOR-12-3.test.jsx`; ไม่แก้ `test-cases.md` หรือโค้ดระบบ
+- ผล test ชุดเต็ม: `cd backend && PYTHONPATH=.. pytest -v` ผ่าน 83 tests; `cd frontend && npm test` ผ่าน 61 tests ใน 40 ไฟล์
+- ผล test เฉพาะไฟล์ AC-DOR-12: pytest ผ่าน 4 tests; Vitest ใหม่ผ่าน 2 tests
+- จำนวน test: backend เพิ่มจาก 2 เป็น 4 (+2); frontend เพิ่ม 1 ตัวในแต่ละไฟล์ใหม่ (+2)
+- หมายเหตุ: รายงานขั้นตอนทดสอบด้วยคนสำหรับ `TC-DOR-12-1` ถึง `TC-DOR-12-3`; `TC-DOR-12-2` จำลองตาม Given ไม่ได้ด้วยโมเดลปัจจุบัน และ `TC-DOR-12-4` ยังรอคำตอบ Q-02

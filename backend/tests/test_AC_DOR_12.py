@@ -99,6 +99,51 @@ class PublicDormitoryApprovalTests(unittest.IsolatedAsyncioTestCase):
         self.assertNotIn("หอพักที่รออนุมัติ", response.text)
         self.assertNotIn("/pending.jpg", response.text)
 
+    async def test_TC_DOR_12_1_public_view_shows_latest_approved_data_and_images(
+        self,
+    ) -> None:
+        # Given มีข้อมูลหอพักและรูปภาพที่ได้รับอนุมัติแล้ว
+        approved_dormitory = self.catalog[0][0]
+        approved_image = self.catalog[2][0]
+
+        # When ผู้ใช้งานทั่วไปเปิดดูข้อมูลหอพัก
+        with patch.object(
+            details,
+            "load_dormitory_detail_data",
+            return_value=([approved_dormitory], [], [approved_image], []),
+        ):
+            response = await self.client.get("/dormitories/dorm-approved")
+
+        # Then แสดงข้อมูลหอพักและรูปภาพล่าสุดที่ได้รับอนุมัติแล้ว
+        self.assertEqual(response.status_code, 200)
+        detail = response.json()
+        self.assertEqual(detail["name"], approved_dormitory.name)
+        self.assertEqual(detail["location"], approved_dormitory.location)
+        self.assertEqual(
+            detail["images"],
+            [{"url": approved_image.url, "caption": approved_image.caption}],
+        )
+
+    async def test_TC_DOR_12_3_public_view_hides_pending_dormitory_data(
+        self,
+    ) -> None:
+        # Given ข้อมูลหอพักและรูปภาพมีสถานะรออนุมัติ
+        pending_dormitory = self.catalog[0][1]
+        pending_image = self.catalog[2][1]
+
+        # When ผู้ใช้งานทั่วไปเปิดดูข้อมูลหอพัก
+        with patch.object(
+            details,
+            "load_dormitory_detail_data",
+            return_value=([pending_dormitory], [], [pending_image], []),
+        ):
+            response = await self.client.get("/dormitories/dorm-pending")
+
+        # Then ระบบไม่แสดงข้อมูลหอพักหรือรูปภาพที่รออนุมัติ
+        self.assertEqual(response.status_code, 404)
+        self.assertNotIn(pending_dormitory.name, response.text)
+        self.assertNotIn(pending_image.url, response.text)
+
 
 if __name__ == "__main__":
     unittest.main()
