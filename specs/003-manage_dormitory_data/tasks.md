@@ -205,7 +205,7 @@ Dependency ก่อนเริ่มเฟส 1: plan ระบุให้ใ
 - ไฟล์ที่แตะ: `backend/app/details.py`, `backend/tests/test_AC_DOR_12.py`
 - แบบหน้าจอ: ไม่มี
 - ต้องทำหลัง: T-04, T-11
-- เสร็จเมื่อ: `test_AC_DOR_12_public_view_shows_approved_data_only` และ `test_AC_DOR_12_public_view_hides_pending_data` ผ่านด้วยข้อมูล/รูปสถานะอนุมัติและรออนุมัติ โดยใช้สถานะจากกระบวนการที่มีอยู่และไม่สร้าง workflow อนุมัติใหม่
+- เสร็จเมื่อ: `test_AC_DOR_12_public_view_shows_approved_data_only`, `test_AC_DOR_12_public_view_hides_pending_data`, `test_owner_managed_dormitory_is_public_only_after_approval` และ `test_TC_DOR_12_2_public_view_hides_pending_image` ผ่านด้วยข้อมูล/รูปสถานะอนุมัติและรออนุมัติ โดยใช้สถานะจากกระบวนการที่มีอยู่และไม่สร้าง workflow อนุมัติใหม่
 - สถานะ: เสร็จ
 
 ### T-15 เชื่อมหน้ารายละเอียดสาธารณะกับข้อมูลที่กรองสถานะแล้ว
@@ -218,7 +218,7 @@ Dependency ก่อนเริ่มเฟส 1: plan ระบุให้ใ
 - สถานะ: เสร็จ 
 
 #### จุดตรวจเฟส 6
-- test ที่ต้องผ่านทั้งหมด: `test_owner_dormitory_schema_supports_owner_rooms_and_images`, `test_AC_DOR_07_lists_only_authenticated_owners_dormitories`, `test_NFR_SEC_02_rejects_foreign_dormitory_and_room_access`, `test_AC_DOR_07_owner_list_renders_only_owner_rows`, `test_AC_DOR_07_edit_form_shows_existing_data`, `test_AC_DOR_08_save_shows_pending_status_to_owner_and_admin_only`, `test_AC_DOR_08_room_management_is_separate_and_linked`, `test_AC_DOR_08_dormitory_form_saves_valid_data`, `test_AC_DOR_08_room_management_page_is_separate_and_linked`, `test_NFR_USE_02_usability_acceptance`, `test_AC_DOR_09_required_and_invalid_fields_show_per_field_errors_without_saving`, `test_AC_DOR_09_field_errors_display_without_saving`, `test_AC_DOR_10_rejects_only_invalid_or_over_limit_images`, `test_AC_DOR_10_rejected_files_keep_valid_files`, `test_AC_DOR_11_cancel_discards_unsaved_changes`, `test_AC_DOR_12_public_view_shows_approved_data_only`, `test_AC_DOR_12_public_view_hides_pending_data`, `test_AC_DOR_12_public_detail_renders_only_api_approved_data`
+- test ที่ต้องผ่านทั้งหมด: `test_owner_dormitory_schema_supports_owner_rooms_and_images`, `test_owner_image_approval_migration_inherits_dormitory_status`, `test_AC_DOR_07_lists_only_authenticated_owners_dormitories`, `test_NFR_SEC_02_rejects_foreign_dormitory_and_room_access`, `test_AC_DOR_07_owner_list_renders_only_owner_rows`, `test_AC_DOR_07_edit_form_shows_existing_data`, `test_AC_DOR_08_save_shows_pending_status_to_owner_and_admin_only`, `test_AC_DOR_08_room_management_is_separate_and_linked`, `test_AC_DOR_08_dormitory_form_saves_valid_data`, `test_AC_DOR_08_room_management_page_is_separate_and_linked`, `test_NFR_USE_02_usability_acceptance`, `test_AC_DOR_09_required_and_invalid_fields_show_per_field_errors_without_saving`, `test_AC_DOR_09_field_errors_display_without_saving`, `test_AC_DOR_10_rejects_only_invalid_or_over_limit_images`, `test_AC_DOR_10_rejected_files_keep_valid_files`, `test_AC_DOR_11_cancel_discards_unsaved_changes`, `test_AC_DOR_12_public_view_shows_approved_data_only`, `test_AC_DOR_12_public_view_hides_pending_data`, `test_owner_managed_dormitory_is_public_only_after_approval`, `test_TC_DOR_12_2_public_view_hides_pending_image`, `test_AC_DOR_12_public_detail_renders_only_api_approved_data`
 - เปิดระบบ: หลังบ้าน `cd backend && PYTHONPATH=.. uvicorn app.main:app --reload`; หน้าจอ `cd frontend && npm run dev -- --host 0.0.0.0`
 - คนลองเองตาม AC-DOR-12:
   Given มีหอพัก/รูปที่อนุมัติแล้วและข้อมูล/รูปที่รออนุมัติในระบบ

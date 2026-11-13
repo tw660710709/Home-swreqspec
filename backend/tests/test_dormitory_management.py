@@ -3,6 +3,77 @@ import sqlite3
 from backend.app.database import get_database_path, initialize_database
 
 
+def test_owner_image_approval_migration_inherits_dormitory_status(
+    tmp_path,
+    monkeypatch,
+) -> None:
+    # Given database เดิมที่ยังไม่มีสถานะอนุมัติรายรูป
+    database_path = tmp_path / "legacy.sqlite3"
+    monkeypatch.setenv("DORMITORY_DATABASE_PATH", str(database_path))
+    connection = sqlite3.connect(database_path)
+    try:
+        connection.executescript(
+            """
+            CREATE TABLE owner_dormitories (
+                dormitory_id TEXT PRIMARY KEY,
+                owner_id TEXT NOT NULL,
+                name TEXT NOT NULL,
+                location TEXT NOT NULL,
+                type TEXT NOT NULL,
+                contact_info TEXT NOT NULL,
+                approval_status TEXT NOT NULL,
+                amenities TEXT,
+                rules TEXT
+            );
+            CREATE TABLE owner_dormitory_rooms (
+                room_id TEXT PRIMARY KEY,
+                dormitory_id TEXT NOT NULL,
+                monthly_rent TEXT NOT NULL
+            );
+            CREATE TABLE owner_dormitory_images (
+                image_id TEXT PRIMARY KEY,
+                dormitory_id TEXT,
+                room_id TEXT,
+                file_type TEXT NOT NULL,
+                file_size_bytes INTEGER NOT NULL
+            );
+            INSERT INTO owner_dormitories VALUES
+                ('approved-dorm', 'owner-1', 'A', 'L', 'T', 'C', 'Approved', NULL, NULL),
+                ('pending-dorm', 'owner-2', 'B', 'L', 'T', 'C', 'Pending', NULL, NULL);
+            INSERT INTO owner_dormitory_rooms VALUES
+                ('pending-room', 'pending-dorm', '5000');
+            INSERT INTO owner_dormitory_images VALUES
+                ('approved-image', 'approved-dorm', NULL, 'JPG', 10),
+                ('pending-image', NULL, 'pending-room', 'PNG', 10);
+            """
+        )
+        connection.commit()
+    finally:
+        connection.close()
+
+    # When initialize_database upgrades the existing schema
+    initialize_database()
+
+    # Then existing images inherit their parent dormitory approval status
+    connection = sqlite3.connect(database_path)
+    try:
+        statuses = dict(
+            connection.execute(
+                """
+                SELECT image_id, approval_status
+                FROM owner_dormitory_images
+                ORDER BY image_id
+                """
+            )
+        )
+        assert statuses == {
+            "approved-image": "Approved",
+            "pending-image": "Pending",
+        }
+    finally:
+        connection.close()
+
+
 def test_owner_dormitory_schema_supports_owner_rooms_and_images() -> None:
     # Given มีเจ้าของหอพักสองราย หอพัก ห้องพัก และ metadata รูปภาพที่เชื่อมโยงกัน
     initialize_database()

@@ -36,7 +36,8 @@ def _connect(path: Path) -> sqlite3.Connection:
 
 
 def _create_owner_management_schema(connection: sqlite3.Connection) -> None:
-    # รองรับ CON-AUTH-01, CON-DATA-01, CON-FILE-01 และ FR-DOR-12
+    # รองรับ CON-AUTH-01, CON-DATA-01, CON-FILE-01, FR-DOR-12,
+    # NFR-DATA-02 และ AC-DOR-12
     connection.executescript(
         """
         CREATE TABLE IF NOT EXISTS owner_dormitories (
@@ -62,6 +63,7 @@ def _create_owner_management_schema(connection: sqlite3.Connection) -> None:
             room_id TEXT REFERENCES owner_dormitory_rooms(room_id),
             file_type TEXT NOT NULL,
             file_size_bytes INTEGER NOT NULL,
+            approval_status TEXT NOT NULL DEFAULT 'Pending',
             CHECK (
                 (dormitory_id IS NOT NULL AND room_id IS NULL)
                 OR (dormitory_id IS NULL AND room_id IS NOT NULL)
@@ -69,6 +71,39 @@ def _create_owner_management_schema(connection: sqlite3.Connection) -> None:
         );
         """
     )
+    image_columns = {
+        row["name"]
+        for row in connection.execute("PRAGMA table_info(owner_dormitory_images)")
+    }
+    if "approval_status" not in image_columns:
+        connection.execute(
+            """
+            ALTER TABLE owner_dormitory_images
+            ADD COLUMN approval_status TEXT NOT NULL DEFAULT 'Pending'
+            """
+        )
+        connection.execute(
+            """
+            UPDATE owner_dormitory_images
+            SET approval_status = COALESCE(
+                (
+                    SELECT dormitory.approval_status
+                    FROM owner_dormitories AS dormitory
+                    WHERE dormitory.dormitory_id =
+                          owner_dormitory_images.dormitory_id
+                ),
+                (
+                    SELECT dormitory.approval_status
+                    FROM owner_dormitory_rooms AS room
+                    JOIN owner_dormitories AS dormitory
+                      ON dormitory.dormitory_id = room.dormitory_id
+                    WHERE room.room_id = owner_dormitory_images.room_id
+                ),
+                'Pending'
+            )
+            """
+        )
+    connection.commit()
 
 
 def _default_seed_data() -> SeedData:

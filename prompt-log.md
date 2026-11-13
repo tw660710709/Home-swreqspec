@@ -1323,3 +1323,10 @@
 ## 2569-11-13 11:09 UTC คำสั่ง: กรอกคอลัมน์ "ทีมตัดสิน" ใน RTM
 - คำตัดสินทีม: F-01 ไม่แก้ ยอมรับชั่วคราวตามมติใน plan.md จนกว่า 007 login เสร็จ; F-02 แก้; F-03 ไม่แก้เพราะหน้า Admin อยู่ใน UC-13 ซึ่งเป็น Out of scope; F-04 ไม่แก้ตอนนี้ รอ /clarify นิยาม "ข้อมูลไม่ถูกต้อง" พร้อม Q-02; F-05 แก้
 - ไฟล์ที่แก้: เติมเฉพาะคอลัมน์ "ทีมตัดสิน" ของ F-01 ถึง F-05 ใน `specs/003-manage_dormitory_data/rtm.md` และเพิ่มบันทึกนี้ท้าย `prompt-log.md`; ไม่แก้ส่วนอื่น
+
+## 2569-11-13 11:22 UTC คำสั่ง: แก้ F-02 ตามมติทีมใน RTM
+- ผลลัพธ์: เชื่อมข้อมูลหอพักที่เจ้าของบันทึกกับ `GET /dormitories/{id}`; หอพัก Pending ไม่แสดง; เพิ่มสถานะอนุมัติรายรูป โดยรูปใหม่เป็น Pending; public detail และ endpoint รูปแสดงได้เฉพาะรายการที่อนุมัติแล้ว โดยไม่สร้าง workflow UC-13 และไม่เปลี่ยนพฤติกรรม Q-02/TC-DOR-12-4
+- Tests: เพิ่ม pytest และ Vitest ชื่อ `test_TC_DOR_12_2_public_view_hides_pending_image`; เพิ่ม test หอพัก owner ที่ Pending/Approved และ migration status รูปเดิม
+- ผล test ชุดเต็ม: `cd backend && PYTHONPATH=.. pytest -v` ผ่าน 86 tests; `cd frontend && npm test` ผ่าน 62 tests ใน 41 ไฟล์; รวม 148 ผ่าน 0 ไม่ผ่าน
+- เอกสารตามรอย: ย้าย F-02 ไปหัวข้อ 4 "แก้แล้ว" ใน `rtm.md`; ปรับ `plan.md` และ T-14 ใน `tasks.md` ให้ตรงกับสถานะรายรูปและ test
+- ไฟล์ที่แก้/สร้าง: `backend/app/database.py`, `backend/app/details.py`, `backend/app/models.py`, `backend/app/owner_dormitories.py`, `backend/tests/test_AC_DOR_12.py`, `backend/tests/test_dormitory_management.py`, `frontend/src/__tests__/TC-DOR-12-2.test.jsx`, `specs/003-manage_dormitory_data/plan.md`, `specs/003-manage_dormitory_data/tasks.md`, `specs/003-manage_dormitory_data/rtm.md`, `prompt-log.md`; ไม่แก้ spec/test-cases หรือพฤติกรรม Q-02

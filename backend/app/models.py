@@ -47,11 +47,12 @@ class RoomType:
 
 @dataclass
 class DormitoryImage:
-    # รองรับ FR-DOR-04 และ NFR-ACC-01
+    # รองรับ FR-DOR-04, NFR-ACC-01, NFR-DATA-02 และ AC-DOR-12
     id: str
     dormitory_id: str
     url: str
     caption: str
+    approval_status: str = "Approved"
 
 
 @dataclass
@@ -96,9 +97,10 @@ class OwnerDormitoryRoom:
 
 @dataclass
 class OwnerDormitoryImage:
-    # รองรับ CON-FILE-01 และ FR-DOR-12; เก็บ metadata ก่อนเลือก storage จริงใน T-11
+    # รองรับ CON-FILE-01, FR-DOR-12, NFR-DATA-02 และ AC-DOR-12
     image_id: str
     file_type: str
     file_size_bytes: int
     dormitory_id: Optional[str] = None
     room_id: Optional[str] = None
+    approval_status: str = "Pending"

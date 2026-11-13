@@ -302,7 +302,8 @@ def _store_owner_image(
     file_type: str,
     content: bytes,
 ) -> Optional[str]:
-    # รองรับ CON-AUTH-01, CON-FILE-01 และ FR-DOR-14; local filesystem เป็นการเลือกของทีม
+    # รองรับ CON-AUTH-01, CON-FILE-01, FR-DOR-14, NFR-DATA-02 และ AC-DOR-12
+    # local filesystem เป็นการเลือกของทีม
     initialize_database()
     image_id = str(uuid4())
     storage_directory = (
@@ -339,8 +340,9 @@ def _store_owner_image(
             connection.execute(
                 """
                 INSERT INTO owner_dormitory_images (
-                    image_id, dormitory_id, room_id, file_type, file_size_bytes
-                ) VALUES (?, ?, ?, ?, ?)
+                    image_id, dormitory_id, room_id, file_type, file_size_bytes,
+                    approval_status
+                ) VALUES (?, ?, ?, ?, ?, ?)
                 """,
                 (
                     image_id,
@@ -348,6 +350,7 @@ def _store_owner_image(
                     room_id,
                     file_type,
                     len(content),
+                    PENDING_APPROVAL_STATUS,
                 ),
             )
             temporary_path.replace(image_path)
