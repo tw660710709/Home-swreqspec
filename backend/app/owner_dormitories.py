@@ -1,6 +1,7 @@
 import json
 import sqlite3
 from contextlib import closing
+from decimal import Decimal
 from typing import Optional
 from uuid import uuid4
 
@@ -23,6 +24,11 @@ class OwnerDormitoryInput(BaseModel):
     contact_info: str = Field(min_length=1)
     amenities: Optional[list[str]] = None
     rules: Optional[str] = None
+
+
+class OwnerDormitoryRoomInput(BaseModel):
+    # รองรับ CON-DATA-01, FR-DOR-12 และ ASM-16
+    monthly_rent: Decimal
 
 
 def get_current_owner(
@@ -104,7 +110,16 @@ def get_owned_dormitory_room(
         ).fetchone()
     if row is None:
         raise HTTPException(status_code=404)
-    return dict(row)
+    return _serialize_owner_dormitory_room(row)
+
+
+def _serialize_owner_dormitory_room(row: sqlite3.Row) -> dict[str, object]:
+    # รองรับ CON-AUTH-01, FR-DOR-12 และ ASM-17
+    return {
+        "room_id": row["room_id"],
+        "dormitory_id": row["dormitory_id"],
+        "monthly_rent": row["monthly_rent"],
+    }
 
 
 @router.get("/owners/dormitories")
@@ -193,3 +208,77 @@ def update_owner_dormitory(
             raise HTTPException(status_code=404)
         connection.commit()
     return get_owned_dormitory(owner_id, dormitory_id)
+
+
+@router.get("/owners/dormitories/{dormitory_id}/rooms")
+def list_owner_dormitory_rooms(
+    dormitory_id: str,
+    owner_id: str = Depends(get_current_owner),
+) -> list[dict[str, object]]:
+    # รองรับ CON-AUTH-01, FR-DOR-12 และ ASM-17
+    get_owned_dormitory(owner_id, dormitory_id)
+    initialize_database()
+    with closing(_connect(get_database_path().resolve())) as connection:
+        rows = connection.execute(
+            """
+            SELECT room_id, dormitory_id, monthly_rent
+            FROM owner_dormitory_rooms
+            WHERE dormitory_id = ?
+            ORDER BY room_id
+            """,
+            (dormitory_id,),
+        ).fetchall()
+    return [_serialize_owner_dormitory_room(row) for row in rows]
+
+
+@router.post("/owners/dormitories/{dormitory_id}/rooms")
+def create_owner_dormitory_room(
+    dormitory_id: str,
+    room: OwnerDormitoryRoomInput,
+    owner_id: str = Depends(get_current_owner),
+) -> dict[str, object]:
+    # รองรับ CON-AUTH-01, CON-DATA-01, CON-BUS-01, FR-DOR-12 และ ASM-17
+    get_owned_dormitory(owner_id, dormitory_id)
+    room_id = str(uuid4())
+    initialize_database()
+    with closing(_connect(get_database_path().resolve())) as connection:
+        connection.execute(
+            """
+            INSERT INTO owner_dormitory_rooms (room_id, dormitory_id, monthly_rent)
+            VALUES (?, ?, ?)
+            """,
+            (room_id, dormitory_id, str(room.monthly_rent)),
+        )
+        connection.commit()
+    return get_owned_dormitory_room(owner_id, dormitory_id, room_id)
+
+
+@router.put("/owners/dormitories/{dormitory_id}/rooms/{room_id}")
+def update_owner_dormitory_room(
+    dormitory_id: str,
+    room_id: str,
+    room: OwnerDormitoryRoomInput,
+    owner_id: str = Depends(get_current_owner),
+) -> dict[str, object]:
+    # รองรับ CON-AUTH-01, CON-DATA-01, CON-BUS-01, FR-DOR-12 และ ASM-17
+    initialize_database()
+    with closing(_connect(get_database_path().resolve())) as connection:
+        cursor = connection.execute(
+            """
+            UPDATE owner_dormitory_rooms
+            SET monthly_rent = ?
+            WHERE room_id = ? AND dormitory_id = ?
+              AND EXISTS (
+                  SELECT 1
+                  FROM owner_dormitories
+                  WHERE owner_dormitories.dormitory_id =
+                        owner_dormitory_rooms.dormitory_id
+                    AND owner_id = ?
+              )
+            """,
+            (str(room.monthly_rent), room_id, dormitory_id, owner_id),
+        )
+        if cursor.rowcount == 0:
+            raise HTTPException(status_code=404)
+        connection.commit()
+    return get_owned_dormitory_room(owner_id, dormitory_id, room_id)

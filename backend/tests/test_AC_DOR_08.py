@@ -152,3 +152,150 @@ class OwnerDormitorySaveTests(unittest.IsolatedAsyncioTestCase):
             headers={"X-Owner-Id": "owner-1"},
         )
         self.assertEqual(owner_response.json(), [])
+
+    async def test_AC_DOR_08_room_management_is_separate_and_linked(self) -> None:
+        # Given owner-1 และ owner-2 มีหอพักคนละแห่ง
+        owner_one_dormitory = await self.client.post(
+            "/owners/dormitories",
+            headers={"X-Owner-Id": "owner-1"},
+            json={
+                "name": "หอพัก owner-1",
+                "location": "ทำเล owner-1",
+                "type": "หอพักรวม",
+                "contact_info": "ติดต่อ owner-1",
+            },
+        )
+        owner_two_dormitory = await self.client.post(
+            "/owners/dormitories",
+            headers={"X-Owner-Id": "owner-2"},
+            json={
+                "name": "หอพัก owner-2",
+                "location": "ทำเล owner-2",
+                "type": "หอพักหญิง",
+                "contact_info": "ติดต่อ owner-2",
+            },
+        )
+        self.assertEqual(owner_one_dormitory.status_code, 200)
+        self.assertEqual(owner_two_dormitory.status_code, 200)
+        owner_one_id = owner_one_dormitory.json()["dormitory_id"]
+        owner_two_id = owner_two_dormitory.json()["dormitory_id"]
+
+        # When แต่ละเจ้าของเพิ่มห้องในหอพักของตน และ owner-1 แก้ราคา
+        owner_one_room = await self.client.post(
+            f"/owners/dormitories/{owner_one_id}/rooms",
+            headers={"X-Owner-Id": "owner-1"},
+            json={"monthly_rent": "5000"},
+        )
+        owner_one_second_room = await self.client.post(
+            f"/owners/dormitories/{owner_one_id}/rooms",
+            headers={"X-Owner-Id": "owner-1"},
+            json={"monthly_rent": "6000"},
+        )
+        owner_two_room = await self.client.post(
+            f"/owners/dormitories/{owner_two_id}/rooms",
+            headers={"X-Owner-Id": "owner-2"},
+            json={"monthly_rent": "7000"},
+        )
+        self.assertEqual(owner_one_room.status_code, 200)
+        self.assertEqual(owner_one_second_room.status_code, 200)
+        self.assertEqual(owner_two_room.status_code, 200)
+        owner_one_room_data = owner_one_room.json()
+        owner_two_room_data = owner_two_room.json()
+
+        owner_one_rooms = await self.client.get(
+            f"/owners/dormitories/{owner_one_id}/rooms",
+            headers={"X-Owner-Id": "owner-1"},
+        )
+        updated_room = await self.client.put(
+            f"/owners/dormitories/{owner_one_id}/rooms/"
+            f"{owner_one_room_data['room_id']}",
+            headers={"X-Owner-Id": "owner-1"},
+            json={"monthly_rent": "5500"},
+        )
+        foreign_dormitory_rooms = await self.client.get(
+            f"/owners/dormitories/{owner_two_id}/rooms",
+            headers={"X-Owner-Id": "owner-1"},
+        )
+        mismatched_room_update = await self.client.put(
+            f"/owners/dormitories/{owner_two_id}/rooms/"
+            f"{owner_one_room_data['room_id']}",
+            headers={"X-Owner-Id": "owner-2"},
+            json={"monthly_rent": "8000"},
+        )
+        foreign_room_update = await self.client.put(
+            f"/owners/dormitories/{owner_one_id}/rooms/"
+            f"{owner_one_room_data['room_id']}",
+            headers={"X-Owner-Id": "owner-2"},
+            json={"monthly_rent": "8000"},
+        )
+
+        # Then แต่ละห้องเชื่อมกับหอพักของตน รองรับหลายห้อง และปฏิเสธคู่ ID ที่ไม่มีสิทธิ์
+        self.assertEqual(owner_one_rooms.status_code, 200)
+        owner_one_room_rows = owner_one_rooms.json()
+        self.assertEqual(len(owner_one_room_rows), 2)
+        self.assertEqual(
+            {room["dormitory_id"] for room in owner_one_room_rows},
+            {owner_one_id},
+        )
+        self.assertEqual(
+            {room["room_id"] for room in owner_one_room_rows},
+            {
+                owner_one_room_data["room_id"],
+                owner_one_second_room.json()["room_id"],
+            },
+        )
+        self.assertEqual(
+            set(owner_one_room_rows[0]),
+            {"room_id", "dormitory_id", "monthly_rent"},
+        )
+        self.assertEqual(updated_room.status_code, 200)
+        self.assertEqual(updated_room.json()["monthly_rent"], "5500")
+        self.assertEqual(owner_two_room_data["dormitory_id"], owner_two_id)
+        for rejected_response in (
+            foreign_dormitory_rooms,
+            mismatched_room_update,
+            foreign_room_update,
+        ):
+            self.assertGreaterEqual(rejected_response.status_code, 400)
+            self.assertLess(rejected_response.status_code, 500)
+        persisted_rooms = await self.client.get(
+            f"/owners/dormitories/{owner_one_id}/rooms",
+            headers={"X-Owner-Id": "owner-1"},
+        )
+        persisted_by_id = {
+            room["room_id"]: room for room in persisted_rooms.json()
+        }
+        self.assertEqual(
+            persisted_by_id[owner_one_room_data["room_id"]]["monthly_rent"],
+            "5500",
+        )
+
+    async def test_AC_DOR_08_room_requires_monthly_rent(self) -> None:
+        # Given เจ้าของมีหอพักที่บันทึกแล้ว แต่ไม่ได้ระบุราคาห้อง
+        dormitory = await self.client.post(
+            "/owners/dormitories",
+            headers={"X-Owner-Id": "owner-1"},
+            json={
+                "name": "หอพักไม่มีราคาห้อง",
+                "location": "ทำเล",
+                "type": "หอพักรวม",
+                "contact_info": "ติดต่อ",
+            },
+        )
+        dormitory_id = dormitory.json()["dormitory_id"]
+
+        # When ยืนยันเพิ่มห้องโดยไม่มี monthly_rent
+        response = await self.client.post(
+            f"/owners/dormitories/{dormitory_id}/rooms",
+            headers={"X-Owner-Id": "owner-1"},
+            json={},
+        )
+
+        # Then ระบบปฏิเสธและไม่มีห้องถูกบันทึก
+        self.assertGreaterEqual(response.status_code, 400)
+        self.assertLess(response.status_code, 500)
+        rooms = await self.client.get(
+            f"/owners/dormitories/{dormitory_id}/rooms",
+            headers={"X-Owner-Id": "owner-1"},
+        )
+        self.assertEqual(rooms.json(), [])
