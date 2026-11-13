@@ -25,6 +25,8 @@ AI จะเปิดอ่านเมื่อ spec.md ไม่ชัด แ�
 ## Onion Diagram
 ![Onion Diagram](images/Onion-Diagram.png)
 **ผู้รับผิดชอบ**<br>
+670710729 พิทักษ์พล ชยานนท์นุรักษ์<br>
+670710746 ณัฎฐพล ดาเจริญ<br>
 
 ## Requirement
 ![Requirement](images/Requirement.png)
