@@ -1237,3 +1237,9 @@
 - หมายเหตุ: ไม่แก้ `frontend/src/App.jsx` เพราะ route หน้ารายการมีอยู่แล้ว
 - ผล test: `npm test -- --run src/__tests__/AC-DOR-11-cancel.test.jsx` ผ่าน 1 test; `npm test` ผ่าน 47 tests ใน 26 ไฟล์; `npm run build` ผ่าน
 - สิ่งที่เกือบต้องเดาแต่ถามแทน: ไม่มีประเด็นกำกวมเพิ่มเติม; ใช้พฤติกรรมยกเลิกตาม AC-DOR-11 โดยไม่เพิ่มการยืนยันหรือข้อกำหนดอื่น
+
+## 2569-11-13 10:01:10 คำสั่ง: `/implement T-14 specs/003-manage_dormitory_data/tasks.md`
+- ไฟล์ที่แก้/สร้าง: `backend/app/details.py`, `backend/tests/test_AC_DOR_12.py`, `specs/003-manage_dormitory_data/tasks.md`
+- ผลลัพธ์: ยืนยันการกรองมุมมองสาธารณะด้วยสถานะอนุมัติเดิม: หอพัก Pending ไม่คืนข้อมูลและรูป, หอพัก Approved คืนข้อมูลและเฉพาะรูปที่เชื่อมกับหอพักนั้น; เปลี่ยนสถานะ T-14 เป็น "เสร็จ รอทีมตรวจ"
+- ผล test: `PYTHONPATH=.. pytest -q tests/test_AC_DOR_12.py tests/test_details.py` ผ่าน 7 tests
+- สิ่งที่เกือบต้องเดาแต่ถามแทน: โมเดลรูปไม่มีสถานะอนุมัติแยก จึงใช้สถานะอนุมัติของหอพักที่รูปเชื่อมอยู่ตามโมเดล/กระบวนการเดิม และไม่เพิ่ม workflow หรือสถานะใหม่; ไม่ทดสอบพฤติกรรม Q-02

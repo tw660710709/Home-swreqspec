@@ -43,7 +43,8 @@ def build_dormitory_detail(
     images: Sequence[DormitoryImage],
     nearby_facilities: Sequence[Facility],
 ) -> dict:
-    # รองรับ FR-DOR-03, FR-DOR-04, FR-DOR-05, CON-BUS-01, CON-BUS-02, DOM-RULE-01
+    # รองรับ FR-DOR-03, FR-DOR-04, FR-DOR-05, CON-BUS-01, CON-BUS-02,
+    # DOM-RULE-01, NFR-DATA-02 และ AC-DOR-12
     dormitory = next(
         (
             item
@@ -99,7 +100,8 @@ def build_dormitory_detail(
 
 @router.get("/dormitories/{dormitory_id}")
 def get_dormitory_detail(dormitory_id: str) -> dict:
-    # รองรับ FR-DOR-03, FR-DOR-04, FR-DOR-05, CON-BUS-01, CON-BUS-02, DOM-RULE-01
+    # รองรับ FR-DOR-03, FR-DOR-04, FR-DOR-05, CON-BUS-01, CON-BUS-02,
+    # DOM-RULE-01, NFR-DATA-02 และ AC-DOR-12
     dormitories, room_types, images, nearby_facilities = load_dormitory_detail_data(
         dormitory_id
     )
