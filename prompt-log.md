@@ -1337,3 +1337,10 @@
 - ผลตรวจ: pytest 89 ผ่าน; Vitest 65 ผ่านใน 42 ไฟล์; `npm run build` ผ่าน; `git diff --check` ผ่าน
 - เอกสารตามรอย: ย้าย F-05 ไปหัวข้อ 4 "แก้แล้ว" ใน `rtm.md`; เพิ่มเส้นทาง API รูปเดิมใน `plan.md`
 - ไฟล์ที่แก้/สร้าง: `backend/app/owner_dormitories.py`, `backend/tests/test_FR_DOR_12.py`, `frontend/src/api/client.js`, `frontend/src/components/OwnerSavedImages.jsx`, `frontend/src/pages/OwnerDormitoryFormPage.jsx`, `frontend/src/pages/OwnerRoomsPage.jsx`, `frontend/src/__tests__/FR-DOR-12-image-management.test.jsx`, `specs/003-manage_dormitory_data/plan.md`, `specs/003-manage_dormitory_data/rtm.md`, `prompt-log.md`; ไม่แก้ spec/test-cases และไม่เปลี่ยนพฤติกรรม Q-02
+
+## 2569-11-13 11:44 UTC คำสั่ง: `/verify specs/003-manage_dormitory_data/`
+- ผลตรวจ: อ่าน spec, plan, tasks, test-cases, RTM, source ทุกไฟล์ใน `backend/app/` และ `frontend/src/`, tests ทั้งหมดใน `backend/tests/` และ `frontend/src/__tests__/`; ไม่พบ `specs/000-shared/` หรือ mockups ในโฟลเดอร์ที่ prompt ระบุ
+- ผล test: คำสั่งตรง `cd backend && pytest -v` เก็บ test ไม่สำเร็จ (20 errors ระหว่าง collection จาก `ModuleNotFoundError: No module named 'backend'`); เมื่อตั้ง import path ด้วย `cd backend && PYTHONPATH=.. pytest -v` ผ่าน 89 tests; `cd frontend && npm test` ผ่าน 65 tests ใน 42 ไฟล์ รวม 154 ผ่าน 0 ไม่ผ่านในคำสั่งที่รันได้
+- จำนวนแถวตามรอยไปข้างหน้า 19 แถว: ครบ 7, ยังไม่ถึง 1, รอ Q 0, ช่องโหว่ 11
+- ข้อค้นพบใหม่: F-06 — การแก้ไขเขียนทับข้อมูลหอพักเดิมและตั้ง Pending ทำให้ public view ซ่อนข้อมูลที่เคยอนุมัติ เป็นผลตัดสินพฤติกรรม Q-02 ก่อนทีมตอบ
+- ไฟล์ที่แก้: เฉพาะ `specs/003-manage_dormitory_data/rtm.md` และบันทึกนี้ใน `prompt-log.md`; ไม่แก้โค้ด, test, spec, plan หรือ tasks และคงข้อความคอลัมน์ “ทีมตัดสิน” ของ F-01, F-03, F-04 ตามเดิม
