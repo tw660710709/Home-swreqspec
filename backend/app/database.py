@@ -149,6 +149,50 @@ def _create_owner_management_schema(connection: sqlite3.Connection) -> None:
         )
     connection.commit()
 
+def _create_repair_schema(connection: sqlite3.Connection) -> None:
+    # รองรับ FR-REP-01, FR-REP-02, FR-REP-06, CON-SYS-01, ASM-01, ASM-05, ASM-08
+    connection.executescript(
+        """
+        CREATE TABLE IF NOT EXISTS resident_rooms (
+            resident_id TEXT PRIMARY KEY,
+            room_id TEXT NOT NULL,
+            dormitory_id TEXT NOT NULL,
+            room_number TEXT NOT NULL
+        );
+        CREATE TABLE IF NOT EXISTS repair_requests (
+            id TEXT PRIMARY KEY,
+            resident_id TEXT NOT NULL REFERENCES resident_rooms(resident_id),
+            room_id TEXT NOT NULL,
+            issue_type TEXT NOT NULL,
+            description TEXT NOT NULL,
+            status TEXT NOT NULL,
+            created_at TEXT NOT NULL
+        );
+        CREATE INDEX IF NOT EXISTS idx_repair_requests_room
+            ON repair_requests(room_id, created_at);
+        CREATE TABLE IF NOT EXISTS repair_images (
+            id TEXT PRIMARY KEY,
+            repair_request_id TEXT NOT NULL
+                REFERENCES repair_requests(id) ON DELETE CASCADE,
+            file_name TEXT NOT NULL,
+            original_filename TEXT NOT NULL,
+            mime_type TEXT NOT NULL,
+            file_size INTEGER NOT NULL,
+            created_at TEXT NOT NULL
+        );
+        CREATE INDEX IF NOT EXISTS idx_repair_images_request
+            ON repair_images(repair_request_id);
+        """
+    )
+    connection.execute(
+        """
+        INSERT OR IGNORE INTO resident_rooms (
+            resident_id, room_id, dormitory_id, room_number
+        ) VALUES (?, ?, ?, ?)
+        """,
+        ("resident-1", "room-101", "dorm-1", "101"),
+    )
+    connection.commit()
 
 def _default_seed_data() -> SeedData:
     from .fixtures import (
@@ -210,6 +254,7 @@ def _create_schema(connection: sqlite3.Connection) -> None:
         """
     )
     _create_owner_management_schema(connection)
+    _create_repair_schema(connection)
 
 
 def _seed_database(connection: sqlite3.Connection, seed_data: SeedData) -> None:

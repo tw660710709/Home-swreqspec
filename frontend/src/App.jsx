@@ -10,6 +10,7 @@ import OwnerRoomsPage from "./pages/OwnerRoomsPage.jsx";
 import ManageAccountPage from "./pages/ManageAccountPage.jsx";
 import AdminDormitoryReviewPage from "./pages/AdminDormitoryReviewPage.jsx";
 import OwnerNotificationsPage from "./pages/OwnerNotificationsPage.jsx";
+import ReportRepairPage from "./pages/ReportRepairPage.jsx";
 
 // รองรับ FR-DOR-09 ถึง FR-DOR-12 และ AC-DOR-07 ถึง AC-DOR-08
 export default function App() {
@@ -38,6 +39,11 @@ export default function App() {
         >
           จัดการข้อมูลห้องพัก
         </Link>
+        <Link 
+          to="/repairs/new"
+          className="ml-6 font-medium text-primary hover:underline">
+          แจ้งซ่อม
+        </Link>
       </nav>
       <main>
         <Routes>
@@ -46,6 +52,7 @@ export default function App() {
           <Route path="/dorms/:id" element={<DormDetailPage />} />
           <Route path="/dorms/:id/statistics" element={<DormitoryStatisticsPage />} />
           <Route path="/owner/dormitories" element={<OwnerDormitoriesPage />} />
+          <Route path="/repairs/new" element={<ReportRepairPage/>} />
           <Route
             path="/owner/dormitories/new"
             element={<OwnerDormitoryFormPage />}

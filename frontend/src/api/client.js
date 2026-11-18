@@ -554,3 +554,59 @@ export async function resubmitDormitoryForReview(dormitoryId) {
     { method: "POST", headers: prototypeOwnerHeaders },
   );
 }
+// รองรับ CON-SYS-01, ASM-01 และ ASM-05 (ตัวตนจำลองผู้พักอาศัยสำหรับ Prototype)
+const prototypeResidentHeaders = { "X-Resident-Id": "resident-1" };
+
+// รองรับ FR-REP-04 และ AC-REP-03
+export class RepairValidationError extends Error {
+  constructor(fieldErrors) {
+    super("กรุณาตรวจสอบข้อมูลการแจ้งซ่อมที่กรอก");
+    this.name = "RepairValidationError";
+    this.fieldErrors = fieldErrors;
+  }
+}
+
+// รองรับ FR-REP-06, CON-SYS-01 และ AC-REP-01
+export async function getRoomRepairRequests() {
+  const response = await fetch("/api/repairs", {
+    headers: prototypeResidentHeaders,
+  });
+  if (!response.ok) {
+    throw new Error(`ไม่สามารถโหลดรายการแจ้งซ่อมได้ (${response.status})`);
+  }
+  const data = await response.json();
+  if (!Array.isArray(data)) {
+    throw new Error("รูปแบบข้อมูลรายการแจ้งซ่อมไม่ถูกต้อง");
+  }
+  return data;
+}
+
+// รองรับ FR-REP-01, FR-REP-02, FR-REP-04, FR-REP-05 และ AC-REP-01 ถึง AC-REP-04
+export async function createRepairRequest({ issueType, description, images = [] }) {
+  const formData = new FormData();
+  formData.append("issue_type", issueType);
+  formData.append("description", description);
+  for (const file of images) {
+    formData.append("images", file);
+  }
+
+  const response = await fetch("/api/repairs", {
+    method: "POST",
+    headers: prototypeResidentHeaders,
+    body: formData,
+  });
+
+  if (!response.ok) {
+    const payload = await response.json().catch(() => ({}));
+    if (response.status === 422 && payload?.detail?.errors) {
+      throw new RepairValidationError(payload.detail.errors);
+    }
+    const message =
+      typeof payload?.detail === "string"
+        ? payload.detail
+        : `ไม่สามารถส่งข้อมูลแจ้งซ่อมได้ (${response.status})`;
+    throw new Error(message);
+  }
+
+  return response.json();
+}

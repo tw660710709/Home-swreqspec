@@ -1678,3 +1678,25 @@
 - ผลลัพธ์: specs/010-report-repair/test-cases.md
 - TC ID ที่เสนอ: `TC-REP-01-1` ถึง `TC-REP-06-1` รวม 19 กรณีทดสอบ (ครอบคลุมทางปกติ ขอบ และทางผิดครบทุก AC)
 - สถานะ: ทีมตรวจสอบตารางและอนุมัติเปลี่ยนสถานะจาก `ร่าง` เป็น `ใช้ได้`
+
+---
+
+## 2026-11-19 00:15:00 คำสั่ง: /testcases (โหมดโค้ด) และ /implement-all
+
+- เครื่องมือ: Gemini
+- ผลลัพธ์:
+  - Backend: `backend/app/config.py`, `backend/app/models.py`, `backend/app/database.py`, `backend/app/repairs.py`, `backend/app/main.py`
+  - Frontend: `frontend/vite.config.js`, `frontend/src/config.js`, `frontend/src/api/client.js`, `frontend/src/pages/ReportRepairPage.jsx`, `frontend/src/App.jsx`
+  - Tests: `backend/tests/test_AC_REP_01.py` ถึง `test_AC_REP_06.py` และ `frontend/src/__tests__/TC-REP-01-2.test.jsx` ถึง `TC-REP-05-1.test.jsx`
+- เฟสที่เสร็จ: เฟส 0 ถึง เฟส 6 (ครบทุก Acceptance Criteria `AC-REP-01` ถึง `AC-REP-06`)
+- ผลการรัน test:
+  - `python -m pytest -v`: 112 passed
+  - `npm test -- --run`: 52 test files passed (78 tests passed)
+
+---
+
+## 2026-11-19 00:20:00 คำสั่ง: /rtm
+
+- เครื่องมือ: Gemini
+- ผลลัพธ์: `specs/010-report-repair/rtm.md`
+- ผลการตรวจสอบ: ตามรอยครบทั้งไปข้างหน้าและย้อนกลับ ไม่พบ Requirement หรือ AC ตกหล่น

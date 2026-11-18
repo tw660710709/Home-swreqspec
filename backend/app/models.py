@@ -104,3 +104,26 @@ class OwnerDormitoryImage:
     dormitory_id: Optional[str] = None
     room_id: Optional[str] = None
     approval_status: str = "Pending"
+
+@dataclass
+class RepairRequest:
+    # รองรับ FR-REP-01, FR-REP-06, CON-SYS-01, ASM-01, ASM-02
+    id: str
+    resident_id: str
+    room_id: str
+    issue_type: str
+    description: str
+    status: str
+    created_at: str
+
+
+@dataclass
+class RepairImage:
+    # รองรับ FR-REP-02, FR-REP-05, NFR-SEC-01, ASM-03
+    id: str
+    repair_request_id: str
+    file_name: str
+    original_filename: str
+    mime_type: str
+    file_size: int
+    created_at: str
