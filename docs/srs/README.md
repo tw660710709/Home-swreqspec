@@ -53,7 +53,7 @@ AI จะเปิดอ่านเมื่อ spec.md ไม่ชัด แ�
 
 
 ## use case diagram
-![Usecase Diagram](images/Usecase-Diagram.png)
+![Usecase Diagram](images/Usecase-Diagram.png)<br>
 **ผู้รับผิดชอบ**<br>
 660710741 ศิริวุฒิ ชัยเกียรติธรรม<br>
 
