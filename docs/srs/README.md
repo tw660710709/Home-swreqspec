@@ -37,6 +37,7 @@ AI จะเปิดอ่านเมื่อ spec.md ไม่ชัด แ�
 ![Requirements Prioritization](images/Requirements-Prioritization.png)
 **ผู้รับผิดชอบ**<br>
 660710709 ธนกฤต เวทยนุกูล รับผิดชอบ UC-01<br>
+660710741 ศิริวุฒิ ชัยเกียรติธรรม รับผิดชอบ UC-10, UC-11, UC-12<br>
 670710713 ชนัสถ์นันท์ วะรีวะราช รับผิดชอบ UC-03<br>
 670710322 ธันยธรณ์ บุญมาก รับผิดชอบ UC-13<br>
 
@@ -52,6 +53,10 @@ AI จะเปิดอ่านเมื่อ spec.md ไม่ชัด แ�
 
 
 ## use case diagram
+![Usecase Diagram](images/Usecase-Diagram.png)
+**ผู้รับผิดชอบ**<br>
+660710741 ศิริวุฒิ ชัยเกียรติธรรม<br>
+
 
 ## use case specification
 
@@ -63,12 +68,14 @@ AI จะเปิดอ่านเมื่อ spec.md ไม่ชัด แ�
 **ผู้รับผิดชอบ:** 660710709 ธนกฤต เวทยนุกูล
 </details>
 <details>
+
 <summary>UC-02 | สมัครสมาชิก</summary>
 
 ![UC-02](images/usecases/UC-02-register.png)
 
 **ผู้รับผิดชอบ:** 660710709 ธนกฤต เวทยนุกูล
 </details>
+
 <details>
 <summary>UC-03 | จัดการข้อมูลหอพัก</summary>
 
@@ -76,6 +83,7 @@ AI จะเปิดอ่านเมื่อ spec.md ไม่ชัด แ�
 
 **ผู้รับผิดชอบ:** 660710709 ธนกฤต เวทยนุกูล
 </details>
+
 <details>
 <summary>UC-04 | อัพเดทสถานะห้องว่าง</summary>
 
@@ -83,6 +91,7 @@ AI จะเปิดอ่านเมื่อ spec.md ไม่ชัด แ�
 
 **ผู้รับผิดชอบ:** 660710709 ธนกฤต เวทยนุกูล
 </details>
+
 <details>
 <summary>UC-05 | ดูสถิติหอพัก</summary>
 
@@ -90,6 +99,7 @@ AI จะเปิดอ่านเมื่อ spec.md ไม่ชัด แ�
 
 **ผู้รับผิดชอบ:** 660710709 ธนกฤต เวทยนุกูล
 </details>
+
 <details>
 <summary>UC-06 | นัดหมายดูห้องพัก</summary>
 
@@ -97,6 +107,7 @@ AI จะเปิดอ่านเมื่อ spec.md ไม่ชัด แ�
 
 **ผู้รับผิดชอบ:** 660710709 ธนกฤต เวทยนุกูล
 </details>
+
 <details>
 <summary>UC-07 | เข้าสู่ระบบ</summary>
 
@@ -104,6 +115,7 @@ AI จะเปิดอ่านเมื่อ spec.md ไม่ชัด แ�
 
 **ผู้รับผิดชอบ:** 660710709 ธนกฤต เวทยนุกูล
 </details>
+
 <details>
 <summary>UC-08 | จัดการบัญชีผู้ใช้</summary>
 
@@ -111,6 +123,7 @@ AI จะเปิดอ่านเมื่อ spec.md ไม่ชัด แ�
 
 **ผู้รับผิดชอบ:** 660710709 ธนกฤต เวทยนุกูล
 </details>
+
 <details>
 <summary>UC-09 | เขียนและแก้ไขรีวิวหอพัก</summary>
 
@@ -118,7 +131,6 @@ AI จะเปิดอ่านเมื่อ spec.md ไม่ชัด แ�
 
 **ผู้รับผิดชอบ:** 660710709 ธนกฤต เวทยนุกูล
 </details>
-
 
 <details>
 <summary>UC-10 | แจ้งซ่อม / รายงานปัญหา</summary>
@@ -169,7 +181,9 @@ AI จะเปิดอ่านเมื่อ spec.md ไม่ชัด แ�
 
 **ผู้รับผิดชอบ:** 660710709 ธนกฤต เวทยนุกูล
 </details>
+
 <details>
+
 <summary>UC-02 | สมัครสมาชิก</summary>
 
 ![UC-02](images/smells/UC-02-register.png)
@@ -178,14 +192,7 @@ AI จะเปิดอ่านเมื่อ spec.md ไม่ชัด แ�
 </details>
 
 <details>
-<summary>UC-02 | สมัครสมาชิก</summary>
 
-![UC-02](images/smells/UC-02-register.png)
-
-**ผู้รับผิดชอบ:** 660710709 ธนกฤต เวทยนุกูล
-</details>
-
-<details>
 <summary>UC-03 | จัดการข้อมูลหอพัก</summary>
 
 ![UC-03](images/smells/Smell03.png)
@@ -194,9 +201,10 @@ AI จะเปิดอ่านเมื่อ spec.md ไม่ชัด แ�
 </details>
 
 <details>
+
 <summary>UC-04 | อัพเดทสถานะห้องว่าง</summary>
 
-![UC-03](images/smells/Smell04.png)
+![UC-04](images/smells/Smell04.png)
 
 **ผู้รับผิดชอบ:** 670710713 ชนัสถ์นันท์ วะรีวะราช
 </details>
@@ -237,11 +245,34 @@ AI จะเปิดอ่านเมื่อ spec.md ไม่ชัด แ�
 <details>
 <summary>UC-09 | เขียนและแก้ไขรีวิวหอพัก</summary>
 
-![UC-03](images/smells/Smell09.png)
+![UC-09](images/smells/Smell09.png)
 
 **ผู้รับผิดชอบ:** 670710713 ชนัสถ์นันท์ วะรีวะราช
 </details>
 
+<details>
+<summary>UC-10 | แจ้งซ่อม/รายงานปัญหา</summary>
+
+![UC-10](images/smells/UC-10-report-repair.png)
+
+**ผู้รับผิดชอบ:** 660710741 ศิริวุฒิ ชัยเกียรติธรรม
+</details>
+
+<details>
+<summary>UC-11 | ดูข้อมูลค่าใช้จ่ายห้องพัก</summary>
+
+![UC-11](images/smells/UC-11-room-expenses.png)
+
+**ผู้รับผิดชอบ:** 660710741 ศิริวุฒิ ชัยเกียรติธรรม
+</details>
+
+<details>
+<summary>UC-12 | จองห้องพัก</summary>
+
+![UC-12](images/smells/UC-12-book-room.png)
+
+**ผู้รับผิดชอบ:** 660710741 ศิริวุฒิ ชัยเกียรติธรรม
+</details>
 
 <details>
 <summary>UC-13 | ตรวจสอบและอนุมัติหอพัก</summary>
