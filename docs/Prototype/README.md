@@ -29,7 +29,7 @@
 | หน้าแรก / ค้นหา | [search](./screenshots/UC-01/UC01-search.png) | FR-015 | AC-01.1 | ผ่าน |
 | รายละเอียดหอพัก | [detail-1](./screenshots/UC-01/UC01-detail-1.png), [detail-2](./screenshots/UC-01/UC01-detail-2.png) | FR-001..016 | AC-01.3 | ผ่าน |
 | กรณีค้นหาไม่พบ | [notfound](./screenshots/UC-01/UC01-notfound.png) | - | AC-01.5 | ผ่าน |
-
+| กรณีหน้า error | [error](./screenshots/UC-01/UC01-error.png) | - | AC-01.5 | ผ่าน |
 
 ## 5. สรุปผลทดสอบ
 <!-- TODO: ใส่ข้อมูลสรุปผลทดสอบ -->
