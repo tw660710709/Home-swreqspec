@@ -40,7 +40,13 @@ for (const viewport of viewports) {
     await expect(page.getByRole("heading", { name: "สถิติหอพัก" })).toBeVisible();
     await expect(page.getByLabel("วันที่เริ่มต้น")).toBeVisible();
     await expect(page.getByLabel("วันที่สิ้นสุด")).toBeVisible();
-    await expect(page.getByRole("button", { name: "ยืนยันช่วงเวลา" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "แสดงสถิติ" })).toBeVisible();
+    await expect(page.getByText("จำนวนห้องทั้งหมด", { exact: true })).toHaveCount(0);
+
+    await page.getByLabel("วันที่เริ่มต้น").fill("2026-01-01");
+    await page.getByLabel("วันที่สิ้นสุด").fill("2026-01-07");
+    await page.getByRole("button", { name: "แสดงสถิติ" }).click();
+
     await expect(page.getByRole("button", { name: "ดาวน์โหลดรายงาน CSV" })).toBeVisible();
     await expect(page.getByRole("heading", { name: "กราฟสรุป" })).toBeVisible();
 
@@ -51,8 +57,7 @@ for (const viewport of viewports) {
     const controls = [
       page.getByLabel("วันที่เริ่มต้น"),
       page.getByLabel("วันที่สิ้นสุด"),
-      page.getByRole("button", { name: "ยืนยันช่วงเวลา" }),
-      page.getByRole("button", { name: "ดาวน์โหลดรายงาน CSV" }),
+      page.getByRole("button", { name: "แสดงสถิติ" }),
     ];
     for (const control of controls) {
       const bounds = await control.boundingBox();

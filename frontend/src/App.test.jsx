@@ -32,6 +32,19 @@ function renderApp() {
   );
 }
 
+function submitStatisticsRange(
+  startDate = "2026-01-01",
+  endDate = "2026-01-07",
+) {
+  fireEvent.change(screen.getByLabelText("วันที่เริ่มต้น"), {
+    target: { value: startDate },
+  });
+  fireEvent.change(screen.getByLabelText("วันที่สิ้นสุด"), {
+    target: { value: endDate },
+  });
+  fireEvent.click(screen.getByRole("button", { name: "แสดงสถิติ" }));
+}
+
 describe("dormitory search and details", () => {
   beforeEach(() => {
     cleanup();
@@ -334,6 +347,19 @@ describe("dormitory search and details", () => {
     );
   });
 
+  it("test_initial_state_shows_no_statistics_until_submit", async () => {
+    render(
+      <MemoryRouter initialEntries={["/dorms/dorm-approved-verified/statistics"]}>
+        <App />
+      </MemoryRouter>,
+    );
+
+    expect(await screen.findByRole("heading", { name: "สถิติหอพัก" })).toBeTruthy();
+    expect(screen.queryByText("จำนวนห้องทั้งหมด")).toBeNull();
+    expect(screen.queryByRole("heading", { name: "กราฟสรุป" })).toBeNull();
+    expect(getDormitoryStatistics).not.toHaveBeenCalled();
+  });
+
   it("test_AC_STAT_01_dashboard_displays_summary_metrics", async () => {
     getDormitoryStatistics.mockResolvedValue({
       empty_data: false,
@@ -359,6 +385,7 @@ describe("dormitory search and details", () => {
       </MemoryRouter>,
     );
 
+    submitStatisticsRange();
     expect(await screen.findByRole("heading", { name: "สถิติหอพัก" })).toBeTruthy();
     expect(screen.getAllByText("ห้องว่าง").length).toBeGreaterThan(0);
     expect(screen.getAllByText("4").length).toBeGreaterThan(0);
@@ -396,6 +423,7 @@ describe("dormitory search and details", () => {
       </MemoryRouter>,
     );
 
+    submitStatisticsRange("2026-01-03", "2026-01-03");
     expect(await screen.findByRole("heading", { name: "กราฟสรุป" })).toBeTruthy();
     expect(screen.getByText("จำนวนห้องทั้งหมด")).toBeTruthy();
     expect(screen.getAllByText("ห้องว่าง").length).toBeGreaterThan(0);
@@ -428,13 +456,15 @@ describe("dormitory search and details", () => {
       </MemoryRouter>,
     );
 
+    submitStatisticsRange("2026-02-01", "2026-02-02");
     expect(await screen.findByText("ยังไม่มีข้อมูลสถิติในรอบเวลานี้")).toBeTruthy();
-    expect(screen.getByRole("button", { name: "ดาวน์โหลดรายงาน CSV" })).toBeTruthy();
-    expect(screen.getByText("จำนวนห้องทั้งหมด")).toBeTruthy();
-    expect(screen.getAllByText("ห้องว่าง").length).toBeGreaterThan(0);
-    expect(screen.getAllByText("ห้องเต็ม").length).toBeGreaterThan(0);
-    expect(screen.getByText("10")).toBeTruthy();
+    expect(screen.queryByRole("button", { name: "ดาวน์โหลดรายงาน CSV" })).toBeNull();
+    expect(screen.queryByText("จำนวนห้องทั้งหมด")).toBeNull();
+    expect(screen.queryByText("ห้องว่าง")).toBeNull();
+    expect(screen.queryByText("ห้องเต็ม")).toBeNull();
+    expect(screen.queryByRole("heading", { name: "กราฟสรุป" })).toBeNull();
     expect(screen.queryByText("ผู้เข้าชม")).toBeNull();
+    expect(screen.getByText("เลือกช่วงเวลาใหม่เพื่อดูข้อมูลสถิติ")).toBeTruthy();
   });
 
   it("test_AC_STAT_04_zero_metrics_with_data_are_displayed", async () => {
@@ -460,10 +490,159 @@ describe("dormitory search and details", () => {
       </MemoryRouter>,
     );
 
+    submitStatisticsRange("2026-01-03", "2026-01-03");
     expect(await screen.findByRole("heading", { name: "กราฟสรุป" })).toBeTruthy();
     expect(screen.getAllByText("0").length).toBeGreaterThan(0);
     expect(screen.getByRole("button", { name: "ดาวน์โหลดรายงาน CSV" })).toBeTruthy();
     expect(downloadDormitoryStatisticsReport).not.toHaveBeenCalled();
+  });
+
+  it("test_future_date_range_shows_empty_state", async () => {
+    getDormitoryStatistics.mockResolvedValue({
+      empty_data: true,
+      summary: {
+        vacant_rooms: 4,
+        occupied_rooms: 6,
+        detail_page_views: null,
+        appointments_count: null,
+      },
+      date_range: {
+        start_date: "2027-01-01",
+        end_date: "2027-01-01",
+        detail_page_views: null,
+        appointments_count: null,
+      },
+    });
+
+    render(
+      <MemoryRouter initialEntries={["/dorms/dorm-approved-verified/statistics"]}>
+        <App />
+      </MemoryRouter>,
+    );
+
+    submitStatisticsRange("2027-01-01", "2027-01-01");
+
+    expect(await screen.findByText("ยังไม่มีข้อมูลสถิติในรอบเวลานี้")).toBeTruthy();
+    expect(screen.queryByText("จำนวนห้องทั้งหมด")).toBeNull();
+    expect(screen.queryByRole("heading", { name: "กราฟสรุป" })).toBeNull();
+  });
+
+  it("test_second_dormitory_displays_only_its_own_mock_range", async () => {
+    getDormitoryStatistics
+      .mockResolvedValueOnce({
+        empty_data: false,
+        summary: {
+          dormitory_id: "dorm-approved-unverified",
+          vacant_rooms: 1,
+          occupied_rooms: 0,
+          detail_page_views: 20,
+          appointments_count: 3,
+        },
+        date_range: {
+          start_date: "2026-01-03",
+          end_date: "2026-01-07",
+          detail_page_views: 20,
+          appointments_count: 3,
+        },
+      })
+      .mockResolvedValueOnce({
+        empty_data: true,
+        summary: {
+          vacant_rooms: 1,
+          occupied_rooms: 0,
+          detail_page_views: null,
+          appointments_count: null,
+        },
+        date_range: {
+          start_date: "2026-01-01",
+          end_date: "2026-01-02",
+          detail_page_views: null,
+          appointments_count: null,
+        },
+      });
+
+    render(
+      <MemoryRouter initialEntries={["/dorms/dorm-approved-unverified/statistics"]}>
+        <App />
+      </MemoryRouter>,
+    );
+
+    submitStatisticsRange("2026-01-03", "2026-01-07");
+    expect(await screen.findAllByText("20")).not.toHaveLength(0);
+    expect(screen.getAllByText("3").length).toBeGreaterThan(0);
+    expect(getDormitoryStatistics).toHaveBeenLastCalledWith({
+      dormitoryId: "dorm-approved-unverified",
+      startDate: "2026-01-03",
+      endDate: "2026-01-07",
+    });
+
+    fireEvent.change(screen.getByLabelText("วันที่เริ่มต้น"), {
+      target: { value: "2026-01-01" },
+    });
+    fireEvent.change(screen.getByLabelText("วันที่สิ้นสุด"), {
+      target: { value: "2026-01-02" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: "แสดงสถิติ" }));
+
+    expect(await screen.findByText("ยังไม่มีข้อมูลสถิติในรอบเวลานี้")).toBeTruthy();
+    expect(screen.queryByText("จำนวนห้องทั้งหมด")).toBeNull();
+    expect(screen.queryByRole("heading", { name: "กราฟสรุป" })).toBeNull();
+  });
+
+  it("changing_dates_clears_old_statistics_until_resubmitted", async () => {
+    getDormitoryStatistics
+      .mockResolvedValueOnce({
+        empty_data: false,
+        summary: {
+          vacant_rooms: 4,
+          occupied_rooms: 6,
+          detail_page_views: 28,
+          appointments_count: 11,
+        },
+        date_range: {
+          start_date: "2026-01-01",
+          end_date: "2026-01-07",
+          detail_page_views: 28,
+          appointments_count: 11,
+        },
+      })
+      .mockResolvedValueOnce({
+        empty_data: false,
+        summary: {
+          vacant_rooms: 4,
+          occupied_rooms: 6,
+          detail_page_views: 31,
+          appointments_count: 7,
+        },
+        date_range: {
+          start_date: "2026-02-01",
+          end_date: "2026-02-07",
+          detail_page_views: 31,
+          appointments_count: 7,
+        },
+      });
+
+    render(
+      <MemoryRouter initialEntries={["/dorms/dorm-approved-verified/statistics"]}>
+        <App />
+      </MemoryRouter>,
+    );
+    submitStatisticsRange();
+    expect(await screen.findAllByText("28")).not.toHaveLength(0);
+
+    fireEvent.change(screen.getByLabelText("วันที่เริ่มต้น"), {
+      target: { value: "2026-02-01" },
+    });
+    fireEvent.change(screen.getByLabelText("วันที่สิ้นสุด"), {
+      target: { value: "2026-02-07" },
+    });
+
+    expect(screen.queryByText("28")).toBeNull();
+    expect(screen.queryByRole("heading", { name: "กราฟสรุป" })).toBeNull();
+    expect(screen.queryByRole("button", { name: "ดาวน์โหลดรายงาน CSV" })).toBeNull();
+
+    fireEvent.click(screen.getByRole("button", { name: "แสดงสถิติ" }));
+    expect(await screen.findAllByText("31")).not.toHaveLength(0);
   });
 
   it("test_AC_STAT_03_invalid_date_range_is_rejected_without_search", async () => {
@@ -488,6 +667,7 @@ describe("dormitory search and details", () => {
         <App />
       </MemoryRouter>,
     );
+    submitStatisticsRange();
     await screen.findByRole("heading", { name: "กราฟสรุป" });
 
     const callsBeforeSubmit = getDormitoryStatistics.mock.calls.length;
@@ -497,7 +677,7 @@ describe("dormitory search and details", () => {
     fireEvent.change(screen.getByLabelText("วันที่สิ้นสุด"), {
       target: { value: "2026-01-09" },
     });
-    fireEvent.click(screen.getByRole("button", { name: "ยืนยันช่วงเวลา" }));
+    fireEvent.click(screen.getByRole("button", { name: "แสดงสถิติ" }));
 
     expect((await screen.findByRole("alert")).textContent).toContain(
       "วันที่สิ้นสุดต้องไม่น้อยกว่าวันที่เริ่มต้น",
@@ -534,6 +714,7 @@ describe("dormitory search and details", () => {
           <App />
         </MemoryRouter>,
       );
+      submitStatisticsRange();
       await screen.findByRole("heading", { name: "กราฟสรุป" });
       fireEvent.click(screen.getByRole("button", { name: "ดาวน์โหลดรายงาน CSV" }));
 
@@ -598,6 +779,7 @@ describe("dormitory search and details", () => {
         <App />
       </MemoryRouter>,
     );
+    submitStatisticsRange();
     await screen.findByRole("heading", { name: "กราฟสรุป" });
     fireEvent.change(screen.getByLabelText("วันที่เริ่มต้น"), {
       target: { value: "2026-01-08" },
@@ -607,7 +789,7 @@ describe("dormitory search and details", () => {
     });
 
     const startedAt = performance.now();
-    fireEvent.click(screen.getByRole("button", { name: "ยืนยันช่วงเวลา" }));
+    fireEvent.click(screen.getByRole("button", { name: "แสดงสถิติ" }));
     await screen.findAllByText("31");
     const elapsedMilliseconds = performance.now() - startedAt;
 

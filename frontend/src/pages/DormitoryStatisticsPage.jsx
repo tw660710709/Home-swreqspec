@@ -1,26 +1,9 @@
-import { useEffect, useMemo, useState } from "react";
+import { useRef, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import {
   downloadDormitoryStatisticsReport,
   getDormitoryStatistics,
 } from "../api/dormApi.js";
-
-const toIsoDate = (date) => {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDate()).padStart(2, "0");
-  return `${year}-${month}-${day}`;
-};
-
-const defaultDateRange = () => {
-  const end = new Date();
-  const start = new Date();
-  start.setDate(end.getDate() - 6);
-  return {
-    startDate: toIsoDate(start),
-    endDate: toIsoDate(end),
-  };
-};
 
 function SummaryCard({ label, value, tone = "primary" }) {
   const toneClasses = {
@@ -42,16 +25,20 @@ function SummaryCard({ label, value, tone = "primary" }) {
 
 export default function DormitoryStatisticsPage() {
   const { id } = useParams();
-  const initialRange = useMemo(defaultDateRange, []);
-  const [startDate, setStartDate] = useState(initialRange.startDate);
-  const [endDate, setEndDate] = useState(initialRange.endDate);
-  const [loading, setLoading] = useState(true);
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+  const [submittedRange, setSubmittedRange] = useState(null);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [stats, setStats] = useState(null);
   const [downloading, setDownloading] = useState(false);
+  const requestVersion = useRef(0);
 
   const loadStatistics = async (nextStartDate = startDate, nextEndDate = endDate) => {
     if (!id) return;
+    const version = ++requestVersion.current;
+    setStats(null);
+    setSubmittedRange(null);
     setLoading(true);
     setError("");
     try {
@@ -60,18 +47,23 @@ export default function DormitoryStatisticsPage() {
         startDate: nextStartDate,
         endDate: nextEndDate,
       });
-      setStats(result);
+      if (requestVersion.current === version) {
+        setSubmittedRange({
+          startDate: nextStartDate,
+          endDate: nextEndDate,
+        });
+        setStats(result);
+      }
     } catch (err) {
-      setError(err.message || "ไม่สามารถโหลดสถิติหอพักได้");
+      if (requestVersion.current === version) {
+        setError(err.message || "ไม่สามารถโหลดสถิติหอพักได้");
+      }
     } finally {
-      setLoading(false);
+      if (requestVersion.current === version) {
+        setLoading(false);
+      }
     }
   };
-
-  useEffect(() => {
-    loadStatistics();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id]);
 
   const totalRooms = stats
     ? (stats.summary.total_rooms ?? stats.summary.vacant_rooms + stats.summary.occupied_rooms)
@@ -90,6 +82,14 @@ export default function DormitoryStatisticsPage() {
 
   const handleSubmit = (event) => {
     event.preventDefault();
+    if (!startDate || !endDate) {
+      setError("กรุณาเลือกวันที่เริ่มต้นและวันที่สิ้นสุด");
+      return;
+    }
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(startDate) || !/^\d{4}-\d{2}-\d{2}$/.test(endDate)) {
+      setError("กรุณาเลือกวันที่ในรูปแบบ YYYY-MM-DD");
+      return;
+    }
     if (endDate < startDate) {
       setError("วันที่สิ้นสุดต้องไม่น้อยกว่าวันที่เริ่มต้น");
       return;
@@ -98,8 +98,12 @@ export default function DormitoryStatisticsPage() {
   };
 
   const handleDownload = async () => {
-    if (endDate < startDate) {
-      setError("วันที่สิ้นสุดต้องไม่น้อยกว่าวันที่เริ่มต้น");
+    if (stats?.empty_data) {
+      setError("ไม่สามารถดาวน์โหลดรายงานได้เนื่องจากไม่มีข้อมูลในช่วงเวลาที่เลือก");
+      return;
+    }
+    if (!submittedRange) {
+      setError("กรุณากดแสดงสถิติก่อนดาวน์โหลดรายงาน");
       return;
     }
     setError("");
@@ -107,13 +111,13 @@ export default function DormitoryStatisticsPage() {
     try {
       const report = await downloadDormitoryStatisticsReport({
         dormitoryId: id,
-        startDate,
-        endDate,
+        startDate: submittedRange.startDate,
+        endDate: submittedRange.endDate,
       });
       const url = URL.createObjectURL(report);
       const link = document.createElement("a");
       link.href = url;
-      link.download = `dormitory-statistics-${id}-${startDate}-${endDate}.csv`;
+      link.download = `dormitory-statistics-${id}-${submittedRange.startDate}-${submittedRange.endDate}.csv`;
       document.body.appendChild(link);
       link.click();
       link.remove();
@@ -146,8 +150,16 @@ export default function DormitoryStatisticsPage() {
             <span className="mb-1 block">วันที่เริ่มต้น</span>
             <input
               type="date"
+              required
               value={startDate}
-              onChange={(event) => setStartDate(event.target.value)}
+              onChange={(event) => {
+                requestVersion.current += 1;
+                setStartDate(event.target.value);
+                setSubmittedRange(null);
+                setStats(null);
+                setLoading(false);
+                setError("");
+              }}
               className="w-full rounded-lg border border-dark/20 bg-white px-3 py-2"
             />
           </label>
@@ -155,8 +167,16 @@ export default function DormitoryStatisticsPage() {
             <span className="mb-1 block">วันที่สิ้นสุด</span>
             <input
               type="date"
+              required
               value={endDate}
-              onChange={(event) => setEndDate(event.target.value)}
+              onChange={(event) => {
+                requestVersion.current += 1;
+                setEndDate(event.target.value);
+                setSubmittedRange(null);
+                setStats(null);
+                setLoading(false);
+                setError("");
+              }}
               className="w-full rounded-lg border border-dark/20 bg-white px-3 py-2"
             />
           </label>
@@ -165,7 +185,7 @@ export default function DormitoryStatisticsPage() {
               type="submit"
               className="w-full rounded-lg bg-primary px-4 py-2.5 font-medium text-white hover:bg-primary-dark"
             >
-              ยืนยันช่วงเวลา
+              แสดงสถิติ
             </button>
           </div>
         </div>
@@ -180,49 +200,52 @@ export default function DormitoryStatisticsPage() {
       {loading ? (
         <div role="status" className="rounded-2xl bg-white p-6 shadow-sm">กำลังโหลดสถิติหอพัก...</div>
       ) : stats ? (
-        <>
-          <div className="mb-4 flex justify-end">
-            <button
-              type="button"
-              onClick={handleDownload}
-              disabled={downloading}
-              className="rounded-lg border border-primary px-4 py-2 font-medium text-primary hover:bg-primary/5 disabled:cursor-wait disabled:opacity-60"
-            >
-              {downloading ? "กำลังสร้างรายงาน..." : "ดาวน์โหลดรายงาน CSV"}
-            </button>
+        stats.empty_data ? (
+          <div className="rounded-2xl border border-sand bg-white p-6 shadow-sm">
+            <p>ยังไม่มีข้อมูลสถิติในรอบเวลานี้</p>
+            <p className="mt-2 text-sm text-dark/70">เลือกช่วงเวลาใหม่เพื่อดูข้อมูลสถิติ</p>
           </div>
-          <div className="mb-4 grid gap-4 md:grid-cols-3">
-            <SummaryCard label="จำนวนห้องทั้งหมด" value={totalRooms} tone="neutral" />
-            <SummaryCard label="ห้องว่าง" value={stats.summary.vacant_rooms} tone="success" />
-            <SummaryCard label="ห้องเต็ม" value={stats.summary.occupied_rooms} tone="accent" />
-          </div>
-          {stats.empty_data ? (
-            <div className="rounded-2xl border border-sand bg-white p-6 shadow-sm">
-              <p>ยังไม่มีข้อมูลสถิติในรอบเวลานี้</p>
-              <p className="mt-2 text-sm text-dark/70">เลือกช่วงเวลาใหม่เพื่อดูข้อมูลสถิติ</p>
+        ) : (
+          <>
+            {stats.data_source === "synthetic_mock" && (
+              <div className="mb-4 rounded-xl border border-amber-200 bg-amber-50 p-3 text-sm text-amber-800">
+                {stats.data_source_note || "ข้อมูลสถิติผู้เข้าชมและการนัดหมายเป็นข้อมูลจำลองสำหรับ Prototype"}
+              </div>
+            )}
+            <div className="mb-4 flex justify-end">
+              <button
+                type="button"
+                onClick={handleDownload}
+                disabled={downloading}
+                className="rounded-lg border border-primary px-4 py-2 font-medium text-primary hover:bg-primary/5 disabled:cursor-wait disabled:opacity-60"
+              >
+                {downloading ? "กำลังสร้างรายงาน..." : "ดาวน์โหลดรายงาน CSV"}
+              </button>
             </div>
-          ) : (
-            <>
-              <div className="grid gap-4 md:grid-cols-2">
-                <SummaryCard label="ผู้เข้าชม" value={stats.summary.detail_page_views} tone="primary" />
-                <SummaryCard label="การนัดหมาย" value={stats.summary.appointments_count} tone="neutral" />
-              </div>
+            <div className="mb-4 grid gap-4 md:grid-cols-3">
+              <SummaryCard label="จำนวนห้องทั้งหมด" value={totalRooms} tone="neutral" />
+              <SummaryCard label="ห้องว่าง" value={stats.summary.vacant_rooms} tone="success" />
+              <SummaryCard label="ห้องเต็ม" value={stats.summary.occupied_rooms} tone="accent" />
+            </div>
+            <div className="grid gap-4 md:grid-cols-2">
+              <SummaryCard label="ผู้เข้าชม" value={stats.summary.detail_page_views} tone="primary" />
+              <SummaryCard label="การนัดหมาย" value={stats.summary.appointments_count} tone="neutral" />
+            </div>
 
-              <div className="mt-8 rounded-2xl bg-white p-6 shadow-sm">
-                <h2 className="mb-4 text-xl font-bold">กราฟสรุป</h2>
-                <div className="grid h-80 grid-cols-2 items-end gap-4 sm:h-52 sm:grid-cols-4">
-                  {chartValues.map((value, index) => (
-                    <div key={labels[index]} className="flex h-full flex-col items-center justify-end gap-3">
-                      <div className="w-full rounded-t-xl bg-primary/80" style={{ height: `${(value / maxChartValue) * 100}%` }} />
-                      <span className="text-center text-xs font-medium text-dark/70">{labels[index]}</span>
-                      <strong className="text-xs">{value}</strong>
-                    </div>
-                  ))}
-                </div>
+            <div className="mt-8 rounded-2xl bg-white p-6 shadow-sm">
+              <h2 className="mb-4 text-xl font-bold">กราฟสรุป</h2>
+              <div className="grid h-80 grid-cols-2 items-end gap-4 sm:h-52 sm:grid-cols-4">
+                {chartValues.map((value, index) => (
+                  <div key={labels[index]} className="flex h-full flex-col items-center justify-end gap-3">
+                    <div className="w-full rounded-t-xl bg-primary/80" style={{ height: `${(value / maxChartValue) * 100}%` }} />
+                    <span className="text-center text-xs font-medium text-dark/70">{labels[index]}</span>
+                    <strong className="text-xs">{value}</strong>
+                  </div>
+                ))}
               </div>
-            </>
-          )}
-        </>
+            </div>
+          </>
+        )
       ) : null}
     </div>
   );

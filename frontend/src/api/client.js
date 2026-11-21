@@ -441,6 +441,7 @@ export async function getDormitoryStatistics({ dormitoryId, startDate, endDate }
 
   const response = await fetch(
     `/dormitories/${encodeURIComponent(dormitoryId)}/statistics?${params.toString()}`,
+    { headers: { "X-Owner-Id": "owner-1" } },
   );
   if (!response.ok) {
     const payload = await response.json().catch(() => ({}));
@@ -466,6 +467,7 @@ export async function downloadDormitoryStatisticsReport({
   });
   const response = await fetch(
     `/dormitories/${encodeURIComponent(dormitoryId)}/statistics/report?${params.toString()}`,
+    { headers: { "X-Owner-Id": "owner-1" } },
   );
   if (!response.ok) {
     const payload = await response.json().catch(() => ({}));
