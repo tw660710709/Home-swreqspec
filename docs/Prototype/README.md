@@ -37,7 +37,7 @@
 | หน้าแสดงสถิติหอพัก | [statistics](./screenshots/UC-05/UC05-statistic.png) | FR-STAT-01, FR-STAT-02, FR-STAT-03 | AC-STAT-01, AC-STAT-02 | ผ่าน |
 | เลือกช่วงวันที่และแสดงสถิติ | [date-filter](./screenshots/UC-05/UC05-date-filter.png) | FR-STAT-04, FR-STAT-05 | AC-STAT-03 | ผ่าน |
 | กรณีไม่มีข้อมูลสถิติ | [empty-state](./screenshots/UC-05/UC05-empty-state.png) | FR-STAT-06 | AC-STAT-04 | ผ่าน |
-| ดาวน์โหลดรายงานสถิติ CSV | [export-csv](./screenshots/UC-05/UC05-export-csv.png) | FR-STAT-07 | AC-STAT-05 | ผ่าน |
+| ดาวน์โหลดรายงานสถิติ CSV | [export-csv](./screenshots/UC-05/UC05-csv-export.png) | FR-STAT-07 | AC-STAT-05 | ผ่าน |
 
 หมายเหตุ: ข้อมูลสถิติที่ใช้ทดสอบเป็นข้อมูลจำลอง (synthetic_mock) โดยทดสอบแยกตาม dormitory_id และช่วงวันที่ รวมถึงกรณีมีข้อมูลแต่ค่าตัวเลขเป็น 0 ซึ่งระบบต้องแสดงค่า 0 ไม่ใช่ข้อความว่าไม่มีข้อมูล
 
