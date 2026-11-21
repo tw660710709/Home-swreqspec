@@ -39,7 +39,6 @@
 | กรณีไม่มีข้อมูลสถิติ | [empty-state](./screenshots/UC-05/UC05-empty-state.png) | FR-STAT-06 | AC-STAT-04 | ผ่าน |
 | ดาวน์โหลดรายงานสถิติ CSV | [export-csv](./screenshots/UC-05/UC05-csv-export.png) | FR-STAT-07 | AC-STAT-05 | ผ่าน |
 
-หมายเหตุ: ข้อมูลสถิติที่ใช้ทดสอบเป็นข้อมูลจำลอง (synthetic_mock) โดยทดสอบแยกตาม dormitory_id และช่วงวันที่ รวมถึงกรณีมีข้อมูลแต่ค่าตัวเลขเป็น 0 ซึ่งระบบต้องแสดงค่า 0 ไม่ใช่ข้อความว่าไม่มีข้อมูล
 
 
 ## 5. สรุปผลทดสอบ
@@ -47,6 +46,7 @@
 | UC | AC ทั้งหมด | ผ่าน | ไม่ผ่าน |
 |---|---|---|---|
 | UC-01 | 6 | 6 | 0 |
+| UC-05 | 5 | 5 | 0 |
 
 ผลรันเทสต์ frontend: [ภาพ/log](./screenshots/frontend-test-results.png)
 ผลรันเทสต์ backend: [ภาพ/log](./screenshots/backend-test-results.png)
