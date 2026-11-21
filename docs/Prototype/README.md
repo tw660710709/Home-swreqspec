@@ -34,7 +34,7 @@
 ### 4.2 UC-05 ดูสถิติหอพัก
 | หน้าจอ | ภาพ | FR | AC | ผลทดสอบ |
 |---|---|---|---|---|
-| หน้าแสดงสถิติหอพัก | [statistics](./screenshots/UC-05/UC05-statistics.png) | FR-STAT-01, FR-STAT-02, FR-STAT-03 | AC-STAT-01, AC-STAT-02 | ผ่าน |
+| หน้าแสดงสถิติหอพัก | [statistics](./screenshots/UC-05/UC05-statistic.png) | FR-STAT-01, FR-STAT-02, FR-STAT-03 | AC-STAT-01, AC-STAT-02 | ผ่าน |
 | เลือกช่วงวันที่และแสดงสถิติ | [date-filter](./screenshots/UC-05/UC05-date-filter.png) | FR-STAT-04, FR-STAT-05 | AC-STAT-03 | ผ่าน |
 | กรณีไม่มีข้อมูลสถิติ | [empty-state](./screenshots/UC-05/UC05-empty-state.png) | FR-STAT-06 | AC-STAT-04 | ผ่าน |
 | ดาวน์โหลดรายงานสถิติ CSV | [export-csv](./screenshots/UC-05/UC05-export-csv.png) | FR-STAT-07 | AC-STAT-05 | ผ่าน |
