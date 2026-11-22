@@ -725,6 +725,11 @@
 | Room Status API | ดึงจำนวนห้องพักและสถานะห้องว่าง/ห้องเต็มจากข้อมูลปัจจุบัน; Endpoint มีใน Backend แต่ยังไม่ถูกหน้า Prototype UC-05 เรียกใช้งาน โดยตรง และต้องส่ง `X-Owner-Id` | `GET /dormitories/{dormitory_id}/room-status` | UC-05 |
 | Date Range Statistics API | ดึงข้อมูลสถิติผู้เข้าชมและการนัดหมายตามช่วงวันที่ (`start_date`, `end_date`); Endpoint มีใน Backend แต่ยังไม่ถูกหน้า Prototype UC-05 เรียกใช้งาน โดยตรง และต้องส่ง `X-Owner-Id` | `GET /dormitories/{dormitory_id}/statistics/date-range?start_date=YYYY-MM-DD&end_date=YYYY-MM-DD` | UC-05 |
 | Statistics Report API | ดาวน์โหลดรายงานสถิติเป็นไฟล์ CSV ตามช่วงวันที่ (`start_date`, `end_date`); ใช้จากหน้า Prototype UC-05 และต้องส่ง `X-Owner-Id`; หน้า Prototype ไม่เรียกดาวน์โหลดเมื่อไม่มีข้อมูล | `GET /dormitories/{dormitory_id}/statistics/report?start_date=YYYY-MM-DD&end_date=YYYY-MM-DD` | UC-05 |
+| User Account API | จัดการข้อมูลบัญชีผู้ใช้ ได้แก่ ชื่อ อีเมล เบอร์โทรศัพท์ และข้อมูลบัญชี | ยังไม่มี Endpoint ที่ยืนยันใน Backend | UC-08 |
+| User Profile API | ดึงข้อมูลบัญชีผู้ใช้เพื่อแสดงรายละเอียดและข้อมูลส่วนตัว | ยังไม่มี Endpoint ที่ยืนยันใน Backend | UC-08 |
+| Account Update API | แก้ไขข้อมูลบัญชีผู้ใช้ เช่น ชื่อ อีเมล และเบอร์โทรศัพท์ | ยังไม่มี Endpoint ที่ยืนยันใน Backend | UC-08 |
+| Password Management API | จัดการการเปลี่ยนรหัสผ่าน โดยต้องตรวจสอบรหัสผ่านเดิมและจัดเก็บรหัสผ่านใหม่ในรูปแบบ Hash | ยังไม่มี Endpoint ที่ยืนยันใน Backend | UC-08 |
+| Account Validation API | ตรวจสอบความถูกต้องของข้อมูลบัญชี เช่น รูปแบบอีเมล เบอร์โทรศัพท์ และข้อมูลที่ซ้ำในระบบ | ยังไม่มี Endpoint ที่ยืนยันใน Backend | UC-08 |
 
 
 
