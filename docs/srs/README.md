@@ -971,6 +971,7 @@
 |---|---|---|
 | หน้าแรก / ค้นหา | UC-01 | [search](../Prototype/screenshots/UC-01/UC01-search.png) |
 | รายละเอียดหอพัก | UC-01 | [detail-1](../Prototype/screenshots/UC-01/UC01-detail-1.png), [detail-2](../Prototype/screenshots/UC-01/UC01-detail-2.png) |
+| จัดการข้อมูลหอพัก | UC-03 | [manage-dormitory](../Prototype/screenshots/UC-03/UC03-manage-dormitory.png), [add-dormitory](../Prototype/screenshots/UC-03/UC03-add-dormitory.png), [manage-rooms](../Prototype/screenshots/UC-03/UC03-manage-rooms.png) |
 | หน้าดูสถิติหอพัก | UC-05 | [statistics](../Prototype/screenshots/UC-05/UC05-statistic.png) |
 | จัดการบัญชีผู้ใช้ | UC-08 | [manage-account](../Prototype/screenshots/UC-08/UC08-manage-account.png) |
 
