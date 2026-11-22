@@ -15,6 +15,9 @@
 | UC-10 | แจ้งซ่อม / รายงานปัญหา | พัฒนาจริง | ... |
 | UC-13 | ตรวจสอบและอนุมัติหอพัก | พัฒนาจริง | [013-approve-dormitory](../../specs/013-approve-dormitory/spec.md) |
 
+**ลิงก์ UC-03 จัดการข้อมูลหอพัก** (ผู้รับผิดชอบ 670710713 ชนัสถ์นันท์ วะรีวะราช): [spec.md](../../specs/003-manage_dormitory_data/spec.md) · [plan.md](../../specs/003-manage_dormitory_data/plan.md) · [tasks.md](../../specs/003-manage_dormitory_data/tasks.md) · [test-cases.md](../../specs/003-manage_dormitory_data/test-cases.md) · [rtm.md](../../specs/003-manage_dormitory_data/rtm.md)
+- หน้าจอใน Prototype: `/owner/dormitories` (รายการหอพักของเจ้าของ), `/owner/dormitories/new` และ `/owner/dormitories/:dormitoryId/edit` (ฟอร์มเพิ่ม/แก้ไขหอพัก), `/owner/dormitories/:dormitoryId/rooms` (จัดการห้องพักและราคา)
+
 
 ## 3. วิธีรัน
 1. frontend: `cd frontend && npm install && npm run dev`
@@ -70,9 +73,17 @@
 | UC-01 | 6 | 6 | 0 | 0 |
 | UC-05 | 5 | 5 | 0 | 0 |
 | UC-08 | 8 | 0 | 0 | 8 |
+| UC-03 | 6 | 5 | 0 | 1 |
 
 
 
 
 ผลรันเทสต์ frontend: [ภาพ/log](./screenshots/frontend-test-results.png)
 ผลรันเทสต์ backend: [ภาพ/log](./screenshots/backend-test-results.png)
+
+**UC-03 จัดการข้อมูลหอพัก** (ผู้รับผิดชอบ 670710713 ชนัสถ์นันท์ วะรีวะราช)
+- ผลรันเทสต์ frontend ของ UC-03: [UC-03-test-results.md](./UC-03-test-results.md) ผ่าน 36/36 tests (Vitest, 2026-11-22)
+- ผลรันเทสต์ backend ของ UC-03: [rtm.md](../../specs/003-manage_dormitory_data/rtm.md) pytest ผ่าน 89 tests (2569-11-13)
+- AC-DOR-07, 09, 10, 11, 12 ผ่านตาม test อัตโนมัติ
+- AC-DOR-08 (รอ/ยังไม่ยืนยัน 1 ข้อ) ส่วนบันทึกข้อมูลและหน้าจัดการห้องพักผ่าน test อัตโนมัติแล้ว แต่เกณฑ์ usability (NFR-USE-02: ผู้ทดสอบสำเร็จ ≥ 90%) ยังไม่ได้ทดสอบกับผู้ใช้จริง (TC-DOR-08-5 ถึง 08-8)
+- ข้อสังเกตที่ทีมยอมรับไว้ (F-01 ใน rtm.md): Prototype ใช้ตัวตนเจ้าของจำลองผ่าน `X-Owner-Id` จนกว่า UC-07 เข้าสู่ระบบจะพัฒนาเสร็จ
