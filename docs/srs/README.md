@@ -762,6 +762,8 @@
 
 ### 11.2 ตารางหลัก
 <!-- TODO: ใส่ข้อมูล Usecase ที่ตัวเองทำใน prototype -->
+> UC-08 ในตารางนี้อ้างอิงรหัสจาก [SPEC-ACCOUNT-001](../../specs/008-manage-account/spec.md) โดยตรง; Test Case ที่ระบุคือกรณีทดสอบที่นิยามไว้ ไม่ได้หมายความว่ารันทดสอบแล้ว
+
 <details> 
 <summary>UC-01 | ค้นหาและดูข้อมูลหอพัก</summary>
 
@@ -800,6 +802,34 @@
 
 </details>
 
+<details>
+<summary>UC-08 | จัดการบัญชีผู้ใช้ (SPEC-ACCOUNT-001)</summary>
+
+| FR / NFR / CON | ใน Requirement | AC | Task | Test case | Prototype | สถานะ |
+|---|---|---|---|---|---|---|
+| FR-ACCOUNT-01 | SPEC-ACCOUNT-001, FR-ACCOUNT-01 | AC-ACCOUNT-01 | T-04, T-07, T-11, T-13 | TC-ACCOUNT-01 | [หน้า Manage Account](../../frontend/src/pages/ManageAccountPage.jsx), [UI test](../../frontend/src/__tests__/AC-ACCOUNT-01-manage-account-page.test.jsx) | ⏳ UI test ผ่านเฉพาะการแยกส่วนข้อมูล; ยังไม่มีข้อมูลบัญชีจริงหรือการเชื่อม Authentication |
+| FR-ACCOUNT-02 | SPEC-ACCOUNT-001, FR-ACCOUNT-02 | AC-ACCOUNT-01 | T-05, T-08, T-11 | TC-ACCOUNT-02 | - | ⏳ รอ Q-01 และการเชื่อม backend |
+| FR-ACCOUNT-03 | SPEC-ACCOUNT-001, FR-ACCOUNT-03 | AC-ACCOUNT-03 | T-05, T-06, T-08, T-11, T-12 | TC-ACCOUNT-03, TC-ACCOUNT-04, TC-ACCOUNT-05, TC-ACCOUNT-06, TC-ACCOUNT-07, TC-ACCOUNT-08 | - | ⏳ ยังไม่ได้ทดสอบ; validation รอการเชื่อม backend และ Q-01 |
+| FR-ACCOUNT-04 | SPEC-ACCOUNT-001, FR-ACCOUNT-04 | AC-ACCOUNT-01 | T-05, T-11 | TC-ACCOUNT-02 | - | ⏳ ยังไม่ได้ทดสอบ; รอ Q-01 และการเชื่อม backend |
+| FR-ACCOUNT-05 | SPEC-ACCOUNT-001, FR-ACCOUNT-05 | AC-ACCOUNT-01, AC-ACCOUNT-05 | T-05, T-08, T-11, T-13 | TC-ACCOUNT-02 | - | ⏳ ยังไม่ได้ทดสอบ; รอ Q-01 และการเชื่อม backend |
+| FR-ACCOUNT-06 | SPEC-ACCOUNT-001, FR-ACCOUNT-06 | AC-ACCOUNT-02, AC-ACCOUNT-03 | T-03, T-06, T-09, T-12 | TC-ACCOUNT-06, TC-ACCOUNT-07, TC-ACCOUNT-08 | - | ⏳ ยังไม่ได้ทดสอบ; รอ dependency จาก UC-07 |
+| FR-ACCOUNT-07 | SPEC-ACCOUNT-001, FR-ACCOUNT-07 | AC-ACCOUNT-02, AC-ACCOUNT-04 | T-06, T-09, T-12 | TC-ACCOUNT-06, TC-ACCOUNT-09 | - | ⏳ ยังไม่ได้ทดสอบ; รอ dependency จาก UC-07 |
+| FR-ACCOUNT-08 | SPEC-ACCOUNT-001, FR-ACCOUNT-08 | AC-ACCOUNT-06 | T-10, T-13 | TC-ACCOUNT-10 | - | ⏳ ยังไม่ได้ทดสอบ |
+| FR-ACCOUNT-09 | SPEC-ACCOUNT-001, FR-ACCOUNT-09 | AC-ACCOUNT-07 | T-01, T-04, T-14 | TC-ACCOUNT-11 | - | ⏳ ยังไม่ได้ทดสอบ; รอ dependency จาก UC-07 |
+| NFR-USE-01 | SPEC-ACCOUNT-001, NFR-USE-01 | AC-ACCOUNT-01 | T-07, T-13, T-16 | TC-ACCOUNT-01, TC-ACCOUNT-14 | [หน้า Manage Account](../../frontend/src/pages/ManageAccountPage.jsx) | ⏳ มีโครง UI; ยังไม่ยืนยัน usability ตาม Q-02 หรือการแสดงผลครบตาม AC |
+| NFR-PERF-01 | SPEC-ACCOUNT-001, NFR-PERF-01 | AC-ACCOUNT-08 | T-15 | TC-ACCOUNT-13 | - | ⏳ รอ Q-03 และยังไม่ได้วัดผล |
+| NFR-SEC-01 | SPEC-ACCOUNT-001, NFR-SEC-01 | AC-ACCOUNT-02 | T-03, T-06, T-12 | TC-ACCOUNT-06 | - | ⏳ ยังไม่ได้ทดสอบ; รอ dependency จาก UC-07 |
+| NFR-SEC-02 | SPEC-ACCOUNT-001, NFR-SEC-02 | AC-ACCOUNT-07 | T-01, T-04, T-06, T-14 | TC-ACCOUNT-11, TC-ACCOUNT-12 | - | ⏳ ยังไม่ได้ทดสอบ; รอ dependency จาก UC-07 |
+| CON-ACCOUNT-01 | SPEC-ACCOUNT-001, CON-ACCOUNT-01 | AC-ACCOUNT-07 | T-01, T-04, T-14 | TC-ACCOUNT-11 | - | ⏳ ยังไม่ได้ทดสอบ; รอ dependency จาก UC-07 |
+| CON-ACCOUNT-02 | SPEC-ACCOUNT-001, CON-ACCOUNT-02 | AC-ACCOUNT-07 | T-01, T-04, T-05, T-14 | TC-ACCOUNT-12 | - | ⏳ ยังไม่ได้ทดสอบ; รอ dependency จาก UC-07 |
+| CON-ACCOUNT-03 | SPEC-ACCOUNT-001, CON-ACCOUNT-03 | AC-ACCOUNT-02, AC-ACCOUNT-03 | T-02, T-05, T-06, T-08, T-11, T-12 | TC-ACCOUNT-02, TC-ACCOUNT-03, TC-ACCOUNT-04, TC-ACCOUNT-05, TC-ACCOUNT-06, TC-ACCOUNT-07, TC-ACCOUNT-08 | - | ⏳ ยังไม่ได้ทดสอบ; กฎชื่อและ requiredness รอ Q-01 |
+| CON-ACCOUNT-04 | SPEC-ACCOUNT-001, CON-ACCOUNT-04 | AC-ACCOUNT-02, AC-ACCOUNT-04 | T-06, T-09, T-12 | TC-ACCOUNT-09 | - | ⏳ ยังไม่ได้ทดสอบ; รอ dependency จาก UC-07 |
+| CON-SEC-01 | SPEC-ACCOUNT-001, CON-SEC-01 | AC-ACCOUNT-02 | T-03, T-06, T-12 | TC-ACCOUNT-06 | - | ⏳ ยังไม่ได้ทดสอบ; รอ dependency จาก UC-07 |
+| CON-SEC-02 | SPEC-ACCOUNT-001, CON-SEC-02 | AC-ACCOUNT-02 | T-03, T-06, T-12 | TC-ACCOUNT-06 | - | ⏳ ยังไม่ได้ทดสอบ; รอ dependency จาก UC-07 |
+| CON-UI-01 | SPEC-ACCOUNT-001, CON-UI-01 | AC-ACCOUNT-01 | T-07, T-13 | TC-ACCOUNT-01 | [หน้า Manage Account](../../frontend/src/pages/ManageAccountPage.jsx) | ⏳ มีโครง UI; ยังไม่มีผลทดสอบ responsive ตาม viewport |
+
+</details>
+
 
 ### 11.3 สรุปความครอบคลุม
 <!-- TODO: ใส่ข้อมูล Usecase ที่ตัวเองทำใน prototype -->
@@ -829,11 +859,29 @@
 
 </details>
 
+<details>
+<summary>UC-08 | จัดการบัญชีผู้ใช้ (SPEC-ACCOUNT-001)</summary>
+
+| รายการ | จำนวน |
+|---|---|
+| FR-ACCOUNT ทั้งหมด | 9 |
+| FR ที่เชื่อม AC / Task / Test case | 9 / 9 / 9 |
+| NFR ทั้งหมด | 4 |
+| NFR ที่เชื่อม AC / Test case | 4 / 4 (NFR-USE-01 ยังรอเกณฑ์ Q-02; NFR-PERF-01 ยังรอ Q-03) |
+| CON ทั้งหมด | 7 |
+| CON ที่เชื่อม Test case | 7 |
+| AC ทั้งหมด / AC ที่เชื่อม Test case | 8 / 8 |
+| ผลรันเทสต์จริง | UI test สำหรับการแยกส่วนหน้า Manage Account ผ่าน 1/1; ยังไม่มีผลทดสอบ backend, authentication, validation, password หรือ responsive |
+| Dependency / Open Questions | รอ UC-07 และ Q-01, Q-02, Q-03; สถานะ Covered ใน RTM หมายถึงมี Test Case เชื่อมโยง ไม่ได้หมายถึงรันทดสอบแล้วหรือผ่าน |
+
+</details>
+
 
 ### 11.4 ลิงก์รายฟีเจอร์
 <!-- TODO: ใส่ข้อมูล Usecase ที่ตัวเองทำใน prototype -->
 - [001-search](../../specs/001-search/rtm.md)
 - [005-view_dormitory_statistics](../../specs/005-view_dormitory_statistics/rtm.md)
+- [008-manage-account](../../specs/008-manage-account/rtm.md)
 
 
 
