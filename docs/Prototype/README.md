@@ -31,7 +31,12 @@
 | กรณีค้นหาไม่พบ | [notfound](./screenshots/UC-01/UC01-notfound.png) | - | AC-01.5 | ผ่าน |
 | กรณีหน้า error | [error](./screenshots/UC-01/UC01-error.png) | - | AC-01.5 | ผ่าน |
 
-### 4.2 UC-05 ดูสถิติหอพัก
+### 4.2 UC-03 จัดการข้อมูลหอพัก
+| หน้าจอ | ภาพ | FR | AC | ผลทดสอบ |
+|---|---|---|---|---|
+| หน้าจัดการข้อมูลหอพัก | [manage-dormitory](./screenshots/UC-03/UC03-manage-dormitory.png) | FR-DOR-09 | AC-DOR-07 | ยังไม่มีผลทดสอบ |
+
+### 4.3 UC-05 ดูสถิติหอพัก
 | หน้าจอ | ภาพ | FR | AC | ผลทดสอบ |
 |---|---|---|---|---|
 | หน้าแสดงสถิติหอพัก | [statistics](./screenshots/UC-05/UC05-statistic.png) | FR-STAT-01, FR-STAT-02, FR-STAT-03 | AC-STAT-01, AC-STAT-02 | ผ่าน |
@@ -39,7 +44,7 @@
 | กรณีไม่มีข้อมูลสถิติ | [empty-state](./screenshots/UC-05/UC05-empty-state.png) | FR-STAT-06 | AC-STAT-04 | ผ่าน |
 | ดาวน์โหลดรายงานสถิติ CSV | [export-csv](./screenshots/UC-05/UC05-csv-export.png) | FR-STAT-07 | AC-STAT-05 | ผ่าน |
 
-### 4.3 UC-13 ตรวจสอบและอนุมัติหอพัก
+### 4.4 UC-13 ตรวจสอบและอนุมัติหอพัก
 | หน้าจอ | ภาพ | FR | AC | ผลทดสอบ |
 |---|---|---|---|---|
 | หน้า Admin: รายการและรายละเอียดหอพักรอตรวจสอบ | ไม่มี Screenshot ของ UC-13 ใน Repository | FR-ADM-01, FR-ADM-02, FR-ADM-03, FR-ADM-04, FR-ADM-05, FR-ADM-06, FR-ADM-07, FR-ADM-08, FR-ADM-10 | AC-ADM-01, AC-ADM-02, AC-ADM-03, AC-ADM-04, AC-ADM-05, AC-ADM-06, AC-ADM-07, AC-ADM-08 | ผ่าน |
