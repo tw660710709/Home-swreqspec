@@ -75,6 +75,4 @@
 
 
 
-ผลรันเทสต์ frontend: [ภาพ/log](./screenshots/frontend-test-results.png)
-ผลรันเทสต์ backend: [ภาพ/log](./screenshots/backend-test-results.png)
 
