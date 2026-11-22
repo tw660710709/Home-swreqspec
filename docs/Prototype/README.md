@@ -34,9 +34,9 @@
 ### 4.2 UC-03 จัดการข้อมูลหอพัก
 | หน้าจอ | ภาพ | FR | AC | ผลทดสอบ |
 |---|---|---|---|---|
-| หน้าจัดการข้อมูลหอพัก | [manage-dormitory](./screenshots/UC-03/UC03-manage-dormitory.png) | FR-DOR-09 | AC-DOR-07 | ยังไม่มีผลทดสอบ |
-| แบบฟอร์มเพิ่มข้อมูลหอพัก | [add-dormitory](./screenshots/UC-03/UC03-add-dormitory.png) | FR-DOR-10 | AC-DOR-08 | ยังไม่มีผลทดสอบ |
-| เลือกหอพักเพื่อจัดการห้องพัก | [manage-rooms](./screenshots/UC-03/UC03-manage-rooms.png) | FR-DOR-12 | AC-DOR-08 | ยังไม่มีผลทดสอบ |
+| หน้าจัดการข้อมูลหอพัก | [manage-dormitory](./screenshots/UC-03/UC03-manage-dormitory.png) | FR-DOR-09 | AC-DOR-07 | ผ่าน |
+| แบบฟอร์มเพิ่มข้อมูลหอพัก | [add-dormitory](./screenshots/UC-03/UC03-add-dormitory.png) | FR-DOR-10 | AC-DOR-08 | ผ่าน |
+| เลือกหอพักเพื่อจัดการห้องพัก | [manage-rooms](./screenshots/UC-03/UC03-manage-rooms.png) | FR-DOR-12 | AC-DOR-08 | ผ่าน |
 
 ### 4.3 UC-05 ดูสถิติหอพัก
 | หน้าจอ | ภาพ | FR | AC | ผลทดสอบ |
