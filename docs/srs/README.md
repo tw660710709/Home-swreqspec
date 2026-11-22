@@ -1064,6 +1064,27 @@
 </details>
 
 <details>
+<summary>UC-03 | จัดการข้อมูลหอพัก</summary>
+
+| FR / NFR | ใน Requirement | AC | Task | Test case | Prototype | สถานะ |
+|---|---|---|---|---|---|---|
+| FR-DOR-09 | - (UC-03 Main Flow ขั้น 1-2) | AC-DOR-07 | T-02, T-03 | TC-DOR-07-1 | [หน้าจัดการข้อมูลหอพัก](../Prototype/screenshots/UC-03/UC03-manage-dormitory.png) | ✅ |
+| FR-DOR-10 | - (UC-03 Alternative 2a) | AC-DOR-08 | T-04, T-06, T-09 | TC-DOR-08-1, 08-4 | [ฟอร์มเพิ่มหอพัก](../Prototype/screenshots/UC-03/UC03-add-dormitory.png) | ✅ |
+| FR-DOR-11 | - (UC-03 Main Flow ขั้น 3-4) | AC-DOR-07 | T-02, T-03 | TC-DOR-07-1 | - | ✅ |
+| FR-DOR-12 | Req #12 | AC-DOR-08 | T-05, T-06, T-07, T-11, T-12 | TC-DOR-08-2, 08-3 | [หน้าจัดการห้องพัก](../Prototype/screenshots/UC-03/UC03-manage-rooms.png) | ✅ |
+| FR-DOR-13 | - (UC-03 Main Flow ขั้น 7) | AC-DOR-08, AC-DOR-09 | T-09, T-10 | TC-DOR-09-1, 09-2, 09-3, 09-4 | - | ✅ |
+| FR-DOR-14 | - (UC-03 Main Flow ขั้น 6) | AC-DOR-10 | T-11, T-12 | TC-DOR-10-1, 10-2, 10-3, 10-4, 10-5 | [ฟอร์มเพิ่มหอพัก (ช่องรูปภาพ)](../Prototype/screenshots/UC-03/UC03-add-dormitory.png) | ✅ |
+| FR-DOR-15 | - (UC-03 Main Flow ขั้น 8-9) | AC-DOR-08, AC-DOR-12 | T-04, T-14, T-15, T-16 | TC-DOR-08-1, 08-2, 12-3 | - | ✅ |
+| FR-DOR-16 | - (UC-03 Alternative 5a) | AC-DOR-11 | T-13 | TC-DOR-11-1, 11-2, 11-3 | - | ✅ (TC-DOR-11-3 เป็นกรณีที่ spec ไม่ได้กำหนด) |
+| FR-DOR-17 | - (UC-03 Exception 7a) | AC-DOR-09 | T-09, T-10 | TC-DOR-09-1, 09-2, 09-4 | - | ✅ |
+| FR-DOR-18 | - (UC-03 Exception 7b) | AC-DOR-10 | T-11, T-12 | TC-DOR-10-1, 10-3, 10-5 | - | ✅ |
+| NFR-USE-02 | Req #17 | AC-DOR-08 | T-08 | TC-DOR-08-5, 08-6, 08-7, 08-8 | - | ⏳ ยังไม่ได้ทดสอบ usability กับผู้ใช้จริง |
+| NFR-DATA-02 | Req #18 | AC-DOR-12 | T-14, T-15, T-16 | TC-DOR-12-1, 12-2, 12-3, 12-4 | - | ✅ (TC-DOR-12-4 ตรวจโดยคน) |
+| NFR-SEC-02 | - (UC-03 NFR) | AC-DOR-07 | T-02 | TC-DOR-07-2, 07-3, 07-4 | - | ✅ (Prototype ใช้ตัวตนจำลอง `X-Owner-Id` จนกว่า UC-07 จะเสร็จ) |
+
+</details>
+
+<details>
 <summary>UC-05 | ดูสถิติหอพัก</summary>
 
 | FR / NFR | ใน Requirement | AC | Task | Test case | Prototype | สถานะ |
