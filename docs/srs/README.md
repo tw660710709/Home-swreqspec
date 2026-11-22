@@ -1177,6 +1177,24 @@
 </details>
 
 <details>
+<summary>UC-03 | จัดการข้อมูลหอพัก</summary>
+
+| รายการ | จำนวน |
+|---|---|
+| FR-DOR ทั้งหมด | 10 (FR-DOR-09 ถึง FR-DOR-18) |
+| FR ที่มี AC / Task / Test case | 10 / 10 / 10 |
+| NFR ทั้งหมด | 3 |
+| NFR ที่มี AC | 3 (USE-02, DATA-02, SEC-02) |
+| CON / DOM ทั้งหมด | 6 (CON-ACC-01, CON-AUTH-01, CON-DATA-01, CON-FILE-01, CON-BUS-01, DOM-RULE-01) |
+| AC ทั้งหมด | 6 (AC-DOR-07 ถึง AC-DOR-12) |
+| Task | 16; เสร็จ 15, พร้อมทำ 1 (T-08 usability testing กับผู้ใช้จริง) |
+| Test case | 28 (TC-DOR-07-1 ถึง TC-DOR-12-4) |
+| ผลรันเทสต์จริง | Frontend (Vitest) UC-03 ผ่าน 36/36 ([ผลรัน](../Prototype/UC-03-test-results.md)); Backend (pytest) ผ่าน 89 ตาม [rtm.md](../../specs/003-manage_dormitory_data/rtm.md); NFR-USE-02 ยังไม่ได้ทดสอบกับผู้ใช้จริง |
+| Prototype / Screenshot | พัฒนาจริง; มี Screenshot 3 รูป (หน้าจัดการข้อมูลหอพัก, ฟอร์มเพิ่มหอพัก, หน้าจัดการห้องพัก) ใน `docs/Prototype/screenshots/UC-03/` |
+
+</details>
+
+<details>
 <summary>UC-05 | ดูสถิติหอพัก</summary>
 
 | รายการ | จำนวน |
