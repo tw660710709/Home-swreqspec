@@ -1109,6 +1109,36 @@
 
 </details>
 
+<details>
+<summary>UC-13 | ตรวจสอบและอนุมัติหอพัก</summary>
+
+| FR / NFR / CON | ใน Requirement | AC | Task | Test case | Prototype | สถานะ |
+|---|---|---|---|---|---|---|
+| FR-ADM-01 | ระบบต้องแสดงรายการหอพักที่มีสถานะ Pending Review ให้ Admin | AC-ADM-01 | งาน 5, งาน 11 | `test_AC_ADM_01_admin_lists_pending_and_views_details`, `test_AC_ADM_01_admin_reviews_dormitory_details` | [หน้ารายการ](../Prototype/screenshots/๊UC-013/1.png) | มี Task done และ Test Case จริง; ยังไม่พบหลักฐานรันและผลผ่าน |
+| FR-ADM-02 | ระบบต้องแสดงรายละเอียดข้อมูลและเอกสารของหอพักที่ Admin เลือกตรวจสอบ | AC-ADM-01 | งาน 5, งาน 11 | `test_AC_ADM_01_admin_lists_pending_and_views_details`, `test_AC_ADM_01_admin_can_view_uploaded_form_attachment` | - | มี Task done และ Test Case จริง; ยังไม่พบหลักฐานรันและผลผ่าน |
+| FR-ADM-03 | ระบบต้องตรวจสอบข้อมูลและเอกสารที่กำหนดเป็น Required ในแบบฟอร์มลงทะเบียนหอพักครบถ้วนก่อนอนุมัติ | AC-ADM-06 | งาน 1, งาน 6 | `test_AC_ADM_02_approve_complete_required_form_fields`, `test_AC_ADM_06_approval_rejects_missing_required_field` | - | มี Task done และ Test Case จริง; ยังไม่พบหลักฐานรันและผลผ่าน |
+| FR-ADM-04 | Admin สามารถอนุมัติหอพักได้เมื่อข้อมูลและเอกสารครบถ้วน | AC-ADM-02 | งาน 6 | `test_AC_ADM_02_approve_complete_required_form_fields` | - | มี Task done และ Test Case จริง; ยังไม่พบหลักฐานรันและผลผ่าน |
+| FR-ADM-05 | Admin สามารถขอให้เจ้าของหอพักแก้ไขข้อมูล พร้อมระบุเหตุผลที่ไม่ว่างและมีความยาว 1–500 ตัวอักษร | AC-ADM-03 | งาน 3, งาน 7 | `test_AC_ADM_03_requires_a_reason_before_requesting_revision`, `test_AC_ADM_03_revision_reason_boundaries_and_notification`, `test_AC_ADM_03_revision_rejects_empty_or_overlength_reason` | - | มี Task done และ Test Case จริง; ยังไม่พบหลักฐานรันและผลผ่าน |
+| FR-ADM-06 | Admin สามารถปฏิเสธหอพัก พร้อมระบุเหตุผลที่ไม่ว่างและมีความยาว 1–500 ตัวอักษร | AC-ADM-04 | งาน 3, งาน 8 | `test_AC_ADM_04_reject_reason_boundaries_and_notification`, `test_AC_ADM_04_reject_rejects_empty_or_overlength_reason` | - | มี Task done และ Test Case จริง; ยังไม่พบหลักฐานรันและผลผ่าน |
+| FR-ADM-07 | ระบบต้องเปลี่ยนสถานะหอพักตามผลตรวจสอบและอนุญาตให้ส่งตรวจสอบใหม่กลับเป็น Pending Review ได้หลายรอบ | AC-ADM-02, AC-ADM-03, AC-ADM-04 | งาน 2, งาน 10, งาน 12 | `test_FR_ADM_07_owner_resubmits_revision_for_review`, `test_AC_ADM_05_multiple_revision_rounds_keep_all_history`, `test_CON_ADM_06_resubmission_requires_need_revision_and_owner` | - | มี Task done และ Test Case จริง; ยังไม่พบหลักฐานรันและผลผ่าน |
+| FR-ADM-08 | ระบบต้องบันทึกประวัติการตรวจสอบทุกครั้งเป็นรายการใหม่โดยไม่เขียนทับประวัติเดิม | AC-ADM-05 | งาน 3, งาน 7, งาน 8, งาน 10, งาน 12 | `test_AC_ADM_05_history_is_append_only_and_auditable`, `test_AC_ADM_05_multiple_revision_rounds_keep_all_history` | - | มี Task done และ Test Case จริง; ยังไม่พบหลักฐานรันและผลผ่าน |
+| FR-ADM-09 | ระบบต้องแจ้งผลให้เจ้าของหอพักผ่าน Notification หลังบันทึกสำเร็จ และเจ้าของหอพักดูผลและเหตุผลย้อนหลังได้ | AC-ADM-03, AC-ADM-04 | งาน 9, งาน 11, งาน 12 | `test_AC_ADM_03_owner_views_notification_reason_and_history`, `test_AC_ADM_02_approve_complete_required_form_fields`, `test_AC_ADM_03_revision_reason_boundaries_and_notification`, `test_AC_ADM_04_reject_reason_boundaries_and_notification`, `test_FR_ADM_09_owner_notifications_are_scoped_to_owner` | - | มี Task done และ Test Case จริง; ยังไม่พบหลักฐานรันและผลผ่าน |
+| FR-ADM-10 | ระบบต้องตรวจสอบสิทธิ์ของผู้ใช้งานก่อนเข้าถึงฟังก์ชันตรวจสอบหอพัก | AC-ADM-07 | งาน 4 | `test_AC_ADM_07_admin_routes_fail_closed_without_authentication` | - | Task 4 เป็น blocked; มี Test Case จริง; ยังไม่พบหลักฐานรันและผลผ่าน |
+| NFR-SEC-01 | ข้อมูลหอพักและเอกสารต้องสามารถเข้าถึงได้เฉพาะผู้ที่มีสิทธิ์ | AC-ADM-07 | งาน 4 | `test_AC_ADM_07_admin_routes_fail_closed_without_authentication` | - | Task 4 เป็น blocked; มี Test Case จริง; ยังไม่พบหลักฐานรันและผลผ่าน |
+| NFR-AUD-01 | ระบบต้องเก็บประวัติการตรวจสอบเพื่อให้สามารถตรวจสอบย้อนหลังได้ | AC-ADM-05 | งาน 3, งาน 7, งาน 8, งาน 10, งาน 12 | `test_AC_ADM_05_history_is_append_only_and_auditable`, `test_AC_ADM_05_multiple_revision_rounds_keep_all_history` | - | มี Task done และ Test Case จริง; ยังไม่พบหลักฐานรันและผลผ่าน |
+| NFR-DATA-01 | สถานะหอพักและประวัติการตรวจสอบต้องสอดคล้องกัน | AC-ADM-05, AC-ADM-08 | งาน 2, งาน 6, งาน 7, งาน 8, งาน 10, งาน 12 | `test_AC_ADM_05_history_is_append_only_and_auditable`, `test_AC_ADM_08_database_failure_rolls_back_status_history_and_notification` | - | มี Task done และ Test Case จริง; ยังไม่พบหลักฐานรันและผลผ่าน |
+| NFR-USE-01 | หน้าจอตรวจสอบต้องแสดงข้อมูล สถานะ และผลการดำเนินการอย่างชัดเจน | AC-ADM-01, AC-ADM-03, AC-ADM-04 | งาน 5, งาน 11, งาน 12 | `test_AC_ADM_01_admin_reviews_dormitory_details`, `test_AC_ADM_03_owner_views_notification_reason_and_history` | [หน้ารายการ](../Prototype/screenshots/๊UC-013/1.png) | มี Task done และ Test Case จริง; Screenshot รองรับหน้ารายการเท่านั้น; ยังไม่พบหลักฐานรันและผลผ่าน |
+| CON-ADM-01 | เฉพาะผู้ใช้ที่มีสิทธิ์ Admin เท่านั้นที่สามารถตรวจสอบและอนุมัติหอพักได้ | AC-ADM-07 | งาน 4 | `test_AC_ADM_07_admin_routes_fail_closed_without_authentication` | - | Task 4 เป็น blocked; มี Test Case จริง; ยังไม่พบหลักฐานรันและผลผ่าน |
+| CON-ADM-02 | หอพักที่ข้อมูลหรือเอกสารที่กำหนดเป็น Required ไม่ครบไม่สามารถอนุมัติได้ | AC-ADM-06 | งาน 1, งาน 6 | `test_AC_ADM_02_approve_complete_required_form_fields`, `test_AC_ADM_06_approval_rejects_missing_required_field` | - | มี Task done และ Test Case จริง; ยังไม่พบหลักฐานรันและผลผ่าน |
+| CON-ADM-03 | การขอแก้ไขหรือปฏิเสธต้องระบุเหตุผลที่ไม่ว่าง มีความชัดเจนและเข้าใจได้ ความยาว 1–500 ตัวอักษร | AC-ADM-03, AC-ADM-04, AC-ADM-05 | งาน 3, งาน 7, งาน 8 | `test_AC_ADM_03_requires_a_reason_before_requesting_revision`, `test_AC_ADM_03_revision_reason_boundaries_and_notification`, `test_AC_ADM_03_revision_rejects_empty_or_overlength_reason`, `test_AC_ADM_04_reject_reason_boundaries_and_notification`, `test_AC_ADM_04_reject_rejects_empty_or_overlength_reason` | - | มี Task done และ Test Case จริง; ยังไม่พบหลักฐานรันและผลผ่าน |
+| CON-ADM-04 | ทุกการตรวจสอบต้องมีประวัติผู้ดำเนินการ วันที่ เวลา ผลการดำเนินการ และเหตุผล | AC-ADM-05 | งาน 3, งาน 7, งาน 8, งาน 9 | `test_AC_ADM_05_history_is_append_only_and_auditable`, `test_AC_ADM_05_multiple_revision_rounds_keep_all_history` | - | มี Task done และ Test Case จริง; ยังไม่พบหลักฐานรันและผลผ่าน |
+| CON-ADM-05 | หอพักที่มีสถานะ Approved เท่านั้นจึงจะแสดงต่อผู้ใช้งานทั่วไป | - | งาน 2 | `test_CON_ADM_05_only_approved_dormitories_are_public` | - | มี Task done และ Test Case จริง; ยังไม่พบหลักฐานรันและผลผ่าน |
+| CON-ADM-06 | เมื่อได้รับ Need Revision เจ้าของหอพักต้องแก้ไขและส่งตรวจสอบใหม่ ระบบจะเปลี่ยนสถานะกลับเป็น Pending Review | AC-ADM-03, AC-ADM-05 | งาน 10 | `test_FR_ADM_07_owner_resubmits_revision_for_review`, `test_CON_ADM_06_resubmission_requires_need_revision_and_owner`, `test_AC_ADM_05_multiple_revision_rounds_keep_all_history` | - | มี Task done และ Test Case จริง; ยังไม่พบหลักฐานรันและผลผ่าน |
+| CON-ADM-07 | หากบันทึกผลการตรวจสอบไม่สำเร็จ ระบบต้องแจ้งข้อผิดพลาดและไม่เปลี่ยนสถานะหอพัก | AC-ADM-08 | งาน 6, งาน 12 | `test_AC_ADM_08_database_failure_rolls_back_status_history_and_notification` | - | มี Task done และ Test Case จริง; ยังไม่พบหลักฐานรันและผลผ่าน |
+
+</details>
+
+
 
 ### 11.3 สรุปความครอบคลุม
 <!-- TODO: ใส่ข้อมูล Usecase ที่ตัวเองทำใน prototype -->
