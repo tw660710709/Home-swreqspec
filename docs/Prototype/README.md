@@ -35,6 +35,7 @@
 | หน้าจอ | ภาพ | FR | AC | ผลทดสอบ |
 |---|---|---|---|---|
 | หน้าจัดการข้อมูลหอพัก | [manage-dormitory](./screenshots/UC-03/UC03-manage-dormitory.png) | FR-DOR-09 | AC-DOR-07 | ยังไม่มีผลทดสอบ |
+| แบบฟอร์มเพิ่มข้อมูลหอพัก | [add-dormitory](./screenshots/UC-03/UC03-add-dormitory.png) | FR-DOR-10 | AC-DOR-08 | ยังไม่มีผลทดสอบ |
 
 ### 4.3 UC-05 ดูสถิติหอพัก
 | หน้าจอ | ภาพ | FR | AC | ผลทดสอบ |
@@ -44,14 +45,13 @@
 | กรณีไม่มีข้อมูลสถิติ | [empty-state](./screenshots/UC-05/UC05-empty-state.png) | FR-STAT-06 | AC-STAT-04 | ผ่าน |
 | ดาวน์โหลดรายงานสถิติ CSV | [export-csv](./screenshots/UC-05/UC05-csv-export.png) | FR-STAT-07 | AC-STAT-05 | ผ่าน |
 
-### 4.3 UC-13 ตรวจสอบและอนุมัติหอพัก
+### 4.4 UC-13 ตรวจสอบและอนุมัติหอพัก
 | หน้าจอ | ภาพ | FR | AC | ผลทดสอบ |
 |---|---|---|---|---|
 | หน้า Admin: รายการและรายละเอียดหอพักรอตรวจสอบ | ไม่มี Screenshot ของ UC-13 ใน Repository | FR-ADM-01, FR-ADM-02, FR-ADM-03, FR-ADM-04, FR-ADM-05, FR-ADM-06, FR-ADM-07, FR-ADM-08, FR-ADM-10 | AC-ADM-01, AC-ADM-02, AC-ADM-03, AC-ADM-04, AC-ADM-05, AC-ADM-06, AC-ADM-07, AC-ADM-08 | ผ่าน |
 | หน้าเจ้าของหอพัก: การแจ้งเตือนผลตรวจสอบ | ไม่มี Screenshot ของ UC-13 ใน Repository | FR-ADM-07, FR-ADM-09 | AC-ADM-03, AC-ADM-04 | ผ่าน |
 
-=======
-### 4.3 UC-08 จัดการบัญชีผู้ใช้
+### 4.5 UC-08 จัดการบัญชีผู้ใช้
 
 | หน้าจอ | FR | AC | สถานะ |
 |---|---|---|---|
@@ -64,7 +64,6 @@
 
 ## 5. สรุปผลทดสอบ
 <!-- TODO: ใส่ข้อมูลสรุปผลทดสอบ -->
-<<<<<<< HEAD
 | UC | AC ทั้งหมด | ผ่าน | ไม่ผ่าน | รอ/ยังไม่ยืนยัน |
 |---|---|---|---|---|
 | UC-01 | 6 | 6 | 0 | 0 |
