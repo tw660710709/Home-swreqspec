@@ -1185,6 +1185,28 @@
 
 </details>
 
+<details>
+<summary>UC-13 | ตรวจสอบและอนุมัติหอพัก</summary>
+
+| รายการ | จำนวน |
+|---|---|
+| FR-ADM ทั้งหมด | 10 |
+| FR ที่เชื่อม AC / Task / Test Case | 10 / 10 / 10 |
+| NFR ทั้งหมด | 4 |
+| NFR ที่เชื่อม AC / Task / Test Case | 4 / 4 / 4 (NFR-SEC-01, NFR-AUD-01, NFR-DATA-01, NFR-USE-01) |
+| CON ทั้งหมด | 7 |
+| CON ที่เชื่อม AC / Task / Test Case | 6 / 7 / 7 (ไม่มี AC: CON-ADM-05) |
+| AC ทั้งหมด | 8 (AC-ADM-01 ถึง AC-ADM-08) |
+| Requirement ที่เชื่อมโยง AC | 20/21 |
+| Requirement ที่เชื่อมโยง Task / Test Case | 21/21 |
+| Task | เสร็จแล้ว 11 งาน; Blocked 1 งาน (Task 4: การตรวจสอบสิทธิ์ Admin) |
+| Test Case ที่มีอยู่จริง | 19 Test (Backend 15, Frontend 4) |
+| ผลรันเทสต์จริง | Backend ผ่าน 106 tests และ 3 subtests; Frontend ผ่าน 71 tests |
+| Prototype / Screenshot | Prototype สถานะพัฒนาจริง; มี Screenshot 1 รูป (`docs/Prototype/screenshots/๊UC-013/1.png`) แสดงหน้ารายการหอพักที่รอตรวจสอบ |
+| Diagram / SRS Image | Use Case Diagram 1 รูป และ Requirement Smell 1 รูป |
+
+</details>
+
 
 ### 11.4 ลิงก์รายฟีเจอร์
 <!-- TODO: ใส่ข้อมูล Usecase ที่ตัวเองทำใน prototype -->
