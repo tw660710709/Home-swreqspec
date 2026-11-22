@@ -11,7 +11,7 @@
 | UC-01 | ค้นหาและดูข้อมูลหอพัก | พัฒนาจริง | [001-search](../../specs/001-search/spec.md) |
 | UC-03 | จัดการข้อมูลหอพัก | พัฒนาจริง | ... |
 | UC-05 | ดูสถิติหอพัก | พัฒนาจริง |[005-view_dormitory_statistics](../../specs/005-view_dormitory_statistics/spec.md)  |
-| UC-08 | จัดการบัญชีผู้ใช้ | พัฒนาจริง | ... |
+| UC-08 | จัดการบัญชีผู้ใช้ | ต้นแบบ UI | [008-manage-account](../../specs/008-manage-account/spec.md) |
 | UC-10 | แจ้งซ่อม / รายงานปัญหา | พัฒนาจริง | ... |
 | UC-13 | ตรวจสอบและอนุมัติหอพัก | พัฒนาจริง | [013-approve-dormitory](../../specs/013-approve-dormitory/spec.md) |
 
@@ -44,21 +44,41 @@
 | กรณีไม่มีข้อมูลสถิติ | [empty-state](./screenshots/UC-05/UC05-empty-state.png) | FR-STAT-06 | AC-STAT-04 | ผ่าน |
 | ดาวน์โหลดรายงานสถิติ CSV | [export-csv](./screenshots/UC-05/UC05-csv-export.png) | FR-STAT-07 | AC-STAT-05 | ผ่าน |
 
-### 4.4 UC-13 ตรวจสอบและอนุมัติหอพัก
+### 4.3 UC-13 ตรวจสอบและอนุมัติหอพัก
 | หน้าจอ | ภาพ | FR | AC | ผลทดสอบ |
 |---|---|---|---|---|
 | หน้า Admin: รายการและรายละเอียดหอพักรอตรวจสอบ | ไม่มี Screenshot ของ UC-13 ใน Repository | FR-ADM-01, FR-ADM-02, FR-ADM-03, FR-ADM-04, FR-ADM-05, FR-ADM-06, FR-ADM-07, FR-ADM-08, FR-ADM-10 | AC-ADM-01, AC-ADM-02, AC-ADM-03, AC-ADM-04, AC-ADM-05, AC-ADM-06, AC-ADM-07, AC-ADM-08 | ผ่าน |
 | หน้าเจ้าของหอพัก: การแจ้งเตือนผลตรวจสอบ | ไม่มี Screenshot ของ UC-13 ใน Repository | FR-ADM-07, FR-ADM-09 | AC-ADM-03, AC-ADM-04 | ผ่าน |
 
+=======
+### 4.3 UC-08 จัดการบัญชีผู้ใช้
+
+| หน้าจอ | FR | AC | สถานะ |
+|---|---|---|---|
+| [หน้าจัดการบัญชี](./screenshots/UC-08/UC08-manage-account.png): แก้ไขข้อมูลส่วนตัว ตรวจรูปแบบเบอร์โทรศัพท์/อีเมล และยกเลิกการแก้ไข | FR-ACCOUNT-01 ถึง FR-ACCOUNT-05, FR-ACCOUNT-08 | AC-ACCOUNT-01, AC-ACCOUNT-03, AC-ACCOUNT-05, AC-ACCOUNT-06 | ทดสอบ UI ผ่าน; เก็บข้อมูลใน state ของหน้าเท่านั้น |
+| ตรวจรูปแบบข้อมูลเปลี่ยนรหัสผ่านและแสดงข้อจำกัดการเชื่อมต่อ | FR-ACCOUNT-06, FR-ACCOUNT-07 | AC-ACCOUNT-02, AC-ACCOUNT-03, AC-ACCOUNT-04 | ทดสอบ UI validation ผ่าน; ยังไม่ตรวจรหัสผ่านเดิมหรือเปลี่ยนรหัสผ่านจริง |
+
+ต้นแบบ UC-08 ยังไม่เชื่อมต่อฐานข้อมูลหรือ Authentication ของ UC-07 จึงยังไม่ยืนยันการบันทึกจริง, salted password hash, HTTPS, การยกเลิก session, HTTP 403 หรือเกณฑ์ประสิทธิภาพ/ความง่ายในการใช้งานที่รอคำตอบใน spec
+>>>>>>> 66f6f51 (update)
 
 
 ## 5. สรุปผลทดสอบ
 <!-- TODO: ใส่ข้อมูลสรุปผลทดสอบ -->
+<<<<<<< HEAD
 | UC | AC ทั้งหมด | ผ่าน | ไม่ผ่าน |
 |---|---|---|---|
 | UC-01 | 6 | 6 | 0 |
 | UC-05 | 5 | 5 | 0 |
 | UC-13 | 8 | 6 | 2 |
+=======
+| UC | AC ทั้งหมด | ผ่าน | ไม่ผ่าน | รอ/ยังไม่ยืนยัน |
+|---|---|---|---|---|
+| UC-01 | 6 | 6 | 0 | 0 |
+| UC-05 | 5 | 5 | 0 | 0 |
+| UC-08 | 8 | 0 | 0 | 8 |
+
+
+>>>>>>> 66f6f51 (update)
 
 ผลรันเทสต์ frontend: [ภาพ/log](./screenshots/frontend-test-results.png)
 ผลรันเทสต์ backend: [ภาพ/log](./screenshots/backend-test-results.png)

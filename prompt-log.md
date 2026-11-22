@@ -1703,6 +1703,7 @@
 
 ---
 
+<<<<<<< HEAD
 ## 2026-11-22 16:38 คำสั่ง: เพิ่มภาพหน้าจอ UC-03 ใน Prototype
 
 - เครื่องมือ: Copilot SDK
@@ -1711,3 +1712,13 @@
 - คำตอบทีม: ยกเลิกคำถามก่อนหน้า จากนั้นแนบภาพและขอให้เพิ่มลงในโฟลเดอร์
 - ผลลัพธ์: เพิ่มภาพหน้าจอหน้าจัดการข้อมูลหอพัก อ้างอิง `FR-DOR-09` และ `AC-DOR-07` ใน `docs/Prototype/README.md`
 - ผลการทดสอบ: ยังไม่มีข้อมูลผลทดสอบสำหรับภาพหน้าจอนี้
+=======
+## 2026-11-22 16:25:00 คำสั่ง: ทำ prototype ของ 08
+
+- เครื่องมือ: Copilot ใน VS Code
+- Spec: `specs/008-manage-account/spec.md` (`SPEC-ACCOUNT-001`)
+- ผลลัพธ์: หน้า UI prototype จัดการบัญชีใน `frontend/src/pages/ManageAccountPage.jsx` และบันทึกผลใน `docs/Prototype/README.md`
+- สิ่งที่ทำ: เพิ่มฟอร์มข้อมูลส่วนตัวและเปลี่ยนรหัสผ่าน, ตรวจรูปแบบเบอร์โทรศัพท์/อีเมลและรหัสผ่านใน UI, ยกเลิกข้อมูลส่วนตัวกลับสู่ state ล่าสุด, รองรับ responsive และจับภาพหน้าจอ
+- ข้อจำกัดที่ยังคงไว้: ไม่เชื่อมฐานข้อมูลหรือ Authentication; ไม่ยืนยันการเปลี่ยนรหัสผ่านจริง; requiredness/กฎตรวจชื่อและเกณฑ์ usability/performance ยังรอคำตอบตาม Q-01 ถึง Q-03
+- ผลตรวจ: frontend tests 84 passed, responsive browser tests 3 passed และ production build ผ่าน; ยังไม่ถือว่า AC ใดผ่านครบในตารางสรุป เพราะยังไม่มีการเชื่อม backend/authentication
+>>>>>>> 5ea9a40 (update)

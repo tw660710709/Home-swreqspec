@@ -19,7 +19,7 @@ export default function App() {
       <Navbar />
       <nav
         aria-label="เมนูการจัดการ"
-        className="border-b border-sand px-6 py-3"
+        className="flex flex-wrap gap-x-6 gap-y-2 border-b border-sand px-4 py-3 sm:px-6"
       >
         <Link
           to="/account"
@@ -29,19 +29,19 @@ export default function App() {
         </Link>
         <Link
           to="/owner/dormitories"
-          className="ml-6 font-medium text-primary hover:underline"
+          className="font-medium text-primary hover:underline"
         >
           จัดการข้อมูลหอพัก
         </Link>
         <Link
           to="/owner/rooms"
-          className="ml-6 font-medium text-primary hover:underline"
+          className="font-medium text-primary hover:underline"
         >
           จัดการข้อมูลห้องพัก
         </Link>
         <Link 
           to="/repairs/new"
-          className="ml-6 font-medium text-primary hover:underline">
+          className="font-medium text-primary hover:underline">
           แจ้งซ่อม
         </Link>
       </nav>

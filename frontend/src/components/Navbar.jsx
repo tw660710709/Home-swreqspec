@@ -6,12 +6,18 @@ const linkClass = ({ isActive }) =>
 export default function Navbar() {
   return (
     <header className="bg-cream">
-      <nav className="flex w-full items-center justify-between px-6 py-5">
-        <Link to="/" className="text-3xl font-bold">
+      <nav className="flex w-full flex-wrap items-center justify-between gap-4 px-4 py-4 sm:px-6 sm:py-5">
+        <Link to="/" className="text-2xl font-bold sm:text-3xl">
           DORM-DEE (หอดี)
         </Link>
-        <div className="flex items-center gap-8">
-          <NavLink to="/" end className={linkClass}>หน้าแรก</NavLink>
+        <div className="ml-auto flex items-center gap-4 sm:gap-8">
+          <NavLink
+            to="/"
+            end
+            className={(props) => `${linkClass(props)} whitespace-nowrap`}
+          >
+            หน้าแรก
+          </NavLink>
           <div className="flex h-12 w-12 items-center justify-center rounded-full bg-dark text-white">
             K
           </div>
