@@ -39,6 +39,12 @@
 | กรณีไม่มีข้อมูลสถิติ | [empty-state](./screenshots/UC-05/UC05-empty-state.png) | FR-STAT-06 | AC-STAT-04 | ผ่าน |
 | ดาวน์โหลดรายงานสถิติ CSV | [export-csv](./screenshots/UC-05/UC05-csv-export.png) | FR-STAT-07 | AC-STAT-05 | ผ่าน |
 
+### 4.3 UC-13 ตรวจสอบและอนุมัติหอพัก
+| หน้าจอ | ภาพ | FR | AC | ผลทดสอบ |
+|---|---|---|---|---|
+| หน้า Admin: รายการและรายละเอียดหอพักรอตรวจสอบ | ไม่มี Screenshot ของ UC-13 ใน Repository | FR-ADM-01, FR-ADM-02, FR-ADM-03, FR-ADM-04, FR-ADM-05, FR-ADM-06, FR-ADM-07, FR-ADM-08, FR-ADM-10 | AC-ADM-01, AC-ADM-02, AC-ADM-03, AC-ADM-04, AC-ADM-05, AC-ADM-06, AC-ADM-07, AC-ADM-08 | ผ่าน |
+| หน้าเจ้าของหอพัก: การแจ้งเตือนผลตรวจสอบ | ไม่มี Screenshot ของ UC-13 ใน Repository | FR-ADM-07, FR-ADM-09 | AC-ADM-03, AC-ADM-04 | ผ่าน |
+
 
 
 ## 5. สรุปผลทดสอบ
