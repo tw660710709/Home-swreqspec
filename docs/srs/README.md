@@ -1250,6 +1250,7 @@
 ### 11.4 ลิงก์รายฟีเจอร์
 <!-- TODO: ใส่ข้อมูล Usecase ที่ตัวเองทำใน prototype -->
 - [001-search](../../specs/001-search/rtm.md)
+- [003-manage_dormitory_data](../../specs/003-manage_dormitory_data/rtm.md)
 - [005-view_dormitory_statistics](../../specs/005-view_dormitory_statistics/rtm.md)
 - [008-manage-account](../../specs/008-manage-account/rtm.md)
 - [013-approve-dormitory](../../specs/013-approve-dormitory/rtm.md)
