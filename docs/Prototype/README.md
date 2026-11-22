@@ -53,6 +53,7 @@
 |---|---|---|---|
 | UC-01 | 6 | 6 | 0 |
 | UC-05 | 5 | 5 | 0 |
+| UC-13 | 8 | 6 | 2 |
 
 ผลรันเทสต์ frontend: [ภาพ/log](./screenshots/frontend-test-results.png)
 ผลรันเทสต์ backend: [ภาพ/log](./screenshots/backend-test-results.png)
