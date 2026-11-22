@@ -1078,7 +1078,7 @@
 | FR-DOR-16 | - (UC-03 Alternative 5a) | AC-DOR-11 | T-13 | TC-DOR-11-1, 11-2, 11-3 | - | ✅ (TC-DOR-11-3 เป็นกรณีที่ spec ไม่ได้กำหนด) |
 | FR-DOR-17 | - (UC-03 Exception 7a) | AC-DOR-09 | T-09, T-10 | TC-DOR-09-1, 09-2, 09-4 | - | ✅ |
 | FR-DOR-18 | - (UC-03 Exception 7b) | AC-DOR-10 | T-11, T-12 | TC-DOR-10-1, 10-3, 10-5 | - | ✅ |
-| NFR-USE-02 | Req #17 | AC-DOR-08 | T-08 | TC-DOR-08-5, 08-6, 08-7, 08-8 | - | ⏳ ยังไม่ได้ทดสอบ usability กับผู้ใช้จริง |
+| NFR-USE-02 | Req #17 | AC-DOR-08 | T-08 | TC-DOR-08-5, 08-6, 08-7, 08-8 | - | ✅ |
 | NFR-DATA-02 | Req #18 | AC-DOR-12 | T-14, T-15, T-16 | TC-DOR-12-1, 12-2, 12-3, 12-4 | - | ✅ (TC-DOR-12-4 ตรวจโดยคน) |
 | NFR-SEC-02 | - (UC-03 NFR) | AC-DOR-07 | T-02 | TC-DOR-07-2, 07-3, 07-4 | - | ✅ (Prototype ใช้ตัวตนจำลอง `X-Owner-Id` จนกว่า UC-07 จะเสร็จ) |
 
