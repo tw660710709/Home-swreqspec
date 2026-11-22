@@ -1742,3 +1742,9 @@
 - คำถาม AI: ภาพแสดงหน้าจัดการข้อมูลหอพักซึ่งดูตรงกับ UC-03 มากกว่า UC-13
 - คำตอบทีม: คงภาพไว้ในโฟลเดอร์ UC-13 และ push ตามที่สั่ง
 - ผลลัพธ์: ย้ายภาพเป็น `docs/Prototype/screenshots/UC-13/uc13.png` และเชื่อมโยงใน `docs/Prototype/README.md`
+
+## 2026-11-22 16:59 คำสั่ง: push การแก้ไขล่าสุดของ Prototype README
+
+- เครื่องมือ: Copilot SDK
+- คำสั่งทีม: push การแก้ไขล่าสุดขึ้น Git
+- ผลลัพธ์: เพิ่มลิงก์ spec ของ UC-03 ใน `docs/Prototype/README.md`

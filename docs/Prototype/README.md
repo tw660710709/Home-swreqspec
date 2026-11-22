@@ -9,7 +9,7 @@
 | UC | ชื่อ | สถานะ | spec |
 |---|---|---|---|
 | UC-01 | ค้นหาและดูข้อมูลหอพัก | พัฒนาจริง | [001-search](../../specs/001-search/spec.md) |
-| UC-03 | จัดการข้อมูลหอพัก | พัฒนาจริง | ... |
+| UC-03 | จัดการข้อมูลหอพัก | พัฒนาจริง | [003-manage_dormitory_data](../../specs/003-manage_dormitory_data/spec.md)  |
 | UC-05 | ดูสถิติหอพัก | พัฒนาจริง |[005-view_dormitory_statistics](../../specs/005-view_dormitory_statistics/spec.md)  |
 | UC-08 | จัดการบัญชีผู้ใช้ | ต้นแบบ UI | [008-manage-account](../../specs/008-manage-account/spec.md) |
 | UC-10 | แจ้งซ่อม / รายงานปัญหา | พัฒนาจริง | ... |
