@@ -974,6 +974,8 @@
 | จัดการข้อมูลหอพัก | UC-03 | [manage-dormitory](../Prototype/screenshots/UC-03/UC03-manage-dormitory.png), [add-dormitory](../Prototype/screenshots/UC-03/UC03-add-dormitory.png), [manage-rooms](../Prototype/screenshots/UC-03/UC03-manage-rooms.png) |
 | หน้าดูสถิติหอพัก | UC-05 | [statistics](../Prototype/screenshots/UC-05/UC05-statistic.png) |
 | จัดการบัญชีผู้ใช้ | UC-08 | [manage-account](../Prototype/screenshots/UC-08/UC08-manage-account.png) |
+| ตรวจสอบและอนุมัติหอพัก (Admin) | UC-13 | [uc13](./screenshots/UC-13/uc13.png) |
+| การแจ้งเตือนผลตรวจสอบ (เจ้าของหอพัก) | UC-13 | ไม่มี Screenshot ของหน้าจอแจ้งเตือนใน Prototype |
 
 ### 9.2 ส่วนติดต่อซอฟต์แวร์ / API
 <!-- TODO: ใส่ข้อมูล UC ของตัวเองที่ทำเป็น prototype -->
@@ -994,6 +996,15 @@
 | Account Update API | แก้ไขข้อมูลบัญชีผู้ใช้ เช่น ชื่อ อีเมล และเบอร์โทรศัพท์ | ยังไม่มี Endpoint ที่ยืนยันใน Backend | UC-08 |
 | Password Management API | จัดการการเปลี่ยนรหัสผ่าน โดยต้องตรวจสอบรหัสผ่านเดิมและจัดเก็บรหัสผ่านใหม่ในรูปแบบ Hash | ยังไม่มี Endpoint ที่ยืนยันใน Backend | UC-08 |
 | Account Validation API | ตรวจสอบความถูกต้องของข้อมูลบัญชี เช่น รูปแบบอีเมล เบอร์โทรศัพท์ และข้อมูลที่ซ้ำในระบบ | ยังไม่มี Endpoint ที่ยืนยันใน Backend | UC-08 |
+| GET รายการหอพักรอตรวจสอบ | แสดงรายการหอพักสถานะ Pending Review (FR-ADM-01) | `GET /admin/dormitories/pending` | UC-13 |
+| GET รายละเอียดหอพักสำหรับตรวจสอบ | แสดงรายละเอียด ข้อมูล Required และเอกสารประกอบ (FR-ADM-02, FR-ADM-03) | `GET /admin/dormitories/{dormitory_id}` | UC-13 |
+| GET เอกสารประกอบหอพัก | ส่งไฟล์เอกสารที่ Admin เลือกเปิดดู (FR-ADM-02) | `GET /admin/dormitories/{dormitory_id}/documents/{image_id}` | UC-13 |
+| GET ประวัติการตรวจสอบ | แสดงประวัติการตรวจสอบของหอพัก (FR-ADM-08) | `GET /admin/dormitories/{dormitory_id}/history` | UC-13 |
+| POST อนุมัติหอพัก | บันทึกผลอนุมัติและเปลี่ยนสถานะเป็น Approved (FR-ADM-04, FR-ADM-08, FR-ADM-09) | `POST /admin/dormitories/{dormitory_id}/approve` | UC-13 |
+| POST ขอให้แก้ไขข้อมูล | บันทึกผลขอแก้ไขและเปลี่ยนสถานะเป็น Need Revision (FR-ADM-05, FR-ADM-08, FR-ADM-09) | `POST /admin/dormitories/{dormitory_id}/revision` | UC-13 |
+| POST ปฏิเสธหอพัก | บันทึกผลปฏิเสธและเปลี่ยนสถานะเป็น Rejected (FR-ADM-06, FR-ADM-08, FR-ADM-09) | `POST /admin/dormitories/{dormitory_id}/reject` | UC-13 |
+| GET การแจ้งเตือนเจ้าของหอพัก | แสดงผลตรวจสอบและเหตุผลให้เจ้าของหอพัก (FR-ADM-09) | `GET /owner/notifications` | UC-13 |
+| POST ส่งหอพักตรวจสอบใหม่ | เปลี่ยนสถานะจาก Need Revision กลับเป็น Pending Review (FR-ADM-07) | `POST /owner/dormitories/{dormitory_id}/resubmit-review` | UC-13 |
 
 
 
