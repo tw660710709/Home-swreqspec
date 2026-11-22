@@ -710,6 +710,7 @@
 | หน้าแรก / ค้นหา | UC-01 | [search](../Prototype/screenshots/UC-01/UC01-search.png) |
 | รายละเอียดหอพัก | UC-01 | [detail-1](../Prototype/screenshots/UC-01/UC01-detail-1.png), [detail-2](../Prototype/screenshots/UC-01/UC01-detail-2.png) |
 | หน้าดูสถิติหอพัก | UC-05 | [statistics](../Prototype/screenshots/UC-05/UC05-statistic.png) |
+| จัดการบัญชีผู้ใช้ | UC-08 | [manage-account](../Prototype/screenshots/UC-08/UC08-manage-account.png) |
 
 ### 9.2 ส่วนติดต่อซอฟต์แวร์ / API
 <!-- TODO: ใส่ข้อมูล UC ของตัวเองที่ทำเป็น prototype -->
@@ -762,8 +763,6 @@
 
 ### 11.2 ตารางหลัก
 <!-- TODO: ใส่ข้อมูล Usecase ที่ตัวเองทำใน prototype -->
-> UC-08 ในตารางนี้อ้างอิงรหัสจาก [SPEC-ACCOUNT-001](../../specs/008-manage-account/spec.md) โดยตรง; Test Case ที่ระบุคือกรณีทดสอบที่นิยามไว้ ไม่ได้หมายความว่ารันทดสอบแล้ว
-
 <details> 
 <summary>UC-01 | ค้นหาและดูข้อมูลหอพัก</summary>
 
